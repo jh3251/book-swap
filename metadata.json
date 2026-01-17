@@ -1,0 +1,7 @@
+{
+  "name": "BookSwap Bangladesh",
+  "description": "A premier marketplace for students in Bangladesh to buy and sell used textbooks and novels with advanced location-based filtering.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
