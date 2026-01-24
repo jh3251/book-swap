@@ -12,16 +12,16 @@ const Footer: React.FC = () => {
       {/* Global CTA Card */}
       <div className="container mx-auto px-4 max-w-5xl mb-16">
         <div className="bg-white rounded-[2.5rem] p-10 md:p-14 shadow-2xl shadow-emerald-900/5 border border-emerald-50 text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-           <p className="text-zinc-500 font-bold text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+           <p className="text-zinc-800 font-bold text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed">
              {lang === 'bn' 
                ? 'আজই আপনার পুরনো বইগুলো অন্যকে দিন অথবা আপনার প্রয়োজনীয় বইটি খুঁজে নিন।' 
                : 'Donate your old books or find the book you need today.'}
            </p>
            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-             <Link to="/" className="bg-accent text-white px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-accent-hover transition shadow-xl shadow-accent/20">
+             <Link to="/" className="bg-accent text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-accent-hover transition shadow-xl shadow-accent/20">
                {t('browse')}
              </Link>
-             <Link to="/sell" className="bg-zinc-900 text-white px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-zinc-800 transition shadow-xl shadow-black/10">
+             <Link to="/sell" className="bg-zinc-900 text-white px-10 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-zinc-800 transition shadow-xl shadow-black/10">
                {t('sellABook')}
              </Link>
            </div>
@@ -33,8 +33,10 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-8">
-                <div className="bg-accent p-2 rounded-xl">
-                  <BookOpen className="w-6 h-6 text-white" />
+                <div className="logo-blob">
+                  <div className="bg-[#059669] p-2 rounded-xl">
+                    <BookOpen className="w-6 h-6 text-white" />
+                  </div>
                 </div>
                 <span className="text-2xl font-black font-serif text-white tracking-tight">BookSwap BD</span>
               </div>
@@ -58,19 +60,19 @@ const Footer: React.FC = () => {
             </div>
             
             <div>
-              <h4 className="text-white font-serif font-black uppercase tracking-[0.2em] text-[11px] mb-10">Quick Navigation</h4>
+              <h4 className="text-white font-serif font-black uppercase tracking-[0.2em] text-[11px] mb-10">QUICK NAVIGATION</h4>
               <ul className="space-y-4 text-[13px] font-bold">
                 <li><Link to="/about" className="hover:text-white transition text-zinc-500">About Us</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="text-white font-serif font-black uppercase tracking-[0.2em] text-[11px] mb-10">Student Support</h4>
+              <h4 className="text-white font-serif font-black uppercase tracking-[0.2em] text-[11px] mb-10">STUDENT SUPPORT</h4>
               <div className="flex flex-col gap-3">
-                <Link to="/" className="w-full bg-accent text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-accent-hover transition text-center shadow-lg shadow-accent/20">
+                <Link to="/" className="w-full bg-accent text-white px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-accent-hover transition text-center shadow-lg shadow-accent/20">
                   {t('browse')}
                 </Link>
-                <Link to="/sell" className="w-full bg-zinc-800 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-700 transition text-center shadow-lg shadow-black/10">
+                <Link to="/sell" className="w-full bg-[#1c1c1c] text-white px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] border border-zinc-800 hover:bg-zinc-800 transition text-center shadow-lg shadow-black/10">
                   {t('sellABook')}
                 </Link>
               </div>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookSwap Bangladesh</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z'/%3E%3Cpath d='M8 7h6'/%3E%3Cpath d='M8 11h8'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M12 2L3 7v10l9 5 9-5V7l-9-5z' fill='%23059669' fill-opacity='0.1'/%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M8 7h6' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M8 11h8' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,6 +139,28 @@
       .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
       .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
       .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+      
+      /* Stylized blob for logo */
+      .logo-blob {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo-blob::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        background: #059669;
+        opacity: 0.15;
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        z-index: -1;
+        animation: blob-pulse 8s ease-in-out infinite;
+      }
+      @keyframes blob-pulse {
+        0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: scale(1); }
+        50% { border-radius: 60% 40% 30% 70% / 50% 60% 40% 60%; transform: scale(1.1); }
+      }
     </style>
     <script type="importmap">
 {
