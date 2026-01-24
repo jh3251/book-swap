@@ -5,16 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookSwap Bangladesh</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23059669' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z'/%3E%3Cpath d='M8 7h6'/%3E%3Cpath d='M8 11h8'/%3E%3C/svg%3E" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              background: "#F9FAFB",
+              background: "#FDFDFD",
               primary: "#ECFDF5",
               accent: "#059669",
               "accent-hover": "#047857",
@@ -30,78 +31,114 @@
                 '10%, 30%': { transform: 'rotate(10deg)' },
                 '20%, 40%': { transform: 'rotate(-10deg)' },
                 '50%': { transform: 'rotate(0deg)' },
+              },
+              'fade-up': {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'scale-in': {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
               }
             },
             animation: {
               'ring': 'ring 2s ease-in-out infinite',
+              'fade-up': 'fade-up 0.6s ease-out forwards',
+              'scale-in': 'scale-in 0.4s ease-out forwards',
             }
           },
         },
       };
     </script>
     <style>
+      :root {
+        --accent: #059669;
+      }
+
       body {
-        background-color: #F9FAFB;
+        background-color: #FDFDFD;
         font-family: 'Inter', sans-serif;
         color: #111827;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
       }
       
       html[lang="bn"] body {
         font-family: 'Hind Siliguri', 'Inter', sans-serif;
       }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #e2e2e2;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #ccc;
+      }
       
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Playfair Display', serif;
-        font-weight: 700;
+        font-weight: 800;
         color: #111827;
       }
 
-      p, span, label, input, select, textarea {
-        color: #374151;
-      }
-      
       .glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
       }
 
-      @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-12px); }
-      }
-      .animate-float {
-        animation: float 6s ease-in-out infinite;
-      }
-
-      @keyframes pulse-soft {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.02); opacity: 0.95; }
-      }
-      .animate-pulse-soft {
-        animation: pulse-soft 2s ease-in-out infinite;
+      .glass-dark {
+        background: rgba(17, 24, 39, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Custom Reveal Animations */
       @keyframes reveal-up {
-        0% { opacity: 0; transform: translateY(40px); }
+        0% { opacity: 0; transform: translateY(60px); }
         100% { opacity: 1; transform: translateY(0); }
       }
       
       @keyframes float-gentle {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
+        50% { transform: translateY(-10px); }
       }
 
-      .reveal-1 { animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-      .reveal-2 { animation: reveal-up 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both; }
-      .reveal-3 { animation: reveal-up 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      .reveal-1 { animation: reveal-up 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+      .reveal-2 { animation: reveal-up 1s 0.2s cubic-bezier(0.19, 1, 0.22, 1) both; }
+      .reveal-3 { animation: reveal-up 1s 0.4s cubic-bezier(0.19, 1, 0.22, 1) both; }
       
-      .hover-float:hover {
-        animation: float-gentle 4s ease-in-out infinite;
+      .hover-lift {
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
+      .hover-lift:hover {
+        transform: translateY(-8px);
+      }
+
+      /* Smooth interaction for forms */
+      input:focus, select:focus, textarea:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+      }
+
+      /* Staggered children animation utility */
+      .stagger-children > * {
+        opacity: 0;
+        animation: fade-up 0.6s ease-out forwards;
+      }
+      .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+      .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+      .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+      .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+      .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
     </style>
     <script type="importmap">
 {
