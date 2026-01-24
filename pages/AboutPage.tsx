@@ -75,35 +75,6 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      <section className="text-center py-10">
-        <div className="bg-white border-2 border-emerald-50 p-12 rounded-[2.5rem] shadow-xl shadow-emerald-900/5">
-          <BookOpen className="w-12 h-12 text-accent mx-auto mb-6" />
-          <h3 className="text-3xl font-serif font-black text-black mb-4">
-            {lang === 'bn' ? 'আপনার যাত্রা শুরু করুন' : 'Start your journey'}
-          </h3>
-          <p className="text-zinc-500 mb-10 max-w-lg mx-auto font-medium">
-            {lang === 'bn' 
-              ? 'আজই আপনার পুরনো বইগুলো অন্যকে দিন অথবা আপনার প্রয়োজনীয় বইটি খুঁজে নিন।' 
-              : 'Donate your old books or find the book you need today.'}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => window.location.hash = '#/'}
-              className="bg-accent text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-accent-hover transition shadow-lg shadow-accent/20"
-            >
-              {t('browse')}
-            </button>
-            <button 
-              onClick={() => window.location.hash = '#/sell'}
-              className="bg-zinc-900 text-white px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-zinc-800 transition shadow-lg shadow-black/10"
-            >
-              {t('sellABook')}
-            </button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

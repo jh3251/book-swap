@@ -83,6 +83,25 @@
       .animate-pulse-soft {
         animation: pulse-soft 2s ease-in-out infinite;
       }
+
+      /* Custom Reveal Animations */
+      @keyframes reveal-up {
+        0% { opacity: 0; transform: translateY(40px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes float-gentle {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+
+      .reveal-1 { animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      .reveal-2 { animation: reveal-up 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      .reveal-3 { animation: reveal-up 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+      
+      .hover-float:hover {
+        animation: float-gentle 4s ease-in-out infinite;
+      }
     </style>
     <script type="importmap">
 {

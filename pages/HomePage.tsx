@@ -111,17 +111,19 @@ const HomePage: React.FC = () => {
       <section className="px-4 pt-4 md:pt-8">
         <div className="bg-white rounded-[3rem] md:rounded-[4.5rem] pt-16 pb-16 md:pt-24 md:pb-24 px-4 text-center shadow-sm border border-zinc-100/80">
           <div className="max-w-5xl mx-auto space-y-6">
-            <div className="space-y-0">
+            <div className="space-y-0 overflow-hidden">
               <h1 className="text-5xl sm:text-7xl md:text-[7.5rem] font-serif font-bold text-zinc-900 leading-[1.1] tracking-tight">
-                Find Your <span className="italic text-accent">Books..</span>
+                <span className="inline-block reveal-1">Find</span>{" "}
+                <span className="inline-block reveal-2">Your</span>{" "}
+                <span className="italic text-accent inline-block reveal-3 hover-float">Books..</span>
               </h1>
             </div>
             
-            <p className="text-zinc-400 font-semibold text-[10px] md:text-xs uppercase tracking-[0.4em] pt-4">
+            <p className="text-zinc-400 font-semibold text-[10px] md:text-xs uppercase tracking-[0.4em] pt-4 animate-in fade-in slide-in-from-bottom-2 duration-1000 delay-500">
               {lang === 'bn' ? 'ছাত্রদের জন্য সবচেয়ে নিরাপদ মার্কেটপ্লেস।' : 'THE SAFEST MARKETPLACE FOR STUDENTS.'}
             </p>
 
-            <div className="max-w-2xl mx-auto pt-10">
+            <div className="max-w-2xl mx-auto pt-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
               <div className="bg-white p-2 rounded-2xl shadow-xl shadow-emerald-900/5 border border-zinc-100 flex items-center group">
                 <div className="flex-grow flex items-center pl-4">
                   <Search className="w-5 h-5 text-zinc-300" />
@@ -143,7 +145,7 @@ const HomePage: React.FC = () => {
           </div>
 
           {/* Location & Category Filter Panel - Persistently Visible */}
-          <div className="mt-8 max-w-5xl mx-auto opacity-100 translate-y-0 h-auto">
+          <div className="mt-8 max-w-5xl mx-auto opacity-100 translate-y-0 h-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-1000">
             <div className="bg-white rounded-3xl p-6 md:p-10 text-left border border-zinc-100 shadow-xl shadow-emerald-900/5">
               <div className="flex justify-between items-center mb-8">
                 <h3 className="flex items-center gap-2 text-[11px] font-black text-black uppercase tracking-[0.2em]">

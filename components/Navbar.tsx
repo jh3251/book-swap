@@ -51,22 +51,26 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={toggleLang}
-              className="flex items-center gap-2.5 bg-zinc-100/50 px-4 py-1.5 rounded-full text-[11px] font-bold text-zinc-600 hover:bg-zinc-100 transition border border-zinc-200/50 shadow-sm"
-            >
-              {lang === 'en' ? (
-                <>
-                  <span className="text-base leading-none">🇬🇧</span>
-                  <span className="tracking-widest uppercase text-[9px]">English</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-base leading-none">🇧🇩</span>
-                  <span className="tracking-wider font-bn">বাংলা</span>
-                </>
-              )}
-            </button>
+            {/* Custom Language Toggle Switch - Updated to text EN / BD */}
+            <div className="flex items-center bg-zinc-100/80 px-1 py-1 rounded-full border border-zinc-200/50 shadow-sm">
+              <button 
+                onClick={() => setLang('en')}
+                className={`px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 ${
+                  lang === 'en' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
+                }`}
+              >
+                EN
+              </button>
+              <div className="w-px h-3 bg-zinc-200 mx-0.5"></div>
+              <button 
+                onClick={() => setLang('bn')}
+                className={`px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 ${
+                  lang === 'bn' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
+                }`}
+              >
+                BD
+              </button>
+            </div>
 
             <Link to="/" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
               {t('browse')}
@@ -152,22 +156,21 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           )}
 
           <div className="pt-6">
-            <button 
-              onClick={toggleLang}
-              className="w-full flex items-center justify-center gap-4 p-5 bg-zinc-100 rounded-xl font-bold text-sm"
-            >
-              {lang === 'en' ? (
-                <>
-                  <span className="text-xl">🇧🇩</span>
-                  <span>Switch to বাংলা</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-xl">🇬🇧</span>
-                  <span>Switch to English</span>
-                </>
-              )}
-            </button>
+            {/* Mobile Language Toggle */}
+            <div className="flex items-center justify-center gap-4 bg-zinc-100 p-5 rounded-2xl">
+              <button 
+                onClick={() => { setLang('en'); setIsMenuOpen(false); }}
+                className={`px-6 py-2 rounded-xl font-black text-xs transition-all ${lang === 'en' ? 'bg-white text-zinc-900 shadow-md' : 'text-zinc-400'}`}
+              >
+                ENGLISH (EN)
+              </button>
+              <button 
+                onClick={() => { setLang('bn'); setIsMenuOpen(false); }}
+                className={`px-6 py-2 rounded-xl font-black text-xs transition-all ${lang === 'bn' ? 'bg-white text-zinc-900 shadow-md' : 'text-zinc-400'}`}
+              >
+                বাংলা (BD)
+              </button>
+            </div>
           </div>
         </div>
       </div>
