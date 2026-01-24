@@ -73,9 +73,14 @@ const App: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background text-accent">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 animate-spin text-accent" />
-          <p className="font-black text-black text-lg uppercase tracking-widest">BookSwap BD</p>
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-16 h-16 animate-pulse">
+            <img src="https://i.ibb.co/kgjLXphC/book-Converted.png" alt="BookSwap Logo" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="w-8 h-8 animate-spin text-accent/50" />
+            <p className="font-black text-black text-lg uppercase tracking-widest">BookSwap BD</p>
+          </div>
         </div>
       </div>
     );

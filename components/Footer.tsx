@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookOpen, Github, Twitter, Mail, Instagram } from 'lucide-react';
+import { Github, Twitter, Mail, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 
@@ -34,8 +34,12 @@ const Footer: React.FC = () => {
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-8">
                 <div className="logo-blob">
-                  <div className="bg-[#059669] p-2 rounded-xl">
-                    <BookOpen className="w-6 h-6 text-white" />
+                  <div className="w-10 h-10 flex items-center justify-center">
+                    <img 
+                      src="https://i.ibb.co/kgjLXphC/book-Converted.png" 
+                      alt="BookSwap Logo" 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
                 <span className="text-2xl font-black font-serif text-white tracking-tight">BookSwap BD</span>

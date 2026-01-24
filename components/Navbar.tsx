@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
-import { BookOpen, User, LogOut, Menu, X, PlusCircle, LayoutGrid, ChevronRight, Info } from 'lucide-react';
+import { LogOut, Menu, X, PlusCircle, LayoutGrid, ChevronRight, Info } from 'lucide-react';
 import { useTranslation } from '../App';
 
 interface NavbarProps {
@@ -43,8 +43,12 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             : 'bg-transparent'
         }`}>
           <Link to="/" className="flex items-center space-x-2.5 group">
-            <div className="bg-accent p-1.5 rounded-lg shadow-sm shadow-accent/10">
-              <BookOpen className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 flex items-center justify-center">
+              <img 
+                src="https://i.ibb.co/kgjLXphC/book-Converted.png" 
+                alt="BookSwap Logo" 
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
             <span className="text-xl font-bold font-serif text-zinc-900 tracking-tight">BookSwap</span>
           </Link>
@@ -86,8 +90,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                   <PlusCircle className="w-4 h-4" />
                   {t('sellABook')}
                 </Link>
-                <Link to="/dashboard" className="text-zinc-600 hover:text-accent font-semibold text-xs flex items-center gap-2 transition">
-                  <User className="w-4 h-4" />
+                <Link to="/dashboard" className="text-zinc-600 hover:text-accent font-semibold text-xs flex items-center gap-2 transition text-zinc-600">
+                  <LayoutGrid className="w-4 h-4" />
                   {t('dashboard')}
                 </Link>
                 <button 
