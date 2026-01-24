@@ -6,6 +6,7 @@ import { UserProfile, BookListing } from '../types';
 import { CONDITIONS, CLASSES } from '../constants';
 import LocationSelector from '../components/LocationSelector';
 import { ArrowLeft, Save, AlertCircle, Sparkles, Camera, X, Image as ImageIcon, Loader2, CheckCircle2, CloudOff, MapPin } from 'lucide-react';
+import { useTranslation } from '../App';
 
 interface SellPageProps {
   user: UserProfile;
@@ -15,6 +16,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t, lang } = useTranslation();
   
   const [loading, setLoading] = useState(false);
   const [takingLong, setTakingLong] = useState(false);
@@ -80,7 +82,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
     if (!formData.location?.upazilaId) return "Please select a full location.";
     
     const phone = formData.contactPhone?.trim() || "";
-    // Regex for Bangladeshi phone number: 11 digits, starts with 013-019
     const bdPhoneRegex = /^01[3-9]\d{8}$/;
     if (!phone) return "Please enter a contact phone number.";
     if (!bdPhoneRegex.test(phone)) return "Invalid Phone. Must be 11-digit Bangladeshi number (e.g., 017XXXXXXXX).";
@@ -242,7 +243,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
                   className="w-full px-8 py-5 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/5 outline-none font-black text-black text-lg transition-all appearance-none"
                 >
                   <option value="">Select Class</option>
-                  {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {CLASSES.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
@@ -252,7 +253,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
                   onChange={handleConditionChange}
                   className="w-full px-8 py-5 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/5 outline-none font-black text-black text-lg transition-all appearance-none"
                 >
-                  {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                  {CONDITIONS.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                 </select>
               </div>
               

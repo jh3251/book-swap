@@ -72,7 +72,6 @@ const AuthPage: React.FC = () => {
       if (isLogin) {
         await firebase.auth.signIn(email, password);
       } else {
-        // Sign up with undefined for photoFile as option is removed
         await firebase.auth.signUp(email, password, name, undefined);
         setNeedsVerification(true);
       }
@@ -142,20 +141,22 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto py-12">
-      <div className="bg-white p-8 md:p-10 rounded-3xl shadow-2xl shadow-emerald-900/10 border border-emerald-50 relative overflow-hidden">
+      <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-emerald-900/10 border border-emerald-50 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-4 bg-emerald-50 w-fit px-3 py-1 rounded-full text-accent font-semibold text-[10px] uppercase tracking-widest border border-emerald-100">
+          <div className="flex items-center justify-center gap-2 mb-6 bg-emerald-50/50 w-fit mx-auto px-4 py-1.5 rounded-full text-accent font-bold text-[9px] uppercase tracking-[0.2em] border border-emerald-100">
              <Zap className="w-3 h-3" /> 100% Free Service
           </div>
           
-          <h1 className="text-4xl font-bold font-serif text-black mb-2">
-            {isForgotPassword ? 'Reset Password' : (isLogin ? 'Welcome Back!' : 'Join BookSwap')}
-          </h1>
-          <p className="text-zinc-500 mb-8 font-medium text-sm">
-            {isForgotPassword 
-              ? 'Enter your email to receive a recovery link.' 
-              : (isLogin ? 'Sign in to manage your free listings.' : 'Create your account to start trading.')}
-          </p>
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold font-serif text-black mb-4">
+              {isForgotPassword ? 'Reset Password' : (isLogin ? 'Welcome Back!' : 'Join BookSwap')}
+            </h1>
+            <p className="text-zinc-500 font-medium text-sm">
+              {isForgotPassword 
+                ? 'Enter your email to receive a recovery link.' 
+                : (isLogin ? 'Sign in to manage your free listings.' : 'Create your account to start trading.')}
+            </p>
+          </div>
 
           {resetSent ? (
             <div className="space-y-8 py-4 animate-in zoom-in duration-300">
@@ -176,7 +177,7 @@ const AuthPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {error && (
                 <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-[13px] font-semibold border border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-300">
                   <div className="bg-white rounded-full p-0.5 border border-red-200">
@@ -188,50 +189,50 @@ const AuthPage: React.FC = () => {
 
               {!isLogin && !isForgotPassword && (
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">Full Name</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-300 w-5 h-5" />
-                    <input required type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl focus:ring-2 focus:ring-accent outline-none font-bold text-black placeholder:text-zinc-300" placeholder="Daivan Hossain" />
+                  <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">Full Name</label>
+                  <div className="relative group">
+                    <User className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
+                    <input required type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-14 pr-4 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" placeholder="Enter your full name" />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">Email Address</label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-300 w-5 h-5" />
-                  <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl focus:ring-2 focus:ring-accent outline-none font-bold text-black placeholder:text-zinc-300" placeholder="student@gmail.com" />
+                <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
+                  <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-14 pr-4 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" placeholder="student@gmail.com" />
                 </div>
               </div>
 
               {!isForgotPassword && (
                 <div>
-                  <div className="flex justify-between items-center mb-2 ml-1">
-                    <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em]">Password</label>
+                  <div className="flex justify-between items-center mb-3 ml-1">
+                    <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em]">Password</label>
                     {isLogin && (
                       <button 
                         type="button" 
                         onClick={toggleForgotPassword} 
-                        className="text-[10px] font-black text-accent uppercase tracking-widest hover:underline underline-offset-2"
+                        className="text-[10px] font-black text-accent uppercase tracking-widest hover:text-accent-hover transition"
                       >
-                        Forgot?
+                        FORGOT?
                       </button>
                     )}
                   </div>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-300 w-5 h-5" />
+                  <div className="relative group">
+                    <Lock className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
                     <input 
                       required 
                       type={showPassword ? "text" : "password"} 
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
-                      className="w-full pl-12 pr-12 py-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl focus:ring-2 focus:ring-accent outline-none font-bold text-black placeholder:text-zinc-300" 
+                      className="w-full pl-14 pr-14 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" 
                       placeholder="............" 
                     />
                     <button 
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-300 hover:text-accent transition-colors p-1"
+                      className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-accent transition-colors p-1"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -239,8 +240,12 @@ const AuthPage: React.FC = () => {
                 </div>
               )}
 
-              <button disabled={loading} type="submit" className="w-full bg-accent text-white py-4.5 rounded-2xl font-black text-sm hover:bg-accent-hover transition shadow-2xl shadow-accent/20 flex items-center justify-center gap-3 mt-4 disabled:opacity-50 uppercase tracking-[0.2em]">
-                {loading ? 'Processing...' : (isForgotPassword ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Join Now'))}
+              <button 
+                disabled={loading} 
+                type="submit" 
+                className="w-full bg-accent text-white py-5.5 md:py-6 rounded-full font-black text-sm hover:bg-accent-hover transition-all shadow-xl shadow-accent/20 flex items-center justify-center gap-3 mt-6 disabled:opacity-50 uppercase tracking-[0.25em] transform active:scale-[0.98]"
+              >
+                {loading ? 'Processing...' : (isForgotPassword ? 'Send Link' : (isLogin ? 'Sign In' : 'Join Now'))}
                 {!loading && <ArrowRight className="w-5 h-5" />}
               </button>
 
@@ -248,7 +253,7 @@ const AuthPage: React.FC = () => {
                 <button 
                   type="button" 
                   onClick={toggleForgotPassword} 
-                  className="w-full flex items-center justify-center gap-2 text-zinc-400 font-black text-xs uppercase tracking-widest hover:text-black transition"
+                  className="w-full flex items-center justify-center gap-2 text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-black transition"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back to Login
                 </button>
@@ -257,18 +262,18 @@ const AuthPage: React.FC = () => {
           )}
 
           {!isForgotPassword && (
-            <div className="mt-8 pt-8 border-t border-emerald-50 text-center">
-              <p className="text-zinc-500 text-sm font-bold">
+            <div className="mt-10 pt-10 border-t border-emerald-50 text-center">
+              <p className="text-zinc-500 text-[13px] font-bold">
                 {isLogin ? "New to BookSwap?" : "Member already?"}{' '}
-                <button onClick={toggleMode} className="text-accent font-black hover:underline underline-offset-4 decoration-2">
+                <button onClick={toggleMode} className="text-accent font-black hover:text-accent-hover transition underline-offset-4 hover:underline">
                   {isLogin ? 'Sign Up Free' : 'Log In'}
                 </button>
               </p>
             </div>
           )}
           
-          <div className="mt-8 flex items-center justify-center gap-1.5 text-[10px] text-zinc-400 uppercase tracking-[0.2em] font-black">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="mt-10 flex items-center justify-center gap-2 text-[9px] text-zinc-400 uppercase tracking-[0.3em] font-black">
+            <ShieldCheck className="w-4 h-4 text-accent" />
             Built for Bangladesh Students
           </div>
         </div>

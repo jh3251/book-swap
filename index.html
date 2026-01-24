@@ -8,86 +8,80 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              background: "hsl(140, 45%, 98%)",
-              primary: "hsl(142, 72%, 91%)",
-              accent: "hsl(142, 76%, 36%)",
-              "accent-hover": "hsl(142, 76%, 26%)",
-              "rickshaw-red": "#E11D48",
-              "rickshaw-yellow": "#FBBF24",
+              background: "#F9FAFB",
+              primary: "#ECFDF5",
+              accent: "#059669",
+              "accent-hover": "#047857",
             },
             fontFamily: {
               serif: ['"Playfair Display"', 'serif'],
-              sans: ['"Montserrat"', 'sans-serif'],
+              sans: ['"Inter"', 'sans-serif'],
               bn: ['"Hind Siliguri"', 'sans-serif'],
             },
+            keyframes: {
+              'ring': {
+                '0%, 100%': { transform: 'rotate(0deg)' },
+                '10%, 30%': { transform: 'rotate(10deg)' },
+                '20%, 40%': { transform: 'rotate(-10deg)' },
+                '50%': { transform: 'rotate(0deg)' },
+              }
+            },
+            animation: {
+              'ring': 'ring 2s ease-in-out infinite',
+            }
           },
         },
       };
     </script>
     <style>
       body {
-        background-color: hsl(140, 45%, 98%);
-        font-family: 'Montserrat', sans-serif;
-        color: #000;
+        background-color: #F9FAFB;
+        font-family: 'Inter', sans-serif;
+        color: #111827;
         overflow-x: hidden;
       }
       
-      /* Apply Hind Siliguri to Bangla text when active */
       html[lang="bn"] body {
-        font-family: 'Hind Siliguri', 'Montserrat', sans-serif;
+        font-family: 'Hind Siliguri', 'Inter', sans-serif;
       }
       
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Playfair Display', serif;
-        color: #000 !important;
-      }
-      
-      html[lang="bn"] h1, 
-      html[lang="bn"] h2, 
-      html[lang="bn"] h3 {
-        font-family: 'Hind Siliguri', serif;
         font-weight: 700;
+        color: #111827;
       }
 
       p, span, label, input, select, textarea {
-        color: #000;
+        color: #374151;
       }
       
-      .card-3d {
-        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        transform-style: preserve-3d;
-      }
-      .card-3d:hover {
-        transform: translateY(-8px) rotateX(1deg) rotateY(-1deg);
-      }
-
       .glass {
         background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.4);
-      }
-
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #059669;
-        border-radius: 10px;
       }
 
       @keyframes float {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-12px); }
       }
       .animate-float {
-        animation: float 5s ease-in-out infinite;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes pulse-soft {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.02); opacity: 0.95; }
+      }
+      .animate-pulse-soft {
+        animation: pulse-soft 2s ease-in-out infinite;
       }
     </style>
     <script type="importmap">

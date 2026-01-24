@@ -1,13 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
 import { BookListing, UserProfile } from '../types';
 import { MapPin, Phone, User, Calendar, ChevronLeft, ShieldCheck, Share2, Bookmark, Mail, CheckCircle2, X, Link as LinkIcon, MessageCircle, Facebook } from 'lucide-react';
+import { useTranslation } from '../App';
+import { DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, lang } = useTranslation();
   const [book, setBook] = useState<BookListing | null>(null);
   const [seller, setSeller] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +18,7 @@ const BookDetailsPage: React.FC = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isPhoneRevealed, setIsPhoneRevealed] = useState(false);
 
   useEffect(() => {
     const unsub = firebase.auth.onAuthStateChanged(setCurrentUser);
@@ -73,6 +77,34 @@ const BookDetailsPage: React.FC = () => {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
   };
 
+  const handleCallClick = (e: React.MouseEvent) => {
+    if (!isPhoneRevealed) {
+      e.preventDefault();
+      setIsPhoneRevealed(true);
+    }
+  };
+
+  const localizedLocation = useMemo(() => {
+    if (!book) return null;
+    if (lang !== 'bn') {
+      return {
+        upazila: book.location.upazilaName,
+        district: book.location.districtName,
+        division: book.location.divisionName
+      };
+    }
+    
+    const upazila = UPAZILAS.find(u => u.id === book.location.upazilaId);
+    const district = DISTRICTS.find(d => d.id === book.location.districtId);
+    const division = DIVISIONS.find(d => d.id === book.location.divisionId);
+    
+    return {
+      upazila: upazila?.nameBn || book.location.upazilaName,
+      district: district?.nameBn || book.location.districtName,
+      division: division?.nameBn || book.location.divisionName
+    };
+  }, [book, lang]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center py-32 space-y-4">
@@ -103,7 +135,7 @@ const BookDetailsPage: React.FC = () => {
           onClick={() => navigate(-1)}
           className="flex items-center text-black hover:text-accent font-semibold transition uppercase tracking-widest text-xs"
         >
-          <ChevronLeft className="w-4 h-4 mr-1.5" /> Back to Feed
+          <ChevronLeft className="w-4 h-4 mr-1.5" /> {t('back')}
         </button>
         <div className="flex items-center gap-3">
           <div className="flex gap-2">
@@ -140,9 +172,9 @@ const BookDetailsPage: React.FC = () => {
           </div>
 
           <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-emerald-50 space-y-6">
-            <h2 className="text-2xl font-serif font-bold text-black border-b border-emerald-50 pb-4">About this book</h2>
+            <h2 className="text-2xl font-serif font-bold text-black border-b border-emerald-50 pb-4">{lang === 'bn' ? 'বইটি সম্পর্কে' : 'About this book'}</h2>
             <div className="text-black text-lg leading-relaxed whitespace-pre-wrap font-medium">
-              {book.description || "The seller hasn't provided a detailed description for this book. Please contact them directly for more information."}
+              {book.description || (lang === 'bn' ? "বিক্রেতা এই বইটির জন্য কোনো বিস্তারিত বিবরণ প্রদান করেননি। আরও তথ্যের জন্য সরাসরি তাদের সাথে যোগাযোগ করুন।" : "The seller hasn't provided a detailed description for this book. Please contact them directly for more information.")}
             </div>
           </div>
         </div>
@@ -151,12 +183,12 @@ const BookDetailsPage: React.FC = () => {
           <div className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 space-y-8 sticky top-24">
             <div>
               <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em] bg-[#f0fdf4] px-4 py-1.5 rounded-full border border-emerald-100">
-                {book.subject}
+                {t(book.subject as any)}
               </span>
-              <h1 className="text-4xl font-serif font-black text-black mt-5 mb-1.5 leading-tight">{book.title}</h1>
+              <h1 className={`text-4xl font-serif font-black text-black mt-5 mb-1.5 leading-tight ${lang === 'bn' ? 'font-bn' : ''}`}>{book.title}</h1>
               
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50/50 rounded-full border border-emerald-100/50">
-                <span className="text-xs font-bold text-zinc-400">by</span>
+                <span className="text-xs font-bold text-zinc-400">{t('by')}</span>
                 <span className="text-xs font-black text-black">
                   {seller?.username ? seller.username : (seller?.displayName || book.sellerName)}
                 </span>
@@ -165,23 +197,22 @@ const BookDetailsPage: React.FC = () => {
 
             <div className="flex items-center justify-between py-8 border-y border-emerald-50">
               <span className="text-5xl font-black text-black">
-                {book.condition === 'Donation' ? 'FREE' : `৳ ${book.price}`}
+                {book.condition === 'Donation' ? t('free') : `৳ ${book.price}`}
               </span>
               <span className="px-5 py-2.5 bg-[#f0fdf4] text-accent rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-2 border-emerald-100">
-                {book.condition}
+                {t(book.condition as any)}
               </span>
             </div>
 
-            {/* Location and Date as per Screenshot */}
             <div className="space-y-6">
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-7 h-7 text-accent" />
                 </div>
                 <div>
-                  <p className="font-black text-black text-2xl leading-none">{book.location.upazilaName}</p>
+                  <p className="font-black text-black text-2xl leading-none">{localizedLocation?.upazila}</p>
                   <p className="text-[11px] text-zinc-400 font-black uppercase tracking-widest mt-1">
-                    {book.location.districtName}, {book.location.divisionName}
+                    {localizedLocation?.district}, {localizedLocation?.division}
                   </p>
                 </div>
               </div>
@@ -191,46 +222,54 @@ const BookDetailsPage: React.FC = () => {
                   <Calendar className="w-7 h-7 text-zinc-300" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">LISTING CREATED</p>
+                  <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">{lang === 'bn' ? 'বিজ্ঞাপন তৈরির তারিখ' : 'LISTING CREATED'}</p>
                   <p className="text-lg text-black font-black">
-                    {new Date(book.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                    {new Date(book.createdAt).toLocaleDateString(lang === 'bn' ? 'bn-BD' : undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Call Section - Phone number only as per latest screenshot */}
             <div className="pt-6 space-y-4">
               <a 
-                href={`tel:${book.contactPhone}`}
-                className="w-full bg-[#16a34a] text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-emerald-500/30 hover:bg-emerald-700 transition"
+                href={isPhoneRevealed ? `tel:${book.contactPhone}` : '#'}
+                onClick={handleCallClick}
+                className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase tracking-[0.2em] shadow-2xl transition duration-300 transform active:scale-95 ${
+                  isPhoneRevealed 
+                    ? 'bg-accent hover:bg-accent-hover shadow-accent/30' 
+                    : 'bg-[#16a34a] hover:bg-emerald-700 shadow-emerald-500/30 animate-pulse-soft'
+                }`}
               >
-                <Phone className="w-5 h-5" />
-                {book.contactPhone}
+                <Phone className={`w-5 h-5 !text-white ${!isPhoneRevealed ? 'animate-ring' : ''}`} />
+                <span className="transition-all duration-500 !text-white">
+                  {isPhoneRevealed ? (
+                    <span className="animate-in fade-in slide-in-from-left-2 !text-white">{book.contactPhone}</span>
+                  ) : (
+                    <span className="!text-white">{book.contactPhone.substring(0, 5)}XXXXXX</span>
+                  )}
+                </span>
               </a>
               
-              {/* Safety Box matching Screenshot */}
               <div className="p-6 bg-[#fff7ed] rounded-2xl flex items-center gap-4 border border-orange-100 shadow-sm">
                 <ShieldCheck className="w-6 h-6 text-[#ea580c] flex-shrink-0" />
                 <p className="text-[11px] text-[#9a3412] font-black uppercase tracking-tight leading-relaxed">
-                  MEET IN PUBLIC. INSPECT <br/> BEFORE PAYING.
+                  {lang === 'bn' ? <>জনসমক্ষে দেখা করুন। পেমেন্ট করার<br/>আগে বই যাচাই করুন।</> : <>MEET IN PUBLIC. INSPECT <br/> BEFORE PAYING.</>}
                 </p>
               </div>
             </div>
             
             <div className="pt-8 mt-8 border-t border-emerald-50">
                <h3 className="font-black text-black mb-6 uppercase tracking-[0.2em] text-[10px] flex items-center gap-2">
-                 <User className="w-4 h-4 text-accent" /> SELLER INFORMATION
+                 <User className="w-4 h-4 text-accent" /> {lang === 'bn' ? 'বিক্রেতার তথ্য' : 'SELLER INFORMATION'}
                </h3>
                
-               {/* Seller Block Redesigned for Screenshot Accuracy */}
                <div className="flex items-center gap-4 bg-white">
                  <div className="w-14 h-14 bg-black rounded-xl flex items-center justify-center font-black text-2xl text-white shadow-md flex-shrink-0">
                    {(seller?.displayName || book.sellerName).charAt(0).toUpperCase()}
                  </div>
                  <div>
                    <p className="font-black text-black text-xl leading-none">{seller?.displayName || book.sellerName}</p>
-                   <p className="text-[10px] text-accent font-black uppercase tracking-[0.2em] mt-1.5">MEMBER</p>
+                   <p className="text-[10px] text-accent font-black uppercase tracking-[0.2em] mt-1.5">{lang === 'bn' ? 'সদস্য' : 'MEMBER'}</p>
                  </div>
                </div>
                
@@ -245,7 +284,6 @@ const BookDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div 
@@ -260,7 +298,7 @@ const BookDetailsPage: React.FC = () => {
                <X className="w-6 h-6" />
              </button>
 
-             <h3 className="text-2xl font-serif font-black text-black mb-8 text-center">Share this Book</h3>
+             <h3 className="text-2xl font-serif font-black text-black mb-8 text-center">{lang === 'bn' ? 'বইটি শেয়ার করুন' : 'Share this Book'}</h3>
              
              <div className="space-y-4">
                 <button 
@@ -295,7 +333,7 @@ const BookDetailsPage: React.FC = () => {
                 >
                   <div className="flex items-center gap-4">
                     {copySuccess ? <CheckCircle2 className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
-                    {copySuccess ? 'Copied!' : 'Copy Link'}
+                    {copySuccess ? (lang === 'bn' ? 'কপি হয়েছে!' : 'Copied!') : (lang === 'bn' ? 'লিংক কপি করুন' : 'Copy Link')}
                   </div>
                   {!copySuccess && <ChevronLeft className="w-4 h-4 rotate-180" />}
                 </button>
@@ -303,7 +341,7 @@ const BookDetailsPage: React.FC = () => {
 
              <div className="mt-8 p-4 bg-emerald-50 rounded-2xl text-center">
                 <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest leading-tight">
-                  Help a student find their next read!
+                  {lang === 'bn' ? 'একজন শিক্ষার্থীকে তাদের পরবর্তী বইটি খুঁজে পেতে সাহায্য করুন!' : 'Help a student find their next read!'}
                 </p>
              </div>
           </div>

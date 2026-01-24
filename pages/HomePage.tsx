@@ -2,10 +2,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
-import { CLASSES, CONDITIONS } from '../constants';
+import { CLASSES, CONDITIONS, DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import BookCard from '../components/BookCard';
-import LocationSelector from '../components/LocationSelector';
-import { Search, MapPin, SlidersHorizontal, X, LayoutGrid, BookCopy, ShieldCheck, BookOpen, PlusCircle, ArrowRight, GraduationCap, ClipboardCheck, ChevronRight } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, X, LayoutGrid, BookCopy, BookOpen, PlusCircle, ArrowRight, Zap, ExternalLink, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 
@@ -15,8 +14,11 @@ const HomePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
-  const [location, setLocation] = useState<Partial<LocationInfo>>({});
-  const [showFilters, setShowFilters] = useState(true); 
+  const [location, setLocation] = useState<Partial<LocationInfo>>({
+    divisionId: '',
+    districtId: '',
+    upazilaId: ''
+  });
   const { t, lang } = useTranslation();
 
   useEffect(() => {
@@ -24,268 +26,354 @@ const HomePage: React.FC = () => {
       setListings(data);
       setLoading(false);
     });
-
-    const handleAuthChange = () => {
-      firebase.db.getListings().then(setListings);
-    };
-    window.addEventListener('auth-change', handleAuthChange);
-
-    return () => {
-      unsubscribe();
-      window.removeEventListener('auth-change', handleAuthChange);
-    };
+    return () => unsubscribe();
   }, []);
 
+  // Optimized lookup maps for localized search matching
+  const divisionMap = useMemo(() => new Map(DIVISIONS.map(d => [d.id, { en: d.name.toLowerCase(), bn: d.nameBn }])), []);
+  const districtMap = useMemo(() => new Map(DISTRICTS.map(d => [d.id, { en: d.name.toLowerCase(), bn: d.nameBn }])), []);
+  const upazilaMap = useMemo(() => new Map(UPAZILAS.map(u => [u.id, { en: u.name.toLowerCase(), bn: u.nameBn }])), []);
+
   const filteredListings = useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    
     return listings.filter(book => {
-      const matchesSearch = 
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase());
+      // 1. Text Search Logic (Broad)
+      const searchStrings = [
+        book.title,
+        book.author,
+        book.subject,
+        book.condition,
+        book.location.divisionName,
+        book.location.districtName,
+        book.location.upazilaName,
+        t(book.subject as any),
+        t(book.condition as any),
+        divisionMap.get(book.location.divisionId)?.bn || '',
+        districtMap.get(book.location.districtId)?.bn || '',
+        upazilaMap.get(book.location.upazilaId)?.bn || ''
+      ];
+
+      const matchesSearch = !term || searchStrings.some(str => 
+        str && str.toLowerCase().includes(term)
+      );
       
+      // 2. Dropdown Attribute Filters
       const matchesClass = !selectedClass || book.subject === selectedClass;
       const matchesCondition = !selectedCondition || book.condition === selectedCondition;
-      const matchesDivision = !location.divisionId || book.location.divisionId === location.divisionId;
-      const matchesDistrict = !location.districtId || book.location.districtId === location.districtId;
-      const matchesUpazila = !location.upazilaId || book.location.upazilaId === location.upazilaId;
+      
+      // 3. Resilient Location Filtering
+      const checkLocation = (filterId: string | undefined, bookId: string | undefined, bookName: string | undefined, map: Map<string, {en: string, bn: string}>) => {
+        if (!filterId) return true;
+        if (bookId === filterId) return true;
+        
+        const filterData = map.get(filterId);
+        if (!filterData || !bookName) return false;
+        const normalizedBookName = bookName.toLowerCase().trim();
+        return normalizedBookName === filterData.en || normalizedBookName === filterData.bn;
+      };
+
+      const matchesDivision = checkLocation(location.divisionId, book.location.divisionId, book.location.divisionName, divisionMap);
+      const matchesDistrict = checkLocation(location.districtId, book.location.districtId, book.location.districtName, districtMap);
+      const matchesUpazila = checkLocation(location.upazilaId, book.location.upazilaId, book.location.upazilaName, upazilaMap);
       
       return matchesSearch && matchesClass && matchesCondition && matchesDivision && matchesDistrict && matchesUpazila;
     });
-  }, [listings, searchTerm, location, selectedClass, selectedCondition]);
+  }, [listings, searchTerm, location, selectedClass, selectedCondition, t, divisionMap, districtMap, upazilaMap]);
 
   const clearFilters = () => {
-    setLocation({});
+    setLocation({ divisionId: '', districtId: '', upazilaId: '' });
     setSearchTerm('');
     setSelectedClass('');
     setSelectedCondition('');
   };
 
-  const handleSearchClick = () => {
-    const resultsElement = document.getElementById('results-section');
-    resultsElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const handleFind = () => {
+    const element = document.getElementById('results-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
+  const filteredDistricts = useMemo(() => 
+    DISTRICTS.filter(d => d.divisionId === location.divisionId),
+    [location.divisionId]
+  );
+
+  const filteredUpazilas = useMemo(() => 
+    UPAZILAS.filter(u => u.districtId === location.districtId),
+    [location.districtId]
+  );
+
   return (
-    <div className="space-y-16 md:space-y-24 pb-20 md:pb-32 max-w-7xl mx-auto px-4">
-      {/* Modern Hero Section */}
-      <section className="relative text-center py-16 md:py-28 px-4 overflow-hidden">
-         {/* Decorative Background Elements */}
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-full bg-emerald-50/40 rounded-full blur-[100px] -z-10"></div>
-         <div className="absolute -top-20 -left-20 w-64 h-64 bg-accent/5 rounded-full blur-[80px] -z-10 animate-pulse"></div>
-         
-         <div className="relative z-10 space-y-8">
-            <h1 className={`text-6xl md:text-9xl font-serif font-black text-black leading-[1] tracking-tighter ${lang === 'bn' ? 'font-bn' : ''}`}>
-              {t('findYour')} <br/> 
-              <span className="text-accent relative inline-block">
-                {t('books')}
-                <svg className="absolute -bottom-2 left-0 w-full h-3 text-accent/20" viewBox="0 0 100 10" preserveAspectRatio="none">
-                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="transparent" />
-                </svg>
-              </span>
-            </h1>
+    <div className="space-y-12 md:space-y-24 pb-20">
+      {/* Hero Section with Rounded Corners */}
+      <section className="px-4 pt-4 md:pt-8">
+        <div className="bg-white rounded-[3rem] md:rounded-[4.5rem] pt-16 pb-16 md:pt-24 md:pb-24 px-4 text-center shadow-sm border border-zinc-100/80">
+          <div className="max-w-5xl mx-auto space-y-6">
+            <div className="space-y-0">
+              <h1 className="text-5xl sm:text-7xl md:text-[7.5rem] font-serif font-bold text-zinc-900 leading-[1.1] tracking-tight">
+                Find Your <span className="italic text-accent">Books..</span>
+              </h1>
+            </div>
             
-            <p className="text-zinc-400 font-black max-w-2xl mx-auto text-xs md:text-sm uppercase tracking-[0.3em] leading-relaxed">
-              {t('safestMarketplace')}
+            <p className="text-zinc-400 font-semibold text-[10px] md:text-xs uppercase tracking-[0.4em] pt-4">
+              {lang === 'bn' ? 'ছাত্রদের জন্য সবচেয়ে নিরাপদ মার্কেটপ্লেস।' : 'THE SAFEST MARKETPLACE FOR STUDENTS.'}
             </p>
 
-            {/* Floating Search Bar */}
-            <div className="max-w-3xl mx-auto pt-10">
-               <div className="bg-white/80 backdrop-blur-xl p-3 rounded-[2.5rem] shadow-2xl shadow-emerald-900/10 border border-white/40 flex flex-col md:flex-row items-center gap-3">
-                 <div className="flex-grow flex items-center pl-6 w-full group">
-                   <Search className="w-6 h-6 text-zinc-300 group-focus-within:text-accent transition-colors" />
-                   <input 
-                     type="text"
-                     placeholder={t('lookingFor')}
-                     value={searchTerm}
-                     onChange={(e) => setSearchTerm(e.target.value)}
-                     className="w-full px-6 py-5 bg-transparent outline-none font-bold text-black placeholder:text-zinc-300 text-lg"
-                   />
-                 </div>
-                 <button 
-                   onClick={() => setShowFilters(!showFilters)}
-                   className={`flex items-center justify-center gap-3 w-full md:w-auto px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all transform active:scale-95 ${
-                     showFilters ? 'bg-accent text-white shadow-xl shadow-accent/20' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-                   }`}
-                 >
-                   <SlidersHorizontal className="w-5 h-5" />
-                   {t('filters')}
-                 </button>
-               </div>
+            <div className="max-w-2xl mx-auto pt-10">
+              <div className="bg-white p-2 rounded-2xl shadow-xl shadow-emerald-900/5 border border-zinc-100 flex items-center group">
+                <div className="flex-grow flex items-center pl-4">
+                  <Search className="w-5 h-5 text-zinc-300" />
+                  <input 
+                    type="text"
+                    placeholder={lang === 'bn' ? 'আপনি কি খুঁজছেন?' : 'Looking for something?'}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-4 py-3 bg-transparent outline-none font-medium text-zinc-900 placeholder:text-zinc-300 text-sm md:text-base"
+                  />
+                </div>
+                {/* Static Filters Button to match design */}
+                <div className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest bg-zinc-900 text-white shadow-sm mr-1">
+                  <SlidersHorizontal className="w-3.5 h-3.5" />
+                  {lang === 'bn' ? 'ফিল্টার' : 'Filters'}
+                </div>
+              </div>
             </div>
-         </div>
+          </div>
 
-         {/* Bento-Style Advanced Filters */}
-         <div className={`mt-12 md:mt-16 transition-all duration-700 ease-in-out ${showFilters ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-8 scale-95 pointer-events-none absolute'}`}>
-            <div className="bg-white rounded-[3rem] p-8 md:p-14 text-left shadow-3xl shadow-emerald-900/5 border border-emerald-50 max-w-5xl mx-auto relative group">
-               {/* Decorative Gradient Overlay */}
-               <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-[120px] -z-10 group-hover:bg-accent/10 transition-colors"></div>
-               
-               <div className="flex justify-between items-center mb-12">
-                  <h3 className="flex items-center gap-4 text-2xl md:text-3xl font-serif font-black text-black">
-                    <MapPin className="w-8 h-8 text-accent" /> {t('location')}
-                  </h3>
-                  <button 
-                   onClick={clearFilters}
-                   className="text-[10px] font-black text-zinc-400 hover:text-red-500 transition uppercase tracking-[0.2em] flex items-center gap-2 border-b-2 border-transparent hover:border-red-100 pb-1"
+          {/* Location & Category Filter Panel - Persistently Visible */}
+          <div className="mt-8 max-w-5xl mx-auto opacity-100 translate-y-0 h-auto">
+            <div className="bg-white rounded-3xl p-6 md:p-10 text-left border border-zinc-100 shadow-xl shadow-emerald-900/5">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="flex items-center gap-2 text-[11px] font-black text-black uppercase tracking-[0.2em]">
+                  <MapPin className="w-4 h-4 text-accent" /> {lang === 'bn' ? 'স্থান ও শ্রেণী' : 'Location & Category'}
+                </h3>
+                <button onClick={clearFilters} className="text-[10px] font-black text-zinc-300 hover:text-red-500 transition flex items-center gap-1.5 uppercase tracking-widest">
+                  <X className="w-3.5 h-3.5" /> {t('reset')}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-y-8 gap-x-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">{t('division')}</label>
+                  <select 
+                    value={location.divisionId || ''} 
+                    onChange={(e) => {
+                      const d = DIVISIONS.find(div => div.id === e.target.value);
+                      setLocation({ ...location, divisionId: e.target.value, divisionName: d?.name || '', districtId: '', districtName: '', upazilaId: '', upazilaName: '' });
+                    }}
+                    className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl outline-none text-xs font-bold text-black appearance-none cursor-pointer hover:bg-zinc-100 transition-colors"
                   >
-                    <X className="w-4 h-4" /> {t('reset')}
-                  </button>
-               </div>
+                    <option value="">{t('selectDivision')}</option>
+                    {DIVISIONS.map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
+                  </select>
+                </div>
 
-               {/* Location Tile Grid */}
-               <LocationSelector value={location} onChange={(loc) => setLocation(loc)} />
-
-               {/* Class & Condition Bento Section */}
-               <div className="mt-16 pt-12 border-t border-emerald-50">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                   {/* Class Level Bento Card */}
-                   <div className="space-y-10">
-                     <h3 className="flex items-center gap-4 text-2xl md:text-3xl font-serif font-black text-black">
-                       <GraduationCap className="w-8 h-8 text-accent" /> {t('classLevel')}
-                     </h3>
-                     <div className="bg-emerald-50/30 p-8 rounded-[2rem] border border-emerald-50">
-                        <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-4 ml-1">{t('academicLevel')}</label>
-                        <div className="relative">
-                          <select 
-                            value={selectedClass}
-                            onChange={(e) => setSelectedClass(e.target.value)}
-                            className="w-full px-8 py-6 bg-white border border-emerald-100 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-black text-black text-lg transition-all appearance-none cursor-pointer"
-                          >
-                            <option value="">{t('allClasses')}</option>
-                            {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
-                          </select>
-                          <ChevronRight className="absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-accent rotate-90" />
-                        </div>
-                     </div>
-                   </div>
-
-                   {/* Condition Bento Card */}
-                   <div className="space-y-10">
-                     <h3 className="flex items-center gap-4 text-2xl md:text-3xl font-serif font-black text-black">
-                       <ClipboardCheck className="w-8 h-8 text-accent" /> {t('condition')}
-                     </h3>
-                     <div className="bg-emerald-50/30 p-8 rounded-[2rem] border border-emerald-50">
-                        <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-4 ml-1">{t('condition')}</label>
-                        <div className="relative">
-                          <select 
-                            value={selectedCondition}
-                            onChange={(e) => setSelectedCondition(e.target.value)}
-                            className="w-full px-8 py-6 bg-white border border-emerald-100 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-black text-black text-lg transition-all appearance-none cursor-pointer"
-                          >
-                            <option value="">{t('allConditions')}</option>
-                            {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
-                          </select>
-                          <ChevronRight className="absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-accent rotate-90" />
-                        </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-
-               {/* Floating Find Button */}
-               <div className="mt-16 flex justify-center">
-                  <button 
-                    onClick={handleSearchClick}
-                    className="group relative flex items-center justify-center gap-6 bg-accent text-white px-16 py-7 rounded-[2.5rem] font-black text-sm uppercase tracking-[0.4em] shadow-3xl shadow-accent/40 hover:bg-accent-hover transition-all transform hover:-translate-y-2 active:scale-95"
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">{t('district')}</label>
+                  <select 
+                    disabled={!location.divisionId}
+                    value={location.districtId || ''} 
+                    onChange={(e) => {
+                      const d = DISTRICTS.find(dist => dist.id === e.target.value);
+                      setLocation({ ...location, districtId: e.target.value, districtName: d?.name || '', upazilaId: '', upazilaName: '' });
+                    }}
+                    className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl outline-none text-xs font-bold text-black appearance-none cursor-pointer disabled:opacity-30 hover:bg-zinc-100 transition-colors"
                   >
-                    <Search className="w-6 h-6 group-hover:scale-125 transition-transform" />
+                    <option value="">{t('selectDistrict')}</option>
+                    {filteredDistricts.map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">{t('upazilaThana')}</label>
+                  <select 
+                    disabled={!location.districtId}
+                    value={location.upazilaId || ''} 
+                    onChange={(e) => {
+                      const u = UPAZILAS.find(up => up.id === e.target.value);
+                      setLocation({ ...location, upazilaId: e.target.value, upazilaName: u?.name || '' });
+                    }}
+                    className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl outline-none text-xs font-bold text-black appearance-none cursor-pointer disabled:opacity-30 hover:bg-zinc-100 transition-colors"
+                  >
+                    <option value="">{t('selectUpazila')}</option>
+                    {filteredUpazilas.map(u => <option key={u.id} value={u.id}>{lang === 'bn' ? u.nameBn : u.name}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">{t('classLevel')}</label>
+                  <select 
+                    value={selectedClass} 
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                    className="w-full px-5 py-4 bg-zinc-50 border border-emerald-50 focus:border-accent rounded-2xl outline-none text-xs font-bold text-black appearance-none cursor-pointer hover:bg-zinc-100 transition-colors"
+                  >
+                    <option value="">{t('allClasses')}</option>
+                    {CLASSES.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">{lang === 'bn' ? 'অবস্থা' : 'Condition'}</label>
+                  <select 
+                    value={selectedCondition} 
+                    onChange={(e) => setSelectedCondition(e.target.value)}
+                    className="w-full px-5 py-4 bg-zinc-50 border border-emerald-50 focus:border-accent rounded-2xl outline-none text-xs font-bold text-black appearance-none cursor-pointer hover:bg-zinc-100 transition-colors"
+                  >
+                    <option value="">{t('allConditions')}</option>
+                    {CONDITIONS.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
+                  </select>
+                </div>
+
+                <div className="flex items-end">
+                  <button 
+                    onClick={handleFind}
+                    className="w-full px-6 py-4 bg-zinc-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-800 transition transform active:scale-95 shadow-lg shadow-black/10"
+                  >
                     {t('find')}
                   </button>
-               </div>
-            </div>
-         </div>
-      </section>
-
-      {/* Modern Results Section */}
-      <div id="results-section" className="scroll-mt-32">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-white shadow-2xl rounded-3xl border border-emerald-50 flex items-center justify-center">
-               <LayoutGrid className="w-8 h-8 text-black" />
-            </div>
-            <div>
-              <h2 className="text-3xl md:text-4xl font-serif font-black text-black leading-tight">{t('availableBooks')}</h2>
-              <div className="h-1.5 w-24 bg-accent mt-3 rounded-full opacity-20"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Results Section */}
+      <div id="results-section" className="scroll-mt-24 max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-zinc-900 leading-tight">
+            {lang === 'bn' ? 'উপলব্ধ বইসমূহ' : 'Available Books'}
+          </h2>
+          {filteredListings.length > 0 && (
+            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest bg-zinc-100 px-3 py-1 rounded-full">
+              {filteredListings.length} {filteredListings.length === 1 ? 'RESULT' : 'RESULTS'}
+            </span>
+          )}
+        </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-[3rem] aspect-[4/5] animate-pulse border border-emerald-50 shadow-sm"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl aspect-[4/5] animate-pulse border border-emerald-50 shadow-sm"></div>
             ))}
           </div>
         ) : filteredListings.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredListings.map(book => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredListings.map((book) => (
               <BookCard key={book.id} book={book} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-32 bg-white rounded-[4rem] border-4 border-dashed border-emerald-50 shadow-inner px-10">
-            <BookCopy className="w-24 h-24 text-emerald-100 mx-auto mb-10 animate-float" />
-            <h3 className="text-4xl font-serif font-black text-black mb-6">{t('noBooksFound')}</h3>
-            <p className="text-zinc-400 font-black max-w-md mx-auto text-xs uppercase tracking-widest leading-loose">{t('tryDifferent')}</p>
-            <button onClick={clearFilters} className="mt-14 bg-black text-white px-16 py-6 rounded-[2.5rem] font-black hover:bg-zinc-800 transition-all shadow-3xl uppercase tracking-[0.3em] text-xs">
+          <div className="text-center py-24 bg-white rounded-[2.5rem] border border-dashed border-zinc-200 px-8 animate-in fade-in duration-700">
+            <BookCopy className="w-16 h-16 text-zinc-200 mx-auto mb-6" />
+            <h3 className="text-xl md:text-2xl font-serif font-black text-black mb-3">{t('noBooksFound')}</h3>
+            <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em] mb-10">{t('tryDifferent')}</p>
+            <button onClick={clearFilters} className="bg-zinc-900 text-white px-10 py-5 rounded-2xl font-black hover:bg-zinc-800 transition text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-black/10">
               {t('showEverything')}
             </button>
           </div>
         )}
       </div>
 
-      {/* Premium How it Works Section */}
-      <section className="pt-24 md:pt-32 border-t border-emerald-100/50">
-        <div className="text-center mb-20">
-          <div className="inline-block px-6 py-2 bg-emerald-50 text-accent rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-6 border border-accent/10">
-            {t('empoweringStudents')}
-          </div>
-          <h2 className="text-4xl md:text-6xl font-serif font-black text-black leading-tight">{t('howItWorks')}</h2>
-        </div>
+      {/* Catchy Banner for toolsybro.com */}
+      <section className="max-w-7xl mx-auto px-4 mt-20">
+        <a 
+          href="https://toolsybro.com" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="group block relative overflow-hidden bg-zinc-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-zinc-900/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+        >
+          {/* Animated Background Elements */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 group-hover:bg-accent/20 transition-colors duration-700"></div>
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4"></div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Buyer Card */}
-          <div className="bg-white rounded-[3.5rem] p-10 md:p-16 border border-emerald-50 shadow-3xl shadow-emerald-900/5 group hover:border-accent/20 transition-all duration-500">
-            <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mb-10 group-hover:scale-110 transition-transform duration-500">
-              <BookOpen className="w-10 h-10 text-accent" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 text-center md:text-left">
+            <div className="space-y-6 flex-grow max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-white font-black text-[10px] uppercase tracking-[0.25em] border border-white/5">
+                <Sparkles className="w-3 h-3 text-accent animate-pulse" />
+                Featured Student Tool
+              </div>
+              <h3 className="text-3xl md:text-5xl font-serif font-bold text-white leading-tight">
+                Study Smarter with <span className="text-accent italic">Toolsybro.</span>
+              </h3>
+              <p className="text-zinc-400 font-medium text-lg md:text-xl leading-relaxed">
+                Free online utilities for students. Convert PDFs, edit images, and power up your academic workflow in seconds.
+              </p>
             </div>
-            <h3 className="text-3xl font-serif font-black text-black mb-8">{t('buyABook')}</h3>
-            <div className="space-y-8">
-              {[1, 2, 3].map(step => (
-                <div key={step} className="flex items-start gap-6 group/step">
-                  <div className="w-8 h-8 bg-black text-white rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 mt-1 transition-transform group-hover/step:rotate-12">{step}</div>
-                  <p className="text-zinc-600 font-medium leading-relaxed text-lg">
-                    {lang === 'bn' 
-                      ? (step === 1 ? "আপনার স্থানীয় এলাকায় বইয়ের জন্য ফিড ব্রাউজ করুন।" : step === 2 ? "বইয়ের প্রাপ্যতা যাচাই করতে সরাসরি বিক্রেতাকে কল করুন।" : "বইটি পরিদর্শন এবং মূল্য পরিশোধ করতে জনসমক্ষে দেখা করুন।")
-                      : (step === 1 ? "Browse the feed for books in your local area." : step === 2 ? "Call the seller directly to check availability." : "Meet in public to inspect and pay for the book.")
-                    }
+            
+            <div className="flex-shrink-0">
+              <div className="bg-white text-zinc-900 px-8 py-5 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-4 group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-xl shadow-black/20">
+                Explore toolsybro.com
+                <ExternalLink className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      {/* Info Section */}
+      <section className="pt-20 border-t border-zinc-100 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-serif font-bold text-zinc-900 leading-tight tracking-tight">{t('empoweringStudents')}</h2>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="bg-white rounded-3xl p-10 md:p-14 border border-zinc-100 shadow-sm">
+            <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-10 border border-emerald-100">
+               <BookOpen className="w-7 h-7 text-accent" />
+            </div>
+            <h3 className="text-3xl font-serif font-bold text-zinc-900 mb-10">{t('buyABook')}</h3>
+            <div className="space-y-10">
+              <div className="flex items-start gap-5">
+                <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">1</div>
+                <p className="text-zinc-600 font-semibold leading-relaxed text-base md:text-lg">
+                  {t('buyStep1')}
+                </p>
+              </div>
+              <div className="flex items-start gap-5">
+                <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">2</div>
+                <p className="text-zinc-600 font-semibold leading-relaxed text-base md:text-lg">
+                  {t('buyStep2')}
+                </p>
+              </div>
+              <div className="flex items-start gap-5">
+                <div className="w-8 h-8 bg-zinc-900 text-white rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">3</div>
+                <p className="text-zinc-600 font-semibold leading-relaxed text-base md:text-lg">
+                  {t('buyStep3')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-zinc-900 rounded-3xl p-10 md:p-14 shadow-2xl shadow-zinc-900/10 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 group-hover:bg-accent/20 transition-colors duration-1000"></div>
+            <div className="relative z-10">
+              <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center mb-10 shadow-lg shadow-accent/20">
+                 <PlusCircle className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-3xl font-serif font-bold text-white mb-10">{t('sellABookTitle')}</h3>
+              <div className="space-y-10 mb-12">
+                <div className="flex items-start gap-5">
+                  <div className="w-8 h-8 bg-white text-zinc-900 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">1</div>
+                  <p className="text-zinc-400 font-semibold leading-relaxed text-base md:text-lg">
+                    {t('sellStep1')}
                   </p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Seller Card */}
-          <div className="bg-black rounded-[3.5rem] p-10 md:p-16 shadow-4xl shadow-black/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-accent/20 rounded-full blur-[120px] -z-0"></div>
-            <div className="relative z-10">
-              <div className="w-20 h-20 bg-accent rounded-3xl flex items-center justify-center mb-10 shadow-2xl shadow-accent/40 group-hover:scale-110 transition-transform duration-500">
-                <PlusCircle className="w-10 h-10 text-white" />
+                <div className="flex items-start gap-5">
+                  <div className="w-8 h-8 bg-white text-zinc-900 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">2</div>
+                  <p className="text-zinc-400 font-semibold leading-relaxed text-base md:text-lg">
+                    {t('sellStep2')}
+                  </p>
+                </div>
+                <div className="flex items-start gap-5">
+                  <div className="w-8 h-8 bg-white text-zinc-900 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">3</div>
+                  <p className="text-zinc-400 font-semibold leading-relaxed text-base md:text-lg">
+                    {t('sellStep3')}
+                  </p>
+                </div>
               </div>
-              <h3 className="text-3xl font-serif font-black text-white mb-8">{t('sellABookTitle')}</h3>
-              <div className="space-y-8 mb-12">
-                {[1, 2, 3].map(step => (
-                  <div key={step} className="flex items-start gap-6 group/step">
-                    <div className="w-8 h-8 bg-white text-black rounded-xl flex items-center justify-center text-xs font-black flex-shrink-0 mt-1 transition-transform group-hover/step:rotate-12">{step}</div>
-                    <p className="text-zinc-300 font-medium leading-relaxed text-lg">
-                      {lang === 'bn' 
-                        ? (step === 1 ? "সাইন আপ করুন এবং আপনার যাচাইকৃত স্টুডেন্ট প্রোফাইল তৈরি করুন।" : step === 2 ? "বইয়ের বিশদ বিবরণ এবং পরিষ্কার কভার ফটো আপলোড করুন।" : "কল পান এবং স্থানীয় শিক্ষার্থীদের কাছে বিক্রি করুন।")
-                        : (step === 1 ? "Sign up and create your verified student profile." : step === 2 ? "Upload book details and clear cover photos." : "Receive calls and sell to local students.")
-                      }
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <Link to="/sell" className="inline-flex items-center gap-4 bg-white text-black px-12 py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-emerald-50 transition-all transform hover:-translate-y-2 shadow-2xl">
+              <Link to="/sell" className="inline-flex items-center gap-4 bg-white text-zinc-900 px-10 py-5 rounded-2xl font-black text-xs transition shadow-2xl hover:bg-zinc-100 uppercase tracking-widest transform active:scale-95">
                 {t('startSelling')}
                 <ArrowRight className="w-5 h-5" />
               </Link>

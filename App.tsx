@@ -10,7 +10,8 @@ import SellPage from './pages/SellPage';
 import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
-import { ExternalLink, Loader2, Globe, CheckCircle2 } from 'lucide-react';
+import AboutPage from './pages/AboutPage';
+import { ExternalLink, Loader2, Globe } from 'lucide-react';
 import { Language, translations } from './translations';
 
 interface LanguageContextType {
@@ -31,7 +32,6 @@ const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(false);
-  const [cloudReady, setCloudReady] = useState(false);
   const [lang, setLang] = useState<Language>(() => {
     const saved = localStorage.getItem('bk_lang');
     return (saved as Language) || 'en';
@@ -51,8 +51,6 @@ const App: React.FC = () => {
     firebase.db.getListings()
       .then(() => {
         setApiError(false);
-        setCloudReady(true);
-        setTimeout(() => setCloudReady(false), 5000);
       })
       .catch(e => {
         if (e.code === 'permission-denied' || e.code === 'unavailable') {
@@ -107,24 +105,18 @@ const App: React.FC = () => {
               </div>
             )}
             
-            {cloudReady && (
-              <div className="container mx-auto px-4 mb-4">
-                <div className="bg-emerald-600 text-white px-6 py-3 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black shadow-xl uppercase tracking-[0.15em] animate-in slide-in-from-top duration-500">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Cloud Sync Connected Successfully</span>
-                </div>
-              </div>
-            )}
-
             <div className="container mx-auto px-4">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/books/:id" element={<BookDetailsPage />} />
-                <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
-                <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
-                <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
-                <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
-              </Routes>
+              <div className="container mx-auto px-4">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/books/:id" element={<BookDetailsPage />} />
+                  <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
+                  <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                  <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
+                  <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                </Routes>
+              </div>
             </div>
           </main>
           <Footer />

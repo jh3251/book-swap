@@ -11,7 +11,7 @@ interface LocationSelectorProps {
 }
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onChange }) => {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const filteredDistricts = useMemo(() => 
     DISTRICTS.filter(d => d.divisionId === value.divisionId),
@@ -63,7 +63,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onChange }) 
           className={selectClasses}
         >
           <option value="">{t('selectDivision')}</option>
-          {DIVISIONS.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+          {DIVISIONS.map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
         </select>
       </div>
 
@@ -79,7 +79,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onChange }) 
           className={`${selectClasses} disabled:opacity-30 disabled:bg-zinc-50 disabled:cursor-not-allowed`}
         >
           <option value="">{t('selectDistrict')}</option>
-          {filteredDistricts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+          {filteredDistricts.map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
         </select>
       </div>
 
@@ -95,7 +95,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onChange }) 
           className={`${selectClasses} disabled:opacity-30 disabled:bg-zinc-50 disabled:cursor-not-allowed`}
         >
           <option value="">{t('selectUpazila')}</option>
-          {filteredUpazilas.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+          {filteredUpazilas.map(u => <option key={u.id} value={u.id}>{lang === 'bn' ? u.nameBn : u.name}</option>)}
         </select>
       </div>
     </div>

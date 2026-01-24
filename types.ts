@@ -37,16 +37,19 @@ export interface BookListing {
 export interface Division {
   id: string;
   name: string;
+  nameBn: string;
 }
 
 export interface District {
   id: string;
   divisionId: string;
   name: string;
+  nameBn: string;
 }
 
 export interface Upazila {
   id: string;
   districtId: string;
   name: string;
+  nameBn: string;
 }
