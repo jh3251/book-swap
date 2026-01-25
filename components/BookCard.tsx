@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BookListing, UserProfile } from '../types';
-import { MapPin, User, Phone, Info } from 'lucide-react';
+import { MapPin, User, Phone, LayoutGrid, PlusCircle, ChevronRight } from 'lucide-react';
 import { firebase } from '../firebase';
 import { useTranslation } from '../App';
 import { DISTRICTS, UPAZILAS } from '../constants';
@@ -23,88 +22,116 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
       try {
         const data = await firebase.db.getUserById(book.sellerId);
         if (data) setSeller(data);
-      } catch (e) {
-        console.warn("Could not fetch seller for card preview");
-      }
+      } catch (e) {}
     };
     fetchSeller();
   }, [book.sellerId]);
 
   const localizedLocation = useMemo(() => {
-    if (lang !== 'bn') return `${book.location.upazilaName}, ${book.location.districtName}`;
-    
     const upazila = UPAZILAS.find(u => u.id === book.location.upazilaId);
     const district = DISTRICTS.find(d => d.id === book.location.districtId);
     
-    return `${upazila?.nameBn || book.location.upazilaName}, ${district?.nameBn || book.location.districtName}`;
+    const uName = lang === 'bn' ? (upazila?.nameBn || book.location.upazilaName) : book.location.upazilaName;
+    const dName = lang === 'bn' ? (district?.nameBn || book.location.districtName) : book.location.districtName;
+    
+    return `${uName}, ${dName}`;
   }, [book.location, lang]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
-      <Link to={`/books/${book.id}`} className="block aspect-[4/3] overflow-hidden bg-zinc-50 relative">
+    <div className="bg-white rounded-[2rem] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 flex flex-col h-full group hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
+      {/* Image Container */}
+      <Link to={`/books/${book.id}`} className="block aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-zinc-50 relative mb-5">
         <img 
           src={book.imageUrl || `https://picsum.photos/seed/${book.id}/600/450`} 
           alt={book.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           loading="lazy"
         />
-        <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
-           <div className={`px-3 py-1.5 rounded-lg font-bold shadow-sm text-xs border border-white/20 ${book.condition === 'Donation' ? 'bg-orange-500 text-white' : 'bg-accent text-white'}`}>
-             {book.condition === 'Donation' ? t('free') : `৳ ${book.price}`}
-           </div>
-        </div>
-        {book.condition === 'Donation' && (
-          <div className="absolute top-3 left-3">
-             <div className="bg-orange-500 text-white px-2 py-1 rounded-md font-bold text-[10px] uppercase shadow-sm">
-                {lang === 'bn' ? 'ফ্রি' : 'FREE'}
-             </div>
+        
+        {/* Floating Badges */}
+        {book.condition === 'Donation' ? (
+          <>
+            <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+              {t('free')}
+            </div>
+            <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+              {t('free')}
+            </div>
+          </>
+        ) : (
+          <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+            ৳ {book.price}
           </div>
         )}
       </Link>
       
-      <div className="p-5 md:p-6 flex-grow flex flex-col">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="bg-zinc-50 px-2.5 py-1 rounded-md text-[10px] font-bold text-zinc-500 uppercase">
+      {/* Content Section */}
+      <div className="flex-grow flex flex-col space-y-4">
+        {/* Chips */}
+        <div className="flex flex-wrap gap-2">
+          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-500 uppercase tracking-widest border border-zinc-100">
             {t(book.subject as any)}
           </span>
-          <span className="bg-zinc-50 px-2.5 py-1 rounded-md text-[10px] font-bold text-zinc-800 uppercase">
+          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-800 uppercase tracking-widest border border-zinc-100">
             {t(book.condition as any)}
           </span>
         </div>
         
-        <Link to={`/books/${book.id}`} className="block mb-2">
-          <h3 className={`text-lg font-serif font-bold text-zinc-900 line-clamp-1 hover:text-accent transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
+        {/* Title & Author */}
+        <Link to={`/books/${book.id}`} className="block space-y-1">
+          <h3 className={`text-xl font-black text-zinc-900 line-clamp-1 leading-tight group-hover:text-accent transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
             {book.title}
           </h3>
+          {book.author && (
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-wide">{book.author}</p>
+          )}
         </Link>
 
-        <p className="text-[11px] text-zinc-400 flex items-center gap-2 font-medium mb-5 uppercase tracking-wide">
-          <User className="w-3 h-3 text-accent" />
-          {seller?.username || seller?.displayName || book.sellerName}
-        </p>
+        {/* Seller Info */}
+        <div className="flex items-center gap-2 text-zinc-400">
+          <User className="w-3.5 h-3.5 text-zinc-300" />
+          <span className="text-[10px] font-black uppercase tracking-widest truncate">
+            {seller?.username || seller?.displayName || book.sellerName}
+          </span>
+        </div>
         
-        <div className="flex items-center gap-2 text-[10px] font-semibold text-zinc-500 bg-zinc-50 px-3 py-2 rounded-lg w-fit mb-6">
-          <MapPin className="w-3 h-3 text-accent" />
-          <span className="truncate max-w-[200px]">{localizedLocation}</span>
+        {/* Location Pill */}
+        <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 bg-zinc-50 px-4 py-2 rounded-xl w-fit border border-zinc-100/50">
+          <MapPin className="w-3.5 h-3.5 text-accent" />
+          <span className="truncate max-w-[180px]">{localizedLocation}</span>
         </div>
 
-        <div className="mt-auto flex gap-2">
+        {/* Action Buttons */}
+        <div className="pt-2 flex gap-3">
           {showActions ? (
             <>
-              <button onClick={() => onEdit?.(book.id)} className="flex-1 py-2.5 text-[10px] font-bold bg-zinc-50 text-zinc-600 rounded-xl hover:bg-emerald-50 hover:text-accent transition uppercase tracking-wider">
+              <button 
+                onClick={() => onEdit?.(book.id)} 
+                className="flex-1 bg-zinc-100 text-zinc-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
+              >
+                <LayoutGrid className="w-4 h-4" />
                 Edit
               </button>
-              <button onClick={() => onDelete?.(book.id)} className="flex-1 py-2.5 text-[10px] font-bold bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition uppercase tracking-wider">
-                Delete
+              <button 
+                onClick={() => onDelete?.(book.id)} 
+                className="w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+              >
+                <PlusCircle className="w-5 h-5 rotate-45" />
               </button>
             </>
           ) : (
             <>
-              <Link to={`/books/${book.id}`} className="flex-grow bg-zinc-900 text-white py-3 rounded-xl text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-800 transition shadow-sm">
+              <Link 
+                to={`/books/${book.id}`} 
+                className="flex-grow bg-[#18181b] text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.25em] flex items-center justify-center hover:bg-black transition-all shadow-xl shadow-zinc-900/10"
+              >
                 {t('details')}
               </Link>
-              <a href={`tel:${book.contactPhone}`} className="w-11 h-11 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-hover transition shadow-sm">
-                <Phone className="w-4 h-4" />
+              <a 
+                href={`tel:${book.contactPhone}`} 
+                className="w-14 h-14 bg-accent text-white rounded-2xl flex items-center justify-center hover:bg-accent-hover transition-all shadow-xl shadow-accent/20"
+              >
+                <Phone className="w-5 h-5" />
               </a>
             </>
           )}
