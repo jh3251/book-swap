@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
@@ -28,10 +27,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
     setIsMenuOpen(false);
   };
 
-  const toggleLang = () => {
-    setLang(lang === 'en' ? 'bn' : 'en');
-  };
-
   return (
     <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
       scrolled ? 'py-3' : 'py-5'
@@ -54,9 +49,9 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {/* Custom Language Toggle Switch - Updated to text EN / BD */}
-            <div className="flex items-center bg-zinc-100/80 px-1 py-1 rounded-full border border-zinc-200/50 shadow-sm">
+          <div className="hidden md:flex items-center space-x-6">
+            {/* Language Toggle Switch */}
+            <div className="flex items-center bg-zinc-100/80 px-1 py-1 rounded-full border border-zinc-200/50 shadow-sm mr-2">
               <button 
                 onClick={() => setLang('en')}
                 className={`px-3 py-1.5 rounded-full text-[10px] font-black transition-all duration-300 ${
@@ -80,23 +75,26 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               {t('home')}
             </Link>
 
-            <Link to="/about" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
-              {t('about')}
+            <Link to="/about" className="text-xs font-semibold text-zinc-600 hover:text-accent transition mr-2">
+              {t('aboutUs')}
+            </Link>
+
+            {/* Sell a Book - Visible to everyone */}
+            <Link to="/sell" className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-accent-hover transition flex items-center gap-2 text-xs font-semibold shadow-sm">
+              <PlusCircle className="w-4 h-4" />
+              {t('sellABook')}
             </Link>
             
             {user ? (
-              <div className="flex items-center space-x-6">
-                <Link to="/sell" className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-accent-hover transition flex items-center gap-2 text-xs font-semibold shadow-sm">
-                  <PlusCircle className="w-4 h-4" />
-                  {t('sellABook')}
-                </Link>
-                <Link to="/dashboard" className="text-zinc-600 hover:text-accent font-semibold text-xs flex items-center gap-2 transition text-zinc-600">
+              <div className="flex items-center space-x-5">
+                <Link to="/dashboard" className="text-zinc-600 hover:text-accent font-semibold text-xs flex items-center gap-2 transition">
                   <LayoutGrid className="w-4 h-4" />
                   {t('dashboard')}
                 </Link>
                 <button 
                   onClick={handleLogout}
-                  className="text-zinc-400 hover:text-red-600 font-semibold text-xs transition flex items-center gap-2"
+                  className="text-zinc-400 hover:text-red-600 font-semibold text-xs transition flex items-center"
+                  title={t('logout')}
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -125,6 +123,15 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
         isMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="pt-24 px-6 space-y-4">
+          {/* Sell a Book - Always at top of mobile menu */}
+          <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-accent text-white rounded-xl font-semibold text-sm shadow-sm mb-2">
+            <div className="flex items-center gap-4">
+              <PlusCircle className="w-5 h-5" />
+              {t('sellABook')}
+            </div>
+            <ChevronRight className="w-4 h-4 text-white/50" />
+          </Link>
+
           <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl text-zinc-900 font-semibold text-sm">
             <div className="flex items-center gap-4">
               <Home className="w-5 h-5 text-accent" />
@@ -136,20 +143,22 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           <Link to="/about" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl text-zinc-900 font-semibold text-sm">
             <div className="flex items-center gap-4">
               <Info className="w-5 h-5 text-accent" />
-              {t('about')}
+              {t('aboutUs')}
             </div>
             <ChevronRight className="w-4 h-4 text-zinc-300" />
           </Link>
           
           {user ? (
             <>
-              <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-accent text-white rounded-xl font-semibold text-sm shadow-sm">
-                {t('sellABook')}
-              </Link>
               <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl font-semibold text-sm">
-                {t('dashboard')}
+                <div className="flex items-center gap-4">
+                  <LayoutGrid className="w-5 h-5 text-accent" />
+                  {t('dashboard')}
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-300" />
               </Link>
-              <button onClick={handleLogout} className="w-full p-5 text-red-600 font-semibold text-sm bg-red-50 rounded-xl text-left">
+              <button onClick={handleLogout} className="w-full p-5 text-red-600 font-semibold text-sm bg-red-50 rounded-xl text-left flex items-center gap-4">
+                <LogOut className="w-5 h-5" />
                 {t('logout')}
               </button>
             </>

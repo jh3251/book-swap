@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { firebase } from './firebase';
@@ -17,7 +16,7 @@ import { Language, translations } from './translations';
 interface LanguageContextType {
   lang: Language;
   setLang: (lang: Language) => void;
-  t: (key: keyof typeof translations['en']) => string;
+  t: (key: string) => string;
 }
 
 export const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -66,8 +65,12 @@ const App: React.FC = () => {
     window.dispatchEvent(new Event('auth-change'));
   };
 
-  const t = (key: keyof typeof translations['en']): string => {
-    return translations[lang][key] || translations['en'][key];
+  const t = (key: string): string => {
+    if (!key) return '';
+    const localizedSet = translations[lang] as any;
+    const englishSet = translations['en'] as any;
+    // Fallback order: Requested language -> English -> Original Key
+    return localizedSet[key] || englishSet[key] || key;
   };
 
   if (loading) {

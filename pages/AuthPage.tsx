@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { firebase } from '../firebase';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Zap, Eye, EyeOff, ChevronLeft, CheckCircle2, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
@@ -89,16 +88,21 @@ const AuthPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
+      // Modern Firebase uses 'auth/invalid-credential' for both wrong password and user not found
       if (err.code === 'auth/email-already-in-use') {
         setError('This email is already registered. Please login instead.');
       } else if (err.code === 'auth/weak-password') {
         setError('Password is too weak. Use at least 6 characters.');
       } else if (err.code === 'auth/invalid-email') {
         setError('Please enter a valid email address.');
-      } else if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+      } else if (
+        err.code === 'auth/user-not-found' || 
+        err.code === 'auth/wrong-password' || 
+        err.code === 'auth/invalid-credential'
+      ) {
         setError('Incorrect email or password. Please try again.');
       } else {
-        setError('Authentication failed. Please check your credentials.');
+        setError('Authentication failed. Please check your connection and try again.');
       }
     } finally {
       setLoading(false);

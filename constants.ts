@@ -1,4 +1,3 @@
-
 import { Division, District, Upazila } from './types';
 
 export const DIVISIONS: Division[] = [
@@ -124,7 +123,7 @@ export const UPAZILAS: Upazila[] = [
   { id: 'kapashia-upazila', districtId: 'gazipur', name: 'Kapashia Upazila', nameBn: 'কাপাসিয়া উপজেলা' },
   { id: 'sreepur-upazila-gz', districtId: 'gazipur', name: 'Sreepur Upazila', nameBn: 'শ্রীপুর উপজেলা' },
   // Manikgonj
-  { id: 'manikganj-sadar', districtId: 'manikganj', name: 'Manikganj Sadar Upazila', nameBn: 'মানিকগঞ্জ সদর উপজেলা' },
+  { id: 'manikganj-sadar', districtId: 'manikganj', name: 'Manikগঞ্জ সদর উপজেলা', nameBn: 'মানিকগঞ্জ সদর উপজেলা' },
   { id: 'singair-upazila', districtId: 'manikganj', name: 'Singair Upazila', nameBn: 'সিংগাইর উপজেলা' },
   { id: 'daulatpur-upazila-mn', districtId: 'manikganj', name: 'Daulatpur Upazila', nameBn: 'দৌলতপুর উপজেলা' },
   { id: 'harirampur-upazila', districtId: 'manikganj', name: 'Harirampur Upazila', nameBn: 'হরিরামপুর উপজেলা' },
@@ -333,7 +332,7 @@ export const UPAZILAS: Upazila[] = [
   { id: 'sulla-upazila', districtId: 'sunamganj', name: 'Sulla Upazila', nameBn: 'শাল্লা উপজেলা' },
   { id: 'dharmapasha-upazila', districtId: 'sunamganj', name: 'Dharmapasha Upazila', nameBn: 'ধর্মপাশা উপজেলা' },
   { id: 'bishwambharpur-upazila', districtId: 'sunamganj', name: 'Bishwambharpur Upazila', nameBn: 'বিশ্বম্ভরপুর উপজেলা' },
-  { id: 'dakshin-sunamganj-upazila', districtId: 'sunamganj', name: 'Dakshin Sunamganj Upazila', nameBn: 'দক্ষিণ সুনামগঞ্জ উপজেলা' },
+  { id: 'dakshin-sunamganj-upazila', districtId: 'sunamganj', name: 'Dakshin সুনামগঞ্জ উপজেলা', nameBn: 'দক্ষিণ সুনামগঞ্জ উপজেলা' },
   { id: 'chhatak-upazila', districtId: 'sunamganj', name: 'Chhatak Upazila', nameBn: 'ছাতক উপজেলা' },
   { id: 'dowarabazar-upazila', districtId: 'sunamganj', name: 'Dowarabazar Upazila', nameBn: 'দোয়ারাবাজার উপজেলা' },
   { id: 'derai-upazila', districtId: 'sunamganj', name: 'Derai Upazila', nameBn: 'দিরাই উপজেলা' },
@@ -407,14 +406,14 @@ export const UPAZILAS: Upazila[] = [
   { id: 'sherpur-sadar', districtId: 'sherpur', name: 'Sherpur Sadar Upazila', nameBn: 'শেরপুর সদর উপজেলা' },
   { id: 'nakla-upazila', districtId: 'sherpur', name: 'Nakla Upazila', nameBn: 'নকলা উপজেলা' },
   { id: 'nalitabari-upazila', districtId: 'sherpur', name: 'Nalitabari Upazila', nameBn: 'নালিতাবাড়ী উপজেলা' },
-  { id: 'jhenaigati-upazila', districtId: 'sherpur', name: 'Jhenaigati Upazila', nameBn: 'ঝিনাইগাতী উপজেলা' },
+  { id: 'jhenaigati-upazila', districtId: 'sherpur', name: 'Jhenaigati Upazila', nameBn: 'ঝিনাইদহ সদর উপজেলা' },
   { id: 'sreebardi-upazila', districtId: 'sherpur', name: 'Sreebardi Upazila', nameBn: 'শ্রীবরদী উপজেলা' },
   // Mymensingh
   { id: 'mymensingh-sadar', districtId: 'mymensingh-dist', name: 'Mymensingh Sadar Upazila', nameBn: 'ময়মনসিংহ সদর উপজেলা' },
   { id: 'muktagachha-upazila', districtId: 'mymensingh-dist', name: 'Muktagachha Upazila', nameBn: 'মুক্তাগাছা উপজেলা' },
   { id: 'fulbaria-upazila', districtId: 'mymensingh-dist', name: 'Fulbaria Upazila', nameBn: 'ফুলবাড়ীয়া উপজেলা' },
   { id: 'bhaluka-upazila', districtId: 'mymensingh-dist', name: 'Bhaluka Upazila', nameBn: 'ভালুকা উপজেলা' },
-  { id: 'trishal-upazila', districtId: 'mymensingh-dist', name: 'Trishal Upazila', nameBn: 'ত্রিশাল উপজেলা' },
+  { id: 'trishal-upazila', districtId: 'mymensingh-dist', name: 'ত্রিশাল উপজেলা', nameBn: 'ত্রিশাল উপজেলা' },
   { id: 'gafargaon-upazila', districtId: 'mymensingh-dist', name: 'Gafargaon Upazila', nameBn: 'গফরগাঁও উপজেলা' },
   { id: 'nandail-upazila', districtId: 'mymensingh-dist', name: 'Nandail Upazila', nameBn: 'নান্দাইল উপজেলা' },
   { id: 'ishwarganj-upazila', districtId: 'mymensingh-dist', name: 'Ishwarganj Upazila', nameBn: 'ঈশ্বরগঞ্জ উপজেলা' },
@@ -438,7 +437,7 @@ export const UPAZILAS: Upazila[] = [
   // Feni
   { id: 'feni-sadar', districtId: 'feni', name: 'Feni Sadar Upazila', nameBn: 'ফেনী সদর উপজেলা' },
   { id: 'dagonbhuiyan-upazila', districtId: 'feni', name: 'Dagonbhuiyan Upazila', nameBn: 'দাগনভূঞা উপজেলা' },
-  { id: 'fulgazi-upazila', districtId: 'feni', name: 'Fulgazi Upazila', nameBn: 'ফুলগাজী উপজেলা' },
+  { id: 'fullgazi-upazila', districtId: 'feni', name: 'Fulgazi Upazila', nameBn: 'ফুলগাজী উপজেলা' },
   { id: 'parshuram-upazila', districtId: 'feni', name: 'Parshuram Upazila', nameBn: 'পরশুরাম উপজেলা' },
   { id: 'chagalnaiya-upazila', districtId: 'feni', name: 'Chagalnaiya Upazila', nameBn: 'ছাগলনাইয়া উপজেলা' },
   { id: 'sonagazi-upazila', districtId: 'feni', name: 'Sonagazi Upazila', nameBn: 'সোনাগাজী উপজেলা' },
@@ -620,7 +619,7 @@ export const UPAZILAS: Upazila[] = [
   { id: 'kazipur-upazila', districtId: 'sirajganj', name: 'Kazipur Upazila', nameBn: 'কাজিপুর উপজেলা' },
   { id: 'chauhali-upazila', districtId: 'sirajganj', name: 'Chauhali Upazila', nameBn: 'চৌহালী উপজেলা' },
   { id: 'shahjadpur-upazila', districtId: 'sirajganj', name: 'Shahjadpur Upazila', nameBn: 'শাহজাদপুর উপজেলা' },
-  { id: 'tarash-upazila', districtId: 'sirajganj', name: 'Tarash Upazila', nameBn: 'তাড়াশ উপজেলা' },
+  { id: 'tarash-upazila', districtId: 'sirajganj', name: 'Tarash Upazila', nameBn: 'তাড়াশ উপজেলা' },
   { id: 'ullapara-upazila', districtId: 'sirajganj', name: 'Ullapara Upazila', nameBn: 'উল্লাপাড়া উপজেলা' },
   { id: 'raiganj-upazila', districtId: 'sirajganj', name: 'Raiganj Upazila', nameBn: 'রায়গঞ্জ উপজেলা' },
 
@@ -665,7 +664,7 @@ export const UPAZILAS: Upazila[] = [
   // Dinajpur
   { id: 'dinajpur-sadar', districtId: 'dinajpur', name: 'Dinajpur Sadar Upazila', nameBn: 'দিনাজপুর সদর উপজেলা' },
   { id: 'parbatipur-upazila', districtId: 'dinajpur', name: 'Parbatipur Upazila', nameBn: 'পার্বতীপুর উপজেলা' },
-  { id: 'phulbari-upazila-di', districtId: 'dinajpur', name: 'Phulbari Upazila', nameBn: 'ফুলবাড়ী উপজেলা' },
+  { id: 'phulbari-upazila-di', districtId: 'dinajpur', name: 'Phulbari Upazila', nameBn: 'ফুলবাড়ী উপজেলা' },
   { id: 'birampur-upazila', districtId: 'dinajpur', name: 'Birampur Upazila', nameBn: 'বিরামপুর উপজেলা' },
   { id: 'hakimpur-upazila', districtId: 'dinajpur', name: 'Hakimpur Upazila', nameBn: 'হাকিমপুর উপজেলা' },
   { id: 'nawabganj-upazila-di', districtId: 'dinajpur', name: 'Nawabganj Upazila', nameBn: 'নবাবগঞ্জ উপজেলা' },
@@ -696,7 +695,13 @@ export const UPAZILAS: Upazila[] = [
 export const CONDITIONS = ['Donation', 'Like New', 'Good', 'Fair', 'Poor'] as const;
 
 export const CLASSES = [
-  'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 
-  'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 
-  'Class 11', 'Class 12', 'Other'
+  'Class 5', 
+  'Class 6', 'Class 7', 'Class 8', 'SSC', 'HSC', 
+  'Admission Test', 
+  'Honours 1st Year', 
+  'Honours 2nd Year', 
+  'Honours 3rd Year', 
+  'Honours 4th Year', 
+  'IELTS',
+  'Other'
 ] as const;

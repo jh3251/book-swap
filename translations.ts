@@ -1,9 +1,9 @@
-
 export type Language = 'en' | 'bn';
 
 export const translations = {
   en: {
     home: 'Home',
+    aboutUs: 'About Us',
     browse: 'Browse',
     sellABook: 'Sell a Book',
     dashboard: 'Dashboard',
@@ -65,6 +65,12 @@ export const translations = {
     deleteProfile: 'Delete Profile',
     confirmDeleteProfile: 'Delete Account?',
     deleteProfileWarning: 'This action is permanent. Your profile and all your active book listings will be deleted from our system forever.',
+    footerDesc: 'Empowering students across Bangladesh to exchange knowledge. We are the premier community-driven marketplace for academic and leisure reading.',
+    quickNavigation: 'QUICK NAVIGATION',
+    studentSupport: 'STUDENT SUPPORT',
+    copyright: '© 2026 BOOKSWAP BANGLADESH. ALL RIGHTS RESERVED.',
+    craftedFor: 'CRAFTED FOR',
+    knowledgeExchange: 'KNOWLEDGE EXCHANGE',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -72,22 +78,23 @@ export const translations = {
     'Fair': 'Fair',
     'Poor': 'Poor',
     // Class labels
-    'Class 1': 'Class 1',
-    'Class 2': 'Class 2',
-    'Class 3': 'Class 3',
-    'Class 4': 'Class 4',
     'Class 5': 'Class 5',
     'Class 6': 'Class 6',
     'Class 7': 'Class 7',
     'Class 8': 'Class 8',
-    'Class 9': 'Class 9',
-    'Class 10': 'Class 10',
-    'Class 11': 'Class 11',
-    'Class 12': 'Class 12',
+    'SSC': 'SSC',
+    'HSC': 'HSC',
+    'Admission Test': 'Admission Test',
+    'Honours 1st Year': 'Honours 1st Year',
+    'Honours 2nd Year': 'Honours 2nd Year',
+    'Honours 3rd Year': 'Honours 3rd Year',
+    'Honours 4th Year': 'Honours 4th Year',
+    'IELTS': 'IELTS',
     'Other': 'Other'
   },
   bn: {
     home: 'হোম',
+    aboutUs: 'আমাদের সম্পর্কে',
     browse: 'ব্রাউজ',
     sellABook: 'বই বিক্রি করুন',
     dashboard: 'ড্যাশবোর্ড',
@@ -149,6 +156,12 @@ export const translations = {
     deleteProfile: 'প্রোফাইল ডিলিট করুন',
     confirmDeleteProfile: 'অ্যাকাউন্ট ডিলিট করবেন?',
     deleteProfileWarning: 'এই কাজটি স্থায়ী। আপনার প্রোফাইল এবং আপনার দেওয়া সব বইয়ের বিজ্ঞাপন আমাদের সিস্টেম থেকে চিরতরে মুছে যাবে।',
+    footerDesc: 'সারা বাংলাদেশের শিক্ষার্থীদের মধ্যে জ্ঞান বিনিময়ে সহায়তা করছি। আমরা একাডেমিক এবং শখের পাঠের জন্য একটি শীর্ষস্থানীয় কমিউনিটি চালিত মার্কেটপ্লেস।',
+    quickNavigation: 'দ্রুত নেভিগেশন',
+    studentSupport: 'স্টুডেন্ট সাপোর্ট',
+    copyright: '© ২০২৬ বুকসোয়াপ বাংলাদেশ। সর্বস্বত্ব সংরক্ষিত।',
+    craftedFor: 'তৈরি করা হয়েছে',
+    knowledgeExchange: 'জ্ঞান বিনিময়ের জন্য',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',
@@ -156,18 +169,18 @@ export const translations = {
     'Fair': 'মোটামুটি',
     'Poor': 'খারাপ',
     // Class labels
-    'Class 1': 'প্রথম শ্রেণী',
-    'Class 2': 'দ্বিতীয় শ্রেণী',
-    'Class 3': 'তৃতীয় শ্রেণী',
-    'Class 4': 'চতুর্থ শ্রেণী',
     'Class 5': 'পঞ্চম শ্রেণী',
     'Class 6': 'ষষ্ঠ শ্রেণী',
     'Class 7': 'সপ্তম শ্রেণী',
     'Class 8': 'অষ্টম শ্রেণী',
-    'Class 9': 'নবম শ্রেণী',
-    'Class 10': 'দশম শ্রেণী',
-    'Class 11': 'একাদশ শ্রেণী',
-    'Class 12': 'দ্বাদশ শ্রেণী',
+    'SSC': 'এসএসসি (SSC)',
+    'HSC': 'এইচএসসি (HSC)',
+    'Admission Test': 'ভর্তি পরীক্ষা (Admission Test)',
+    'Honours 1st Year': 'অনার্স ১ম বর্ষ (Honours 1st Year)',
+    'Honours 2nd Year': 'অনার্স ২য় বর্ষ (Honours 2nd Year)',
+    'Honours 3rd Year': 'অনার্স ৩য় বর্ষ (Honours 3rd Year)',
+    'Honours 4th Year': 'অনার্স ৪র্থ বর্ষ (Honours 4th Year)',
+    'IELTS': 'আইইএলটিএস (IELTS)',
     'Other': 'অন্যান্য'
   }
 };
