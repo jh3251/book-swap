@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
-import { LogOut, Menu, X, PlusCircle, LayoutGrid, ChevronRight, Info } from 'lucide-react';
+import { LogOut, Menu, X, PlusCircle, LayoutGrid, ChevronRight, Info, Home } from 'lucide-react';
 import { useTranslation } from '../App';
 
 interface NavbarProps {
@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             </div>
 
             <Link to="/" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
-              {t('browse')}
+              {t('home')}
             </Link>
 
             <Link to="/about" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
@@ -127,8 +127,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
         <div className="pt-24 px-6 space-y-4">
           <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl text-zinc-900 font-semibold text-sm">
             <div className="flex items-center gap-4">
-              <LayoutGrid className="w-5 h-5 text-accent" />
-              {t('browse')}
+              <Home className="w-5 h-5 text-accent" />
+              {t('home')}
             </div>
             <ChevronRight className="w-4 h-4 text-zinc-300" />
           </Link>

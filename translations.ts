@@ -3,6 +3,7 @@ export type Language = 'en' | 'bn';
 
 export const translations = {
   en: {
+    home: 'Home',
     browse: 'Browse',
     sellABook: 'Sell a Book',
     dashboard: 'Dashboard',
@@ -53,6 +54,17 @@ export const translations = {
     aboutCommunityTitle: 'Built for Students, by the Community',
     aboutCommunityDesc: 'BookSwap is a student-led initiative in Bangladesh to reduce the financial burden of education. By exchanging books within your local community, we save money and help the environment.',
     showNumber: 'Show Number',
+    deleteReminder: 'After selling the book, please delete the listing.',
+    fullName: 'Full Name',
+    userName: 'User Name',
+    emailAddress: 'Email Address',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    joinNow: 'Join Now',
+    saveProfile: 'Save Profile',
+    deleteProfile: 'Delete Profile',
+    confirmDeleteProfile: 'Delete Account?',
+    deleteProfileWarning: 'This action is permanent. Your profile and all your active book listings will be deleted from our system forever.',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -75,6 +87,7 @@ export const translations = {
     'Other': 'Other'
   },
   bn: {
+    home: 'হোম',
     browse: 'ব্রাউজ',
     sellABook: 'বই বিক্রি করুন',
     dashboard: 'ড্যাশবোর্ড',
@@ -125,6 +138,17 @@ export const translations = {
     aboutCommunityTitle: 'শিক্ষার্থীদের জন্য, কমিউনিটির দ্বারা তৈরি',
     aboutCommunityDesc: 'বুকসোয়াপ বাংলাদেশে শিক্ষার আর্থিক বোঝা কমানোর জন্য একটি শিক্ষার্থী-পরিচালিত উদ্যোগ। আপনার স্থানীয় কমিউনিটির মধ্যে বই বিনিময়ের মাধ্যমে, আমরা অর্থ সাশ্রয় করি এবং পরিবেশকে সাহায্য করি।',
     showNumber: 'নম্বর দেখুন',
+    deleteReminder: 'বইটি বিক্রি করার পর অনুগ্রহ করে বিজ্ঞাপনটি ডিলিট করুন।',
+    fullName: 'সম্পূর্ণ নাম',
+    userName: 'ইউজার নেম',
+    emailAddress: 'ইমেইল এড্রেস',
+    password: 'পাসওয়ার্ড',
+    confirmPassword: 'পাসওয়ার্ড নিশ্চিত করুন',
+    joinNow: 'যোগ দিন',
+    saveProfile: 'প্রোফাইল সেভ করুন',
+    deleteProfile: 'প্রোফাইল ডিলিট করুন',
+    confirmDeleteProfile: 'অ্যাকাউন্ট ডিলিট করবেন?',
+    deleteProfileWarning: 'এই কাজটি স্থায়ী। আপনার প্রোফাইল এবং আপনার দেওয়া সব বইয়ের বিজ্ঞাপন আমাদের সিস্টেম থেকে চিরতরে মুছে যাবে।',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',

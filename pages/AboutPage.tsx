@@ -1,78 +1,114 @@
 
 import React from 'react';
 import { useTranslation } from '../App';
-import { BookOpen, Heart, Users, ShieldCheck, Globe } from 'lucide-react';
+import { BookOpen, Heart, Globe, Sparkles, BookHeart, GraduationCap, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const AboutPage: React.FC = () => {
-  const { t, lang } = useTranslation();
+  const { lang } = useTranslation();
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 md:py-24 space-y-16 md:space-y-24">
-      {/* Header Section */}
-      <section className="text-center space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 rounded-full border border-emerald-100 text-accent font-black text-[10px] uppercase tracking-[0.2em] mb-4">
-          <Globe className="w-3.5 h-3.5" /> {t('about')}
+    <div className="max-w-4xl mx-auto py-12 px-4 md:py-20 space-y-20 font-bn">
+      {/* Hero Section */}
+      <section className="text-center space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+        <div className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 rounded-full border border-emerald-100 text-accent font-black text-[11px] uppercase tracking-[0.25em] mb-4">
+          <Globe className="w-4 h-4" /> আমাদের সম্পর্কে
         </div>
-        <h1 className="text-5xl md:text-7xl font-serif font-black text-black leading-tight tracking-tight">
-          {t('aboutMissionTitle')}
+        <h1 className="text-4xl md:text-7xl font-serif font-black text-black leading-tight tracking-tight">
+          Boibandhu <span className="text-accent">(বইবন্ধু)</span>
         </h1>
-        <p className={`text-xl md:text-2xl text-zinc-600 font-medium leading-relaxed max-w-3xl mx-auto ${lang === 'bn' ? 'font-bn' : ''}`}>
-          {t('aboutMissionDesc')}
+        <p className="text-xl md:text-2xl text-zinc-600 font-medium leading-relaxed max-w-3xl mx-auto">
+          একটি শিক্ষার্থী-কেন্দ্রিক অনলাইন প্ল্যাটফর্ম, যেখানে শিক্ষার্থীরা তাদের ব্যবহৃত বা পুরোনো বই কেনা, বিক্রি এবং দান করতে পারে।
         </p>
       </section>
 
-      {/* Values Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white p-10 rounded-[2.5rem] border border-emerald-50 shadow-xl shadow-emerald-900/5 space-y-6 group hover:border-accent/20 transition-colors">
-          <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Heart className="w-7 h-7 text-accent" />
+      {/* Narrative Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="space-y-6">
+          <div className="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center border border-red-100 shadow-sm">
+            <Heart className="w-8 h-8 text-red-500 fill-current" />
           </div>
-          <h3 className="text-2xl font-serif font-black text-black">{t('aboutCommunityTitle')}</h3>
-          <p className={`text-zinc-600 font-medium leading-relaxed ${lang === 'bn' ? 'font-bn' : ''}`}>
-            {t('aboutCommunityDesc')}
-          </p>
-        </div>
-
-        <div className="bg-zinc-900 p-10 rounded-[2.5rem] shadow-2xl shadow-black/10 space-y-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform relative z-10">
-            <ShieldCheck className="w-7 h-7 text-white" />
-          </div>
-          <h3 className="text-2xl font-serif font-black text-white relative z-10">{lang === 'bn' ? 'আমাদের দৃষ্টিভঙ্গি' : 'Our Vision'}</h3>
-          <p className={`text-zinc-400 font-medium leading-relaxed relative z-10 ${lang === 'bn' ? 'font-bn' : ''}`}>
-            {lang === 'bn' 
-              ? 'আমরা চাই বাংলাদেশের প্রতিটি শিক্ষার্থীর জন্য শিক্ষার উপকরণ যেন সহজলভ্য হয়। অর্থাভাবে কোনো স্বপ্ন যেন অঙ্কুরেই বিনষ্ট না হয়।' 
-              : 'We want education materials to be accessible to every student in Bangladesh. No dream should be destroyed because of financial hardship.'}
-          </p>
-        </div>
-      </div>
-
-      {/* Community Stats/Trust Section */}
-      <section className="bg-emerald-50 rounded-[3rem] p-10 md:p-16 text-center space-y-10 border border-emerald-100/50">
-        <div className="max-w-2xl mx-auto space-y-4">
-          <h2 className="text-3xl md:text-4xl font-serif font-black text-black">
-            {lang === 'bn' ? 'একসাথে আমরা আরও শক্তিশালী' : 'Together we are stronger'}
+          <h2 className="text-3xl md:text-4xl font-serif font-black text-black leading-tight">
+            একটি বইয়ের অভাব যেন <br/> স্বপ্নকে থামিয়ে না দেয়
           </h2>
-          <p className={`text-zinc-500 font-medium ${lang === 'bn' ? 'font-bn' : ''}`}>
-            {lang === 'bn' 
-              ? 'বুকসোয়াপ একটি অলাভজনক মানসিকতা নিয়ে তৈরি করা হয়েছে। এটি কেবল একটি ওয়েবসাইট নয়, এটি একটি আন্দোলন।' 
-              : 'BookSwap was created with a non-profit mindset. It is not just a website; it is a movement.'}
+          <p className="text-lg text-zinc-600 font-medium leading-relaxed">
+            অনেক শিশুর মেধা আছে, স্বপ্ন আছে—কিন্তু একটি বইয়ের অভাবে সেই স্বপ্ন থেমে যায়। আমরা সেই গল্পগুলো বদলাতে চাই। 
           </p>
+          <p className="text-lg text-zinc-600 font-medium leading-relaxed">
+            Boibandhu বিশ্বাস করে, আপনার একটি পুরোনো বই কারও কাছে নতুন আলো হতে পারে। যে বইটি আপনার শেলফে পড়ে আছে, সেটিই হয়তো আরেকটি শিশুর পড়াশোনার সবচেয়ে বড় ভরসা।
+          </p>
+        </div>
+        <div className="bg-zinc-50 rounded-[3rem] p-10 border border-zinc-100 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-colors duration-700"></div>
+          <div className="space-y-6 relative z-10">
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+              <Sparkles className="w-6 h-6 text-accent" />
+            </div>
+            <p className="text-xl font-bold text-black leading-relaxed italic">
+              "এই প্ল্যাটফর্মের মাধ্যমে আপনি শুধু বই লেনদেন করছেন না— আপনি একজন শিক্ষার্থীর পাশে দাঁড়াচ্ছেন, একটি শিশুর ভবিষ্যতে বিনিয়োগ করছেন।"
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="space-y-12">
+        <div className="text-center">
+          <h3 className="text-2xl md:text-3xl font-serif font-black text-black mb-4">আমাদের মাধ্যমে আপনি—</h3>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          <div className="space-y-2">
-            <p className="text-4xl font-serif font-black text-accent">100%</p>
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{lang === 'bn' ? 'ফ্রি সার্ভিস' : 'Free Service'}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+              <BookOpen className="w-6 h-6 text-accent" />
+            </div>
+            <p className="text-lg font-bold text-black leading-tight">কম দামে প্রয়োজনীয় বই কিনতে পারবেন</p>
           </div>
-          <div className="space-y-2">
-            <p className="text-4xl font-serif font-black text-accent">8+</p>
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{lang === 'bn' ? 'বিভাগ কাভার করা হয়েছে' : 'Divisions Covered'}</p>
+
+          <div className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+            <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-6">
+              <ArrowRight className="w-6 h-6 text-orange-500" />
+            </div>
+            <p className="text-lg font-bold text-black leading-tight">নিজের পুরোনো বই বিক্রি করতে পারবেন</p>
           </div>
-          <div className="space-y-2">
-            <p className="text-4xl font-serif font-black text-accent">∞ </p>
-            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{lang === 'bn' ? 'শেয়ার করা জ্ঞান' : 'Knowledge Shared'}</p>
+
+          <div className="bg-zinc-900 p-8 rounded-[2.5rem] shadow-2xl space-y-4 hover:-translate-y-2 transition-transform duration-500">
+            <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center">
+              <BookHeart className="w-6 h-6 text-white" />
+            </div>
+            <p className="text-lg font-bold text-white leading-tight">
+              অথবা হৃদয় থেকে বই দান করে সুবিধাবঞ্চিত শিশু ও শিক্ষার্থীদের শিক্ষার পথ সহজ করতে পারবেন
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* Belief Section */}
+      <section className="bg-emerald-50 rounded-[3rem] p-10 md:p-16 border border-emerald-100 text-center space-y-10 relative overflow-hidden group">
+        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-white/40 rounded-full blur-3xl"></div>
+        <div className="max-w-2xl mx-auto space-y-6 relative z-10">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+            <GraduationCap className="w-8 h-8 text-accent" />
+          </div>
+          <h2 className="text-3xl md:text-5xl font-serif font-black text-black leading-tight">
+            আমরা বিশ্বাস করি—
+          </h2>
+          <div className="space-y-4">
+            <p className="text-xl md:text-2xl text-accent font-bold">
+              একটি বই দান মানে একটি স্বপ্নকে বাঁচিয়ে রাখা।
+            </p>
+            <p className="text-lg text-zinc-600 font-medium">
+              ছোট একটি দানও বড় একটি পরিবর্তন আনতে পারে।
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Tagline */}
+      <section className="text-center pt-10">
+        <div className="inline-block px-10 py-6 bg-white border border-zinc-100 rounded-[2rem] shadow-sm">
+          <p className="text-2xl md:text-3xl font-serif font-black text-black">
+            Boibandhu — <span className="text-accent italic">পুরোনো বই, নতুন স্বপ্ন।</span>
+          </p>
         </div>
       </section>
     </div>

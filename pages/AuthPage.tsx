@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { firebase } from '../firebase';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Zap, Eye, EyeOff, ChevronLeft, CheckCircle2, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
+import { useTranslation } from '../App';
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,10 +11,14 @@ const AuthPage: React.FC = () => {
   const [resetSent, setResetSent] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const { t, lang } = useTranslation();
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
@@ -21,6 +26,7 @@ const AuthPage: React.FC = () => {
     setNeedsVerification(false);
     setError('');
     setResetSent(false);
+    setConfirmPassword('');
   };
 
   const toggleForgotPassword = () => {
@@ -62,9 +68,15 @@ const AuthPage: React.FC = () => {
       return;
     }
 
-    if (!isLogin && password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
+    if (!isLogin) {
+      if (password.length < 6) {
+        setError(lang === 'bn' ? 'পাসওয়ার্ডটি কমপক্ষে ৬ অক্ষরের হতে হবে।' : 'Password must be at least 6 characters.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError(lang === 'bn' ? 'পাসওয়ার্ড দুটি মেলেনি।' : 'Passwords do not match.');
+        return;
+      }
     }
 
     setLoading(true);
@@ -189,7 +201,9 @@ const AuthPage: React.FC = () => {
 
               {!isLogin && !isForgotPassword && (
                 <div>
-                  <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">Full Name</label>
+                  <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                    {t('fullName')}
+                  </label>
                   <div className="relative group">
                     <User className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
                     <input required type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full pl-14 pr-4 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" placeholder="Enter your full name" />
@@ -198,7 +212,9 @@ const AuthPage: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">Email Address</label>
+                <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                  {t('emailAddress')}
+                </label>
                 <div className="relative group">
                   <Mail className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
                   <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full pl-14 pr-4 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" placeholder="student@gmail.com" />
@@ -206,38 +222,68 @@ const AuthPage: React.FC = () => {
               </div>
 
               {!isForgotPassword && (
-                <div>
-                  <div className="flex justify-between items-center mb-3 ml-1">
-                    <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em]">Password</label>
-                    {isLogin && (
+                <>
+                  <div>
+                    <div className="flex justify-between items-center mb-3 ml-1">
+                      <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em]">
+                        {t('password')}
+                      </label>
+                      {isLogin && (
+                        <button 
+                          type="button" 
+                          onClick={toggleForgotPassword} 
+                          className="text-[10px] font-black text-accent uppercase tracking-widest hover:text-accent-hover transition"
+                        >
+                          FORGOT?
+                        </button>
+                      )}
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
+                      <input 
+                        required 
+                        type={showPassword ? "text" : "password"} 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        className="w-full pl-14 pr-14 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" 
+                        placeholder="............" 
+                      />
                       <button 
-                        type="button" 
-                        onClick={toggleForgotPassword} 
-                        className="text-[10px] font-black text-accent uppercase tracking-widest hover:text-accent-hover transition"
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-accent transition-colors p-1"
                       >
-                        FORGOT?
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
-                    )}
+                    </div>
                   </div>
-                  <div className="relative group">
-                    <Lock className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
-                    <input 
-                      required 
-                      type={showPassword ? "text" : "password"} 
-                      value={password} 
-                      onChange={(e) => setPassword(e.target.value)} 
-                      className="w-full pl-14 pr-14 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" 
-                      placeholder="............" 
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-accent transition-colors p-1"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
+
+                  {!isLogin && (
+                    <div className="animate-in slide-in-from-top-2 duration-300">
+                      <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                        {t('confirmPassword')}
+                      </label>
+                      <div className="relative group">
+                        <Lock className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
+                        <input 
+                          required 
+                          type={showConfirmPassword ? "text" : "password"} 
+                          value={confirmPassword} 
+                          onChange={(e) => setConfirmPassword(e.target.value)} 
+                          className="w-full pl-14 pr-14 py-5 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl focus:ring-4 focus:ring-accent/10 outline-none font-bold text-black placeholder:text-zinc-300 transition-all" 
+                          placeholder="............" 
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-accent transition-colors p-1"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               <button 
@@ -245,7 +291,7 @@ const AuthPage: React.FC = () => {
                 type="submit" 
                 className="w-full bg-accent text-white py-5.5 md:py-6 rounded-full font-black text-sm hover:bg-accent-hover transition-all shadow-xl shadow-accent/20 flex items-center justify-center gap-3 mt-6 disabled:opacity-50 uppercase tracking-[0.25em] transform active:scale-[0.98]"
               >
-                {loading ? 'Processing...' : (isForgotPassword ? 'Send Link' : (isLogin ? 'Sign In' : 'Join Now'))}
+                {loading ? 'Processing...' : (isForgotPassword ? 'Send Link' : (isLogin ? t('signIn') : t('joinNow')))}
                 {!loading && <ArrowRight className="w-5 h-5" />}
               </button>
 

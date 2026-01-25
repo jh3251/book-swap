@@ -4,7 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
 import { BookListing, UserProfile } from '../types';
 import BookCard from '../components/BookCard';
-import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, X, Save, Loader2, CheckCircle2 } from 'lucide-react';
+import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, X, Save, Loader2, CheckCircle2, Info, AlertTriangle } from 'lucide-react';
+import { useTranslation } from '../App';
 
 interface DashboardPageProps {
   user: UserProfile;
@@ -16,7 +17,11 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
   const [savedListings, setSavedListings] = useState<BookListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showDeleteProfileConfirm, setShowDeleteProfileConfirm] = useState(false);
+  const [deletingProfile, setDeletingProfile] = useState(false);
   
+  const { t, lang } = useTranslation();
+
   // Account settings state - photo related state removed
   const [name, setName] = useState(user.displayName);
   const [username, setUsername] = useState(user.username || '');
@@ -75,6 +80,25 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
       alert("Failed to update profile.");
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    setDeletingProfile(true);
+    try {
+      await firebase.auth.deleteAccount();
+      navigate('/');
+    } catch (err: any) {
+      if (err.code === 'auth/requires-recent-login') {
+        alert(lang === 'bn' 
+          ? 'এই অ্যাকশনটির জন্য সাম্প্রতিক লগইন প্রয়োজন। অনুগ্রহ করে লগআউট করে আবার লগইন করুন এবং চেষ্টা করুন।' 
+          : 'This sensitive action requires a recent login. Please log out, log back in, and try again.');
+      } else {
+        alert(lang === 'bn' ? 'অ্যাকাউন্ট ডিলিট করতে সমস্যা হয়েছে।' : 'Failed to delete account.');
+      }
+    } finally {
+      setDeletingProfile(false);
+      setShowDeleteProfileConfirm(false);
     }
   };
 
@@ -154,6 +178,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               </Link>
             </div>
 
+            {/* Deletion Reminder Text */}
+            <div className="bg-orange-50/60 border border-orange-100/50 rounded-2xl px-6 py-4 flex items-center gap-4 animate-in slide-in-from-top-2 duration-500">
+               <Info className="w-5 h-5 text-orange-400 flex-shrink-0" />
+               <p className={`text-[11px] md:text-[13px] font-bold text-orange-800 leading-relaxed ${lang === 'bn' ? 'font-bn' : ''}`}>
+                 {t('deleteReminder')}
+               </p>
+            </div>
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {[...Array(2)].map((_, i) => (
@@ -229,7 +261,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
             <form onSubmit={handleUpdateProfile} className="space-y-10 md:space-y-12 max-w-xl">
               <div className="space-y-8 md:space-y-10">
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">FULL NAME</label>
+                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                    {t('fullName')}
+                  </label>
                   <input 
                     type="text" 
                     value={name} 
@@ -240,7 +274,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">USER NAME</label>
+                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                    {t('userName')}
+                  </label>
                   <div className="relative">
                     <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-emerald-300 text-lg">@</span>
                     <input 
@@ -254,7 +290,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">REGISTERED EMAIL</label>
+                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                    {t('emailAddress')}
+                  </label>
                   <input 
                     type="text" 
                     value={user.email} 
@@ -271,7 +309,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                   className="w-full sm:w-auto bg-black text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-xl shadow-black/20 hover:bg-zinc-800 transition disabled:opacity-50"
                 >
                   {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Save Profile
+                  {t('saveProfile')}
                 </button>
                 
                 {updateSuccess && (
@@ -280,12 +318,23 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                   </div>
                 )}
               </div>
+
+              <div className="pt-10 md:pt-14 border-t border-emerald-50">
+                <button 
+                  type="button" 
+                  onClick={() => setShowDeleteProfileConfirm(true)}
+                  className="text-red-600 hover:text-red-700 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {t('deleteProfile')}
+                </button>
+              </div>
             </form>
           </div>
         )}
       </main>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal for Listings */}
       {deletingId && (activeTab === 'ads') && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div 
@@ -321,6 +370,50 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 className="w-full bg-emerald-50 text-black py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-100 transition border border-emerald-100"
                >
                  Cancel
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteProfileConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+            onClick={() => setShowDeleteProfileConfirm(false)}
+          ></div>
+          <div className="relative bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl w-full max-w-md p-8 md:p-12 text-center animate-in zoom-in duration-300">
+             <button 
+              onClick={() => setShowDeleteProfileConfirm(false)}
+              className="absolute top-6 right-6 p-2 text-zinc-300 hover:text-black transition"
+             >
+               <X className="w-6 h-6" />
+             </button>
+
+             <div className="w-16 h-16 md:w-20 md:h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 border-4 border-red-100">
+                <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 text-red-500" />
+             </div>
+
+             <h3 className="text-2xl md:text-3xl font-serif font-black text-black mb-4">{t('confirmDeleteProfile')}</h3>
+             <p className="text-zinc-500 font-bold text-[13px] md:text-sm leading-relaxed mb-10 px-4">
+               {t('deleteProfileWarning')}
+             </p>
+
+             <div className="flex flex-col gap-4">
+               <button 
+                onClick={handleDeleteProfile}
+                disabled={deletingProfile}
+                className="w-full bg-red-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-red-600/20 hover:bg-red-700 transition flex items-center justify-center gap-3"
+               >
+                 {deletingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                 {lang === 'bn' ? 'স্থায়ীভাবে ডিলিট করুন' : 'Confirm Permanent Deletion'}
+               </button>
+               <button 
+                onClick={() => setShowDeleteProfileConfirm(false)}
+                className="w-full bg-zinc-100 text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-200 transition"
+               >
+                 {lang === 'bn' ? 'ফিরে যান' : 'Go Back'}
                </button>
              </div>
           </div>

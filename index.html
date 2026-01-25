@@ -26,25 +26,30 @@
               bn: ['"Hind Siliguri"', 'sans-serif'],
             },
             keyframes: {
-              'ring': {
-                '0%, 100%': { transform: 'rotate(0deg)' },
-                '10%, 30%': { transform: 'rotate(10deg)' },
-                '20%, 40%': { transform: 'rotate(-10deg)' },
-                '50%': { transform: 'rotate(0deg)' },
+              'reveal-up': {
+                '0%': { transform: 'translateY(100%)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
               },
-              'fade-up': {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
+              'float': {
+                '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
               },
-              'scale-in': {
-                '0%': { opacity: '0', transform: 'scale(0.95)' },
-                '100%': { opacity: '1', transform: 'scale(1)' },
+              'glimmer': {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' },
+              },
+              'pulse-soft': {
+                '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                '50%': { opacity: '0.8', transform: 'scale(0.98)' },
               }
             },
             animation: {
-              'ring': 'ring 2s ease-in-out infinite',
-              'fade-up': 'fade-up 0.6s ease-out forwards',
-              'scale-in': 'scale-in 0.4s ease-out forwards',
+              'reveal-up': 'reveal-up 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards',
+              'float-slow': 'float 20s ease-in-out infinite',
+              'float-medium': 'float 15s ease-in-out infinite reverse',
+              'glimmer': 'glimmer 2s infinite',
+              'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
             }
           },
         },
@@ -67,100 +72,46 @@
         font-family: 'Hind Siliguri', 'Inter', sans-serif;
       }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #e2e2e2;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #ccc;
-      }
-      
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif;
-        font-weight: 800;
-        color: #111827;
+      .text-mask {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
       }
 
-      .glass {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-      }
-
-      .glass-dark {
-        background: rgba(17, 24, 39, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      @keyframes reveal-up {
-        0% { opacity: 0; transform: translateY(60px); }
-        100% { opacity: 1; transform: translateY(0); }
-      }
-      
-      @keyframes float-gentle {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-      }
-
-      .reveal-1 { animation: reveal-up 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
-      .reveal-2 { animation: reveal-up 1s 0.2s cubic-bezier(0.19, 1, 0.22, 1) both; }
-      .reveal-3 { animation: reveal-up 1s 0.4s cubic-bezier(0.19, 1, 0.22, 1) both; }
-      
-      .hover-lift {
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .hover-lift:hover {
-        transform: translateY(-8px);
-      }
-
-      /* Smooth interaction for forms */
-      input:focus, select:focus, textarea:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
-      }
-
-      /* Staggered children animation utility */
-      .stagger-children > * {
-        opacity: 0;
-        animation: fade-up 0.6s ease-out forwards;
-      }
-      .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-      .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-      .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-      .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-      .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-      
-      /* Stylized blob for logo */
-      .logo-blob {
+      .glimmer-btn {
         position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        overflow: hidden;
       }
-      .logo-blob::after {
+      .glimmer-btn::after {
         content: '';
         position: absolute;
-        inset: -4px;
-        background: #059669;
-        opacity: 0.15;
-        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-        z-index: -1;
-        animation: blob-pulse 8s ease-in-out infinite;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transform: translateX(-100%);
+        transition: 0.5s;
       }
-      @keyframes blob-pulse {
-        0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: scale(1); }
-        50% { border-radius: 60% 40% 30% 70% / 50% 60% 40% 60%; transform: scale(1.1); }
+      .glimmer-btn:hover::after {
+        animation: glimmer 1.5s infinite;
       }
+
+      .hover-lift {
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .hover-lift:hover {
+        transform: translateY(-12px) scale(1.02);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
     </style>
     <script type="importmap">
 {

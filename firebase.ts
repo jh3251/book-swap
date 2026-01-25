@@ -9,6 +9,7 @@ import {
   updateProfile,
   sendPasswordResetEmail,
   sendEmailVerification,
+  deleteUser,
   User as FirebaseUser
 } from "firebase/auth";
 import { 
@@ -30,7 +31,8 @@ import {
   getStorage, 
   ref, 
   uploadBytes, 
-  getDownloadURL 
+  getDownloadURL,
+  deleteObject
 } from "firebase/storage";
 import { BookListing, UserProfile } from './types';
 
@@ -213,6 +215,43 @@ export const firebase = {
     signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
       await sendPasswordResetEmail(auth, email);
+    },
+    deleteAccount: async () => {
+      const user = auth.currentUser;
+      if (!user) throw new Error("No active session found");
+
+      const uid = user.uid;
+
+      // 1. Fetch all listings by this user
+      const q = query(collection(db, "bookListings"), where("sellerId", "==", uid));
+      const snapshot = await getDocs(q);
+      const userListings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BookListing));
+
+      // 2. Delete all book listings and their images
+      for (const listing of userListings) {
+        await firebase.db.deleteListing(listing.id);
+      }
+
+      // 3. Delete user profile photo from storage if exists
+      if (user.photoURL) {
+        try {
+          const profilePicRef = ref(storage, `profiles/${uid}`);
+          await deleteObject(profilePicRef);
+        } catch (e) {
+          console.warn("Profile pic deletion failed or didn't exist");
+        }
+      }
+
+      // 4. Delete user document from Firestore
+      try {
+        await deleteDoc(doc(db, "users", uid));
+      } catch (e) {
+        console.warn("User doc deletion failed");
+      }
+
+      // 5. Delete the authentication user profile
+      // Note: This often requires a recent login.
+      await deleteUser(user);
     }
   },
 
@@ -276,6 +315,17 @@ export const firebase = {
         });
       }
     },
+    deleteStorageImage: async (url: string) => {
+      if (url && url.includes('firebasestorage.googleapis.com')) {
+        try {
+          const imageRef = ref(storage, url);
+          await withTimeout(deleteObject(imageRef), 3000);
+          console.log("Storage image deleted successfully");
+        } catch (e) {
+          console.warn("Could not delete image from storage (might already be gone)");
+        }
+      }
+    },
     addListing: async (listing: Omit<BookListing, 'id' | 'createdAt'>, imageFile?: File) => {
       const createdAt = Date.now();
       let imageUrl = listing.imageUrl || "";
@@ -296,8 +346,19 @@ export const firebase = {
       return localBook;
     },
     updateListing: async (id: string, data: Partial<BookListing>, imageFile?: File) => {
+      const existingListing = mockStore.listings.find(l => l.id === id);
+      const oldImageUrl = existingListing?.imageUrl;
+      
       let imageUrl = data.imageUrl;
-      if (imageFile) imageUrl = await firebase.db.uploadBookImage(imageFile);
+      
+      // If a new image is provided, upload it and delete the old one to save space
+      if (imageFile) {
+        imageUrl = await firebase.db.uploadBookImage(imageFile);
+        if (oldImageUrl) {
+          firebase.db.deleteStorageImage(oldImageUrl);
+        }
+      }
+      
       const finalData = { ...data };
       if (imageUrl) finalData.imageUrl = imageUrl;
 
@@ -313,9 +374,24 @@ export const firebase = {
       }
     },
     deleteListing: async (id: string) => {
+      const listingToDelete = mockStore.listings.find(l => l.id === id);
+      const imageUrl = listingToDelete?.imageUrl;
+
+      // Update local UI immediately
       mockStore.save(mockStore.listings.filter((l) => l.id !== id));
+
+      // Handle cloud cleanup
       if (!id.startsWith('local_')) {
-        try { await withTimeout(deleteDoc(doc(db, "bookListings", id)), 3000); } catch (e) {}
+        try {
+          // 1. Delete the image from storage first to free up space
+          if (imageUrl) {
+            await firebase.db.deleteStorageImage(imageUrl);
+          }
+          // 2. Delete the database record
+          await withTimeout(deleteDoc(doc(db, "bookListings", id)), 3000);
+        } catch (e) {
+          console.error("Cloud deletion failed", e);
+        }
       }
     },
     getUserListings: async (uid: string) => {
