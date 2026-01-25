@@ -130,7 +130,7 @@ const AuthPage: React.FC = () => {
               href="https://mail.google.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full bg-accent text-white py-4.5 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-accent-hover transition shadow-xl shadow-accent/20 uppercase tracking-widest"
+              className="w-full bg-accent text-white py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-accent-hover transition shadow-xl shadow-accent/20 uppercase tracking-widest"
             >
               Open Gmail <ExternalLink className="w-4 h-4" />
             </a>
@@ -138,7 +138,7 @@ const AuthPage: React.FC = () => {
             <button 
               onClick={checkVerificationStatus}
               disabled={loading}
-              className="w-full bg-white text-black border-2 border-emerald-100 py-4.5 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-50 transition uppercase tracking-widest disabled:opacity-50"
+              className="w-full bg-white text-black border-2 border-emerald-100 py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-50 transition uppercase tracking-widest disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh Status
@@ -293,7 +293,7 @@ const AuthPage: React.FC = () => {
               <button 
                 disabled={loading} 
                 type="submit" 
-                className="w-full bg-accent text-white py-5.5 md:py-6 rounded-full font-black text-sm hover:bg-accent-hover transition-all shadow-xl shadow-accent/20 flex items-center justify-center gap-3 mt-6 disabled:opacity-50 uppercase tracking-[0.25em] transform active:scale-[0.98]"
+                className="w-full bg-accent text-white py-6 rounded-full font-black text-sm md:text-base hover:bg-accent-hover transition-all shadow-xl shadow-accent/30 flex items-center justify-center gap-3 mt-8 disabled:opacity-50 uppercase tracking-[0.25em] transform active:scale-[0.98]"
               >
                 {loading ? 'Processing...' : (isForgotPassword ? 'Send Link' : (isLogin ? t('signIn') : t('joinNow')))}
                 {!loading && <ArrowRight className="w-5 h-5" />}

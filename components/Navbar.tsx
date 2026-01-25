@@ -163,7 +163,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               </button>
             </>
           ) : (
-            <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="block p-5 bg-zinc-900 text-white rounded-xl font-semibold text-center">
+            <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="block p-6 bg-zinc-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-center shadow-lg">
               {t('signIn')}
             </Link>
           )}

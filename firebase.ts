@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -84,19 +83,13 @@ const compressImage = async (file: File, maxWidth: number = 1000, quality: numbe
 };
 
 // Helper to force a timeout on cloud operations
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 5000): Promise<T> => {
+const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) => 
-      setTimeout(() => reject(new Error('Cloud operation timed out')), timeoutMs)
+      setTimeout(() => reject(new Error('Operation timed out')), timeoutMs)
     )
   ]);
-};
-
-const listeners = new Set<(listings: BookListing[]) => void>();
-const notifyListeners = () => {
-  const data = [...mockStore.listings].sort((a, b) => b.createdAt - a.createdAt);
-  listeners.forEach(cb => cb(data));
 };
 
 const mapUser = async (user: FirebaseUser): Promise<UserProfile & { emailVerified: boolean }> => {
@@ -117,23 +110,6 @@ const mapUser = async (user: FirebaseUser): Promise<UserProfile & { emailVerifie
     emailVerified: user.emailVerified,
     createdAt: user.metadata.creationTime ? new Date(user.metadata.creationTime).getTime() : Date.now()
   };
-};
-
-const getStoredListings = (): BookListing[] => {
-  try {
-    const stored = localStorage.getItem('bk_listings_v5');
-    if (stored) return JSON.parse(stored);
-  } catch (e) {}
-  return [];
-};
-
-const mockStore = {
-  listings: getStoredListings(),
-  save: (data: BookListing[]) => {
-    mockStore.listings = data;
-    localStorage.setItem('bk_listings_v5', JSON.stringify(data));
-    notifyListeners();
-  }
 };
 
 export const firebase = {
@@ -199,16 +175,13 @@ export const firebase = {
       
       await updateProfile(user, { displayName: name, photoURL });
       
-      // Update firestore document too
       try {
         await updateDoc(doc(db, "users", user.uid), {
           displayName: name,
           photoURL: photoURL || undefined,
           username: username || ""
         });
-      } catch (e) {
-        console.warn("Firestore user update failed, syncing locally");
-      }
+      } catch (e) {}
 
       return await mapUser(user);
     },
@@ -219,214 +192,88 @@ export const firebase = {
     deleteAccount: async () => {
       const user = auth.currentUser;
       if (!user) throw new Error("No active session found");
-
       const uid = user.uid;
-
-      // 1. Fetch all listings by this user
       const q = query(collection(db, "bookListings"), where("sellerId", "==", uid));
       const snapshot = await getDocs(q);
-      const userListings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BookListing));
-
-      // 2. Delete all book listings and their images
-      for (const listing of userListings) {
-        await firebase.db.deleteListing(listing.id);
+      for (const d of snapshot.docs) {
+        await firebase.db.deleteListing(d.id);
       }
-
-      // 3. Delete user profile photo from storage if exists
       if (user.photoURL) {
         try {
-          const profilePicRef = ref(storage, `profiles/${uid}`);
-          await deleteObject(profilePicRef);
-        } catch (e) {
-          console.warn("Profile pic deletion failed or didn't exist");
-        }
+          await deleteObject(ref(storage, `profiles/${uid}`));
+        } catch (e) {}
       }
-
-      // 4. Delete user document from Firestore
-      try {
-        await deleteDoc(doc(db, "users", uid));
-      } catch (e) {
-        console.warn("User doc deletion failed");
-      }
-
-      // 5. Delete the authentication user profile
-      // Note: This often requires a recent login.
+      try { await deleteDoc(doc(db, "users", uid)); } catch (e) {}
       await deleteUser(user);
     }
   },
 
   db: {
-    exportData: () => {
-      const blob = new Blob([JSON.stringify(mockStore.listings)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `bookswap_listings_${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-    },
-    importData: (jsonStr: string) => {
-      try {
-        const data = JSON.parse(jsonStr);
-        if (Array.isArray(data)) {
-          mockStore.save(data);
-          return true;
-        }
-      } catch (e) {
-        console.error("Import failed", e);
-      }
-      return false;
-    },
     subscribeToListings: (callback: (listings: BookListing[]) => void) => {
-      listeners.add(callback);
-      callback([...mockStore.listings].sort((a, b) => b.createdAt - a.createdAt));
-
-      try {
-        const q = query(collection(db, "bookListings"), orderBy("createdAt", "desc"));
-        const unsub = onSnapshot(q, (snapshot) => {
-          if (!snapshot.empty) {
-            const listings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as BookListing));
-            mockStore.listings = listings;
-            callback(listings);
-          }
-        }, (error) => {
-          console.warn("Firestore subscription inactive (Local Mode Active)");
-        });
-
-        return () => {
-          unsub();
-          listeners.delete(callback);
-        };
-      } catch (e) {
-        return () => listeners.delete(callback);
-      }
+      const q = query(collection(db, "bookListings"), orderBy("createdAt", "desc"));
+      return onSnapshot(q, (snapshot) => {
+        const listings = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as BookListing));
+        callback(listings);
+      }, (error) => {
+        console.error("Firestore Error:", error);
+      });
     },
     uploadBookImage: async (file: File) => {
-      try {
-        const compressed = await compressImage(file, 1000, 0.7);
-        const storageRef = ref(storage, `books/${Date.now()}_${file.name}`);
-        await withTimeout(uploadBytes(storageRef, compressed), 3000);
-        return await getDownloadURL(storageRef);
-      } catch (e) {
-        console.warn("Storage upload failed, using local URL");
-        return new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(file);
-        });
-      }
+      const compressed = await compressImage(file, 1000, 0.7);
+      const storageRef = ref(storage, `books/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, compressed);
+      return await getDownloadURL(storageRef);
     },
     deleteStorageImage: async (url: string) => {
       if (url && url.includes('firebasestorage.googleapis.com')) {
         try {
           const imageRef = ref(storage, url);
-          await withTimeout(deleteObject(imageRef), 3000);
-          console.log("Storage image deleted successfully");
-        } catch (e) {
-          console.warn("Could not delete image from storage (might already be gone)");
-        }
+          await deleteObject(imageRef);
+        } catch (e) {}
       }
     },
     addListing: async (listing: Omit<BookListing, 'id' | 'createdAt'>, imageFile?: File) => {
       const createdAt = Date.now();
       let imageUrl = listing.imageUrl || "";
       if (imageFile) imageUrl = await firebase.db.uploadBookImage(imageFile);
-      const finalListing = { ...listing, imageUrl, createdAt };
-
-      const tempId = 'local_' + Math.random().toString(36).substr(2, 9);
-      const localBook = { id: tempId, ...finalListing } as BookListing;
-      
-      mockStore.save([localBook, ...mockStore.listings]);
-
-      withTimeout(addDoc(collection(db, "bookListings"), finalListing), 5000)
-        .then(() => {
-          console.log("Cloud sync successful");
-        })
-        .catch(e => console.warn("Background cloud sync failed.", e));
-
-      return localBook;
+      const docRef = await addDoc(collection(db, "bookListings"), { ...listing, imageUrl, createdAt });
+      return { id: docRef.id, ...listing, imageUrl, createdAt } as BookListing;
     },
     updateListing: async (id: string, data: Partial<BookListing>, imageFile?: File) => {
-      const existingListing = mockStore.listings.find(l => l.id === id);
-      const oldImageUrl = existingListing?.imageUrl;
-      
       let imageUrl = data.imageUrl;
-      
-      // If a new image is provided, upload it and delete the old one to save space
       if (imageFile) {
         imageUrl = await firebase.db.uploadBookImage(imageFile);
-        if (oldImageUrl) {
-          firebase.db.deleteStorageImage(oldImageUrl);
-        }
+        const existing = await firebase.db.getListingById(id);
+        if (existing?.imageUrl) await firebase.db.deleteStorageImage(existing.imageUrl);
       }
-      
       const finalData = { ...data };
       if (imageUrl) finalData.imageUrl = imageUrl;
-
-      const newListings = mockStore.listings.map(l => l.id === id ? { ...l, ...finalData } : l);
-      mockStore.save(newListings);
-
-      if (!id.startsWith('local_')) {
-        try { 
-          await withTimeout(updateDoc(doc(db, "bookListings", id), finalData), 5000); 
-        } catch (e) {
-          console.warn("Firestore update background sync delayed.", e);
-        }
-      }
+      await updateDoc(doc(db, "bookListings", id), finalData);
     },
     deleteListing: async (id: string) => {
-      const listingToDelete = mockStore.listings.find(l => l.id === id);
-      const imageUrl = listingToDelete?.imageUrl;
-
-      // Update local UI immediately
-      mockStore.save(mockStore.listings.filter((l) => l.id !== id));
-
-      // Handle cloud cleanup
-      if (!id.startsWith('local_')) {
-        try {
-          // 1. Delete the image from storage first to free up space
-          if (imageUrl) {
-            await firebase.db.deleteStorageImage(imageUrl);
-          }
-          // 2. Delete the database record
-          await withTimeout(deleteDoc(doc(db, "bookListings", id)), 3000);
-        } catch (e) {
-          console.error("Cloud deletion failed", e);
-        }
-      }
+      const listing = await firebase.db.getListingById(id);
+      if (listing?.imageUrl) await firebase.db.deleteStorageImage(listing.imageUrl);
+      await deleteDoc(doc(db, "bookListings", id));
     },
     getUserListings: async (uid: string) => {
-      try {
-        const q = query(collection(db, "bookListings"), where("sellerId", "==", uid));
-        const snapshot = await withTimeout(getDocs(q), 5000) as any;
-        const cloudData = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() } as BookListing));
-        return cloudData.length > 0 ? cloudData : mockStore.listings.filter(l => l.sellerId === uid);
-      } catch (e) {
-        return mockStore.listings.filter((l) => l.sellerId === uid);
-      }
+      const q = query(collection(db, "bookListings"), where("sellerId", "==", uid));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as BookListing));
     },
     getListingById: async (id: string) => {
-      try {
-        const snapshot = await withTimeout(getDoc(doc(db, "bookListings", id)), 3000) as any;
-        if (snapshot.exists()) return { id: snapshot.id, ...snapshot.data() } as BookListing;
-      } catch (e) {}
-      return mockStore.listings.find((l) => l.id === id);
+      const snapshot = await getDoc(doc(db, "bookListings", id));
+      if (snapshot.exists()) return { id: snapshot.id, ...snapshot.data() } as BookListing;
+      return null;
     },
     getUserById: async (uid: string) => {
-      try {
-        const snapshot = await withTimeout(getDoc(doc(db, "users", uid)), 3000) as any;
-        if (snapshot.exists()) return snapshot.data() as UserProfile;
-      } catch (e) {}
+      const snapshot = await getDoc(doc(db, "users", uid));
+      if (snapshot.exists()) return snapshot.data() as UserProfile;
       return undefined;
     },
     getListings: async () => {
-      try {
-        const q = query(collection(db, "bookListings"), orderBy("createdAt", "desc"));
-        const snapshot = await withTimeout(getDocs(q), 5000) as any;
-        const cloudData = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() } as BookListing));
-        return cloudData.length > 0 ? cloudData : [...mockStore.listings].sort((a, b) => b.createdAt - a.createdAt);
-      } catch (e) {
-        return [...mockStore.listings].sort((a, b) => b.createdAt - a.createdAt);
-      }
+      const q = query(collection(db, "bookListings"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as BookListing));
     }
   }
 };

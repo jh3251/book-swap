@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { firebase } from './firebase';
 import { UserProfile } from './types';
 import Navbar from './components/Navbar';
@@ -10,7 +10,7 @@ import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
 import AboutPage from './pages/AboutPage';
-import { ExternalLink, Loader2, Globe } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Language, translations } from './translations';
 
 interface LanguageContextType {
@@ -27,10 +27,20 @@ export const useTranslation = () => {
   return context;
 };
 
+// Utility component to reset scroll position on route change
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+};
+
 const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(false);
   const [lang, setLang] = useState<Language>(() => {
     const saved = localStorage.getItem('bk_lang');
     return (saved as Language) || 'en';
@@ -46,30 +56,17 @@ const App: React.FC = () => {
       setUser(currUser);
       setLoading(false);
     });
-
-    firebase.db.getListings()
-      .then(() => {
-        setApiError(false);
-      })
-      .catch(e => {
-        if (e.code === 'permission-denied' || e.code === 'unavailable') {
-          setApiError(true);
-        }
-      });
-
     return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await firebase.auth.signOut();
-    window.dispatchEvent(new Event('auth-change'));
   };
 
   const t = (key: string): string => {
     if (!key) return '';
     const localizedSet = translations[lang] as any;
     const englishSet = translations['en'] as any;
-    // Fallback order: Requested language -> English -> Original Key
     return localizedSet[key] || englishSet[key] || key;
   };
 
@@ -92,39 +89,21 @@ const App: React.FC = () => {
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       <HashRouter>
+        <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Navbar user={user} onLogout={handleLogout} />
           
           <main className="flex-grow pt-24 md:pt-32">
-            {apiError && (
-              <div className="container mx-auto px-4 mb-4">
-                <div className="bg-black text-white px-6 py-3 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black shadow-xl uppercase tracking-[0.15em]">
-                  <Globe className="w-4 h-4 text-emerald-400" />
-                  <span>Local Community Mode Active</span>
-                  <a 
-                    href="https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=book-5963d" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-emerald-400 hover:text-white transition border-b border-emerald-400/30"
-                  >
-                    Sync to Cloud <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
-            )}
-            
             <div className="container mx-auto px-4">
-              <div className="container mx-auto px-4">
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/books/:id" element={<BookDetailsPage />} />
-                  <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
-                  <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
-                  <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
-                  <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
-                </Routes>
-              </div>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/books/:id" element={<BookDetailsPage />} />
+                <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
+                <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
+                <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+              </Routes>
             </div>
           </main>
           <Footer />
