@@ -123,7 +123,7 @@ const HomePage: React.FC = () => {
           <div className="min-h-[6rem] sm:min-h-[8rem] md:min-h-[10rem] lg:min-h-[12rem] flex items-center justify-center overflow-visible perspective-1000">
             <h1 
               key={heroIdx}
-              className={`text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-tight tracking-tight animate-reveal-up px-2 py-4 md:py-8 text-3d flex items-center justify-center gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-2 md:py-8 text-3d flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
               style={{ transformStyle: 'preserve-3d' }}
             >
               {currentHero.parts.map((part, i) => (
