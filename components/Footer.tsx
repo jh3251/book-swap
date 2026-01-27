@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
                   {lang === 'bn' ? 'বইসাথী (BoiSathi)' : 'BoiSathi.com'}
                 </span>
               </div>
-              <p className="max-w-md text-[12px] leading-relaxed font-medium text-zinc-500">
+              <p className="max-w-md text-[12px] leading-relaxed font-medium text-white">
                 {t('footerDesc')}
               </p>
               <div className="flex space-x-4 mt-8">
@@ -54,15 +54,15 @@ const Footer: React.FC = () => {
                   href="https://www.facebook.com/profile.php?id=61587380480244" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center hover:bg-accent hover:text-white transition group"
+                  className="w-9 h-9 bg-accent rounded-xl flex items-center justify-center hover:opacity-80 hover:scale-110 transition-all duration-300 shadow-lg shadow-accent/20"
                 >
-                  <Facebook className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition" />
+                  <Facebook className="w-4 h-4 text-white" />
                 </a>
                 <a 
                   href="#" 
-                  className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center hover:bg-accent hover:text-white transition group"
+                  className="w-9 h-9 bg-accent rounded-xl flex items-center justify-center hover:opacity-80 hover:scale-110 transition-all duration-300 shadow-lg shadow-accent/20"
                 >
-                  <Instagram className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition" />
+                  <Instagram className="w-4 h-4 text-white" />
                 </a>
               </div>
             </div>
@@ -71,9 +71,11 @@ const Footer: React.FC = () => {
               <h4 className="text-white font-serif font-black uppercase text-[10px] mb-8">
                 {t('quickNavigation')}
               </h4>
-              <ul className="space-y-3 text-[12px] font-bold">
-                <li><Link to="/about" className="hover:text-white transition text-zinc-500">{t('about')}</Link></li>
-              </ul>
+              <div className="flex flex-col gap-2.5">
+                <Link to="/about" className="w-full bg-accent text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-accent-hover transition text-center shadow-lg shadow-accent/20">
+                  {t('about')}
+                </Link>
+              </div>
             </div>
             
             <div>
@@ -91,7 +93,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
           
-          <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-black uppercase text-zinc-600">
+          <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-black uppercase text-white">
             <p>{t('copyright')}</p>
             <p className="flex items-center gap-1.5">
               {t('craftedFor')} <span className="text-accent">{t('knowledgeExchange')}</span>

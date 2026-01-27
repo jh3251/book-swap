@@ -335,33 +335,48 @@ const HomePage: React.FC = () => {
               ))}
             </div>
             
-            {(hasMore || hasPrevious) && (
-              <div className="flex flex-col items-center gap-6 pt-8">
-                <div className="flex items-center gap-4">
+            {totalPages > 1 && (
+              <div className="flex flex-col items-center gap-8 pt-8">
+                <div className="flex flex-wrap items-center justify-center gap-4">
                   {hasPrevious && (
                     <button 
                       onClick={handlePrevious}
-                      className="group relative flex items-center gap-3 px-10 py-5 bg-white text-zinc-900 border-2 border-zinc-100 rounded-3xl font-black text-xs uppercase hover:bg-zinc-50 transition-all shadow-xl shadow-zinc-100/20 active:scale-95"
+                      className="group relative flex items-center gap-3 px-8 py-4 bg-white text-zinc-900 border-2 border-zinc-100 rounded-2xl font-black text-[10px] uppercase hover:bg-zinc-50 transition-all shadow-lg active:scale-95"
                     >
-                      <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                      {lang === 'bn' ? 'আগের পেজ' : 'Previous'}
+                      <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                      {lang === 'bn' ? 'আগে' : 'Prev'}
                     </button>
                   )}
+                  
+                  <div className="flex items-center gap-2">
+                    {[...Array(totalPages)].map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setCurrentPage(i);
+                          document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className={`w-10 h-10 rounded-xl text-[11px] font-black uppercase transition-all flex items-center justify-center border ${
+                          currentPage === i 
+                            ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl shadow-zinc-900/20' 
+                            : 'bg-white text-zinc-400 border-zinc-100 hover:border-zinc-300'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
                   
                   {hasMore && (
                     <button 
                       onClick={handleNext}
-                      className="group relative flex items-center gap-3 px-12 py-5 bg-zinc-900 text-white rounded-3xl font-black text-xs uppercase hover:bg-black transition-all shadow-2xl shadow-zinc-900/20 active:scale-95"
+                      className="group relative flex items-center gap-3 px-8 py-4 bg-zinc-900 text-white rounded-2xl font-black text-[10px] uppercase hover:bg-black transition-all shadow-xl active:scale-95"
                     >
-                      {lang === 'bn' ? 'পরবর্তী পেজ' : 'Next'}
-                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      {lang === 'bn' ? 'পরে' : 'Next'}
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                   )}
                 </div>
-                
-                <p className="text-slate-400 text-[10px] font-black uppercase">
-                  {lang === 'bn' ? `পেজ ${currentPage + 1} / ${totalPages}` : `Page ${currentPage + 1} of ${totalPages}`}
-                </p>
               </div>
             )}
           </div>
