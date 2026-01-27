@@ -40,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       </button>
       <button 
         onClick={() => setLang('bn')}
-        className={`px-4 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black transition-all duration-300 ${
+        className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black transition-all duration-300 ${
           lang === 'bn' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
         }`}
       >
@@ -56,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       <div className="container mx-auto max-w-7xl px-3 md:px-4">
         <div className="bg-white/90 backdrop-blur-xl shadow-xl shadow-black/5 border border-emerald-50 rounded-full px-3 md:px-6 h-14 md:h-16 flex items-center justify-between transition-all duration-500">
           
-          {/* Logo Section - Now visible on mobile with Bengali text */}
+          {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-2 group flex-shrink-0">
             <div className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center">
               <img 
@@ -73,7 +73,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
 
           {/* Center/Right Section */}
           <div className="flex items-center gap-2 md:gap-8">
-            <div className="hidden sm:block">
+            {/* Language Toggle now always visible to replace Sell button on mobile */}
+            <div>
               <LanguageToggle />
             </div>
 
@@ -87,10 +88,10 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Link to="/sell" className="bg-accent text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full hover:bg-accent-hover transition flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-black uppercase shadow-lg shadow-accent/20">
+              {/* Sell button hidden on mobile (below sm) */}
+              <Link to="/sell" className="hidden sm:flex bg-accent text-white px-3 md:px-5 py-2 md:py-2.5 rounded-full hover:bg-accent-hover transition items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-black uppercase shadow-lg shadow-accent/20">
                 <PlusCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span className="hidden xs:inline">{t('sellABook')}</span>
-                <span className="xs:hidden">Sell</span>
+                <span>{t('sellABook')}</span>
               </Link>
 
               {user ? (
@@ -121,9 +122,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
         isMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="pt-24 md:pt-32 px-6 space-y-4">
-          <div className="flex justify-center mb-8">
-            <LanguageToggle />
-          </div>
           <Link to="/sell" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-accent text-white rounded-3xl font-black text-xs uppercase shadow-lg shadow-accent/20">
             <div className="flex items-center gap-4">
               <PlusCircle className="w-5 h-5" />
