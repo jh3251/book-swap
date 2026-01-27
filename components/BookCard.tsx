@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BookListing, UserProfile } from '../types';
-import { MapPin, User, Phone, LayoutGrid, PlusCircle, ChevronRight } from 'lucide-react';
+import { MapPin, User, Phone, LayoutGrid, PlusCircle } from 'lucide-react';
 import { firebase } from '../firebase';
 import { useTranslation } from '../App';
 import { DISTRICTS, UPAZILAS } from '../constants';
@@ -52,22 +52,22 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
         {/* Floating Badges */}
         {book.condition === 'Donation' ? (
           <>
-            <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
+            <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1.5 rounded-full font-black text-[9px] uppercase shadow-lg z-10">
               {t('free')}
             </div>
-            <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
+            <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1.5 rounded-full font-black text-[9px] uppercase shadow-lg z-10">
               {t('free')}
             </div>
           </>
         ) : (
-          <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
+          <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1.5 rounded-full font-black text-[9px] uppercase shadow-lg z-10">
             ৳ {book.price}
           </div>
         )}
       </Link>
       
       {/* Content Section */}
-      <div className="flex-grow flex flex-col space-y-4">
+      <div className="flex-grow flex flex-col space-y-4 px-1">
         {/* Chips */}
         <div className="flex flex-wrap gap-2">
           <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-500 uppercase border border-zinc-100">
@@ -80,11 +80,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
         
         {/* Title & Author */}
         <Link to={`/books/${book.id}`} className="block space-y-1">
-          <h3 className={`text-xl font-black text-zinc-900 line-clamp-1 leading-tight group-hover:text-accent transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
+          <h3 className={`text-xl font-black text-zinc-900 line-clamp-1 leading-tight group-hover:text-accent transition-colors ${lang === 'bn' ? 'font-bn text-2xl' : ''}`}>
             {book.title}
           </h3>
           {book.author && (
-            <p className="text-[11px] text-zinc-400 font-bold uppercase">{book.author}</p>
+            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-wider">{book.author}</p>
           )}
         </Link>
 

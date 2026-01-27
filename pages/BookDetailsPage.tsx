@@ -6,6 +6,7 @@ import { BookListing, UserProfile } from '../types';
 import { MapPin, Phone, User, Calendar, ChevronLeft, ShieldCheck, Share2, Bookmark, Mail, CheckCircle2, X, Link as LinkIcon, Facebook } from 'lucide-react';
 import { useTranslation } from '../App';
 import { DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
+import LoadingScreen from '../components/LoadingScreen';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -106,12 +107,7 @@ const BookDetailsPage: React.FC = () => {
   }, [book, lang]);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center py-32 space-y-4">
-        <div className="w-16 h-16 border-4 border-emerald-100 border-t-accent rounded-full animate-spin"></div>
-        <p className="font-semibold text-black">Gathering details...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!book) {

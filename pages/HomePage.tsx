@@ -33,22 +33,29 @@ const HomePage: React.FC = () => {
   const heroOptions = useMemo(() => [
     { 
       parts: [
-        { text: 'পুরোনো বই, ', color: 'text-accent' },
-        { text: 'নতুন স্বপ্ন', color: 'text-red-600' }
+        { text: 'আপনার বই,', color: 'text-accent' },
+        { text: 'কারও আশা', color: 'text-red-600' }
       ],
       isBengali: true
     },
     { 
       parts: [
-        { text: 'বইসাথী — ', color: 'text-accent' },
-        { text: 'পড়াশোনার সঙ্গী', color: 'text-red-600' }
+        { text: 'বই হোক', color: 'text-accent' },
+        { text: 'কারও ভরসা', color: 'text-red-600' }
       ],
       isBengali: true
     },
     { 
       parts: [
-        { text: 'একটি বই, ', color: 'text-accent' },
-        { text: 'একটি ভবিষ্যৎ।', color: 'text-red-600' }
+        { text: 'BoiSathi.com-', color: 'text-accent' },
+        { text: 'বইসাথী', color: 'text-red-600' }
+      ],
+      isBengali: true
+    },
+    { 
+      parts: [
+        { text: 'পুরোনো বই,', color: 'text-accent' },
+        { text: 'নতুন আশা', color: 'text-red-600' }
       ],
       isBengali: true
     }
@@ -147,11 +154,11 @@ const HomePage: React.FC = () => {
 
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] md:h-[600px] bg-emerald-50/20 rounded-[4rem] -z-20 blur-3xl"></div>
         
-        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load">
-          <div className="min-h-[6rem] sm:min-h-[8rem] md:min-h-[10rem] lg:min-h-[12rem] flex items-center justify-center text-mask overflow-hidden perspective-1000">
+        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load overflow-visible">
+          <div className="min-h-[6rem] sm:min-h-[8rem] md:min-h-[10rem] lg:min-h-[12rem] flex items-center justify-center overflow-visible perspective-1000">
             <h1 
               key={heroIdx}
-              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[5.5rem] xl:text-[6.5rem] font-serif font-black leading-tight tracking-tight animate-reveal-up px-8 py-4 md:py-8 text-3d ${currentHero.isBengali ? 'font-bn' : ''}`}
+              className={`text-2xl sm:text-4xl md:text-5xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-tight tracking-tight animate-reveal-up px-2 py-4 md:py-8 text-3d whitespace-nowrap flex items-center justify-center gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
               style={{ transformStyle: 'preserve-3d' }}
             >
               {currentHero.parts.map((part, i) => (
@@ -177,7 +184,7 @@ const HomePage: React.FC = () => {
                   className="w-full px-4 py-3 bg-transparent outline-none font-bold text-slate-900 placeholder:text-slate-200 text-sm md:text-base"
                 />
               </div>
-              <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-[10px] uppercase flex items-center justify-center gap-2 hover:bg-black transition-all shadow-xl active:scale-95">
+              <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-[10px] md:text-[11px] uppercase flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl active:scale-95 tracking-widest">
                 <ArrowRight className="w-4 h-4" />
                 {t('browse')}
               </button>
@@ -373,7 +380,7 @@ const HomePage: React.FC = () => {
                       className="group relative flex items-center gap-3 px-8 py-4 bg-zinc-900 text-white rounded-2xl font-black text-[10px] uppercase hover:bg-black transition-all shadow-xl active:scale-95"
                     >
                       {lang === 'bn' ? 'পরে' : 'Next'}
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   )}
                 </div>

@@ -1,6 +1,6 @@
 {
   "name": "BoiSathi.com (বইসাথী)",
-  "description": "পড়াশোনার সঙ্গী - Bangladesh's premier student marketplace for buying, selling, and donating books.",
+  "description": "পুরোনো বই, নতুন আশা - Bangladesh's premier student marketplace for buying, selling, and donating books.",
   "requestFramePermissions": [
     "geolocation"
   ]

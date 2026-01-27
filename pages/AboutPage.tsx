@@ -17,7 +17,7 @@ const AboutPage: React.FC = () => {
           BoiSathi <span className="text-accent">(বইসাথী)</span>
         </h1>
         <p className="text-xl md:text-2xl text-zinc-600 font-medium leading-relaxed max-w-3xl mx-auto">
-          একটি শিক্ষার্থী-কেন্দ্রিক অনলাইন প্ল্যাটফর্ম, যেখানে BoiSathi হয়ে ওঠে আপনার পড়াশোনার সঙ্গী। এখানে পুরোনো বই কেনা, বিক্রি এবং দান করা আরও সহজ।
+          একটি শিক্ষার্থী-কেন্দ্রিক অনলাইন প্ল্যাটফর্ম, যেখানে BoiSathi হয়ে ওঠে আপনার পুরোনো বই, নতুন আশা। এখানে পুরোনো বই কেনা, বিক্রি এবং দান করা আরও সহজ।
         </p>
       </section>
 
@@ -44,7 +44,7 @@ const AboutPage: React.FC = () => {
               <Sparkles className="w-6 h-6 text-accent" />
             </div>
             <p className="text-xl font-bold text-black leading-relaxed italic">
-              "বইসাথী শুধু একটি ওয়েবসাইট নয়— এটি আপনার পড়াশোনার সঙ্গী। এখানে লেনদেন মানেই শিক্ষার প্রসার।"
+              "বইসাথী শুধু একটি ওয়েবসাইট নয়— এটি পুরোনো বই, নতুন আশা। এখানে লেনদেন মানেই শিক্ষার প্রসার।"
             </p>
           </div>
         </div>
@@ -104,7 +104,7 @@ const AboutPage: React.FC = () => {
       <section className="text-center pt-10">
         <div className="inline-block px-10 py-6 bg-white border border-zinc-100 rounded-[2rem] shadow-sm">
           <p className="text-2xl md:text-3xl font-serif font-black text-black">
-            BoiSathi.com — <span className="text-accent italic">পড়াশোনার সঙ্গী।</span>
+            BoiSathi.com — <span className="text-accent italic">পুরোনো বই, নতুন আশা।</span>
           </p>
         </div>
       </section>
