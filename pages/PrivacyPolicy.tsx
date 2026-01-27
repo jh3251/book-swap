@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useTranslation } from '../App';
 import { ShieldCheck, Eye, Lock, Globe } from 'lucide-react';
@@ -48,8 +49,8 @@ const PrivacyPolicy: React.FC = () => {
           </div>
           <p>
             {lang === 'bn'
-              ? 'গোপনীয়তা নীতি সংক্রান্ত কোনো প্রশ্ন থাকলে আমাদের সাথে যোগাযোগ করুন: contact@boisathi.com'
-              : 'If you have any questions about our Privacy Policy, please contact us at: contact@boisathi.com'}
+              ? 'গোপনীয়তা নীতি সংক্রান্ত কোনো প্রশ্ন থাকলে আমাদের সাথে যোগাযোগ করুন: boisathi.com@gmail.com'
+              : 'If you have any questions about our Privacy Policy, please contact us at: boisathi.com@gmail.com'}
           </p>
         </section>
       </div>

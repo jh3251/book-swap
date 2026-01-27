@@ -3,7 +3,7 @@ import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
 import { CLASSES, CONDITIONS, DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import BookCard from '../components/BookCard';
-import { Search, MapPin, X, PlusCircle, ArrowRight, ExternalLink, Sparkles, CheckCircle2, BookOpen, BookHeart, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Search, MapPin, X, PlusCircle, ArrowRight, ExternalLink, Sparkles, CheckCircle2, BookOpen, BookHeart, ChevronRight, ChevronLeft, PhoneCall, Handshake, UserPlus, Camera, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 import SEO from '../components/SEO';
@@ -96,6 +96,18 @@ const HomePage: React.FC = () => {
   };
 
   const currentHero = heroOptions[heroIdx];
+
+  const buySteps = [
+    { icon: <Search className="w-5 h-5" />, text: t('buyStep1') },
+    { icon: <PhoneCall className="w-5 h-5" />, text: t('buyStep2') },
+    { icon: <Handshake className="w-5 h-5" />, text: t('buyStep3') }
+  ];
+
+  const sellSteps = [
+    { icon: <UserPlus className="w-5 h-5" />, text: t('sellStep1') },
+    { icon: <Camera className="w-5 h-5" />, text: t('sellStep2') },
+    { icon: <Wallet className="w-5 h-5" />, text: t('sellStep3') }
+  ];
 
   return (
     <div className="space-y-12 md:space-y-20 pb-32">
@@ -410,27 +422,34 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Modern Steps Section (Compact) */}
+      {/* Instructional Steps Section */}
       <section className="container mx-auto max-w-7xl px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-        <div className="bg-slate-50 rounded-[2rem] p-8 md:p-12 border border-slate-100 flex flex-col justify-between group overflow-hidden relative">
+        {/* Buying Guide */}
+        <div className="bg-white rounded-[2rem] p-8 md:p-12 border border-slate-100 flex flex-col justify-between group overflow-hidden relative shadow-sm hover:shadow-xl transition-all duration-500">
           <div className="absolute top-0 right-0 alpona-bg w-40 h-40 opacity-5 -z-10 group-hover:rotate-12 transition-transform duration-700"></div>
-          <div className="space-y-6 mb-6 relative z-10">
+          <div className="space-y-8 relative z-10">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center border border-slate-100">
-                <BookOpen className="w-6 h-6 text-slate-900" />
+              <div className="w-14 h-14 bg-emerald-50 rounded-2xl shadow-sm flex items-center justify-center border border-emerald-100">
+                <BookOpen className="w-7 h-7 text-accent" />
               </div>
+              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Guide for Buyers</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-serif font-black text-slate-900 leading-none">{t('buyABook')}</h2>
-            <div className="space-y-4">
-              {[1, 2, 3].map(step => (
-                <div key={step} className="flex gap-4 group/step">
-                  <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-black text-sm text-slate-200 border border-slate-100 group-hover/step:text-accent group-hover/step:border-accent transition-all duration-500 flex-shrink-0">
-                    {step}
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-slate-900 leading-none">{t('buyABook')}</h2>
+            <div className="space-y-10">
+              {buySteps.map((step, idx) => (
+                <div key={idx} className="flex gap-6 items-start group/step">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover/step:bg-accent group-hover/step:text-white transition-all duration-500 shadow-sm">
+                      {step.icon}
+                    </div>
+                    {idx < buySteps.length - 1 && (
+                      <div className="absolute top-14 left-1/2 -translate-x-1/2 w-0.5 h-8 bg-dashed border-l-2 border-slate-100 border-dashed"></div>
+                    )}
                   </div>
-                  <div className="space-y-0.5">
-                     <p className="text-sm md:text-base text-slate-800 font-bold leading-relaxed pt-2">
-                        {t(`buyStep${step}` as any)}
-                     </p>
+                  <div className="pt-2">
+                    <p className="text-base md:text-lg text-slate-700 font-bold leading-snug">
+                       {step.text}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -438,37 +457,45 @@ const HomePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-accent rounded-[2rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-xl shadow-accent/5 group overflow-hidden relative">
+        {/* Selling Guide */}
+        <div className="bg-accent rounded-[2rem] p-8 md:p-12 text-white flex flex-col justify-between shadow-2xl shadow-accent/20 group overflow-hidden relative hover:-translate-y-1 transition-transform duration-500">
           <div className="absolute bottom-0 left-0 alpona-bg w-full h-full opacity-[0.08] -z-10"></div>
-          <div className="space-y-6 mb-6 relative z-10">
+          <div className="space-y-8 relative z-10">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center shadow-lg">
-                <PlusCircle className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center shadow-lg">
+                <PlusCircle className="w-7 h-7 text-white" />
               </div>
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Guide for Sellers</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-serif font-black text-white leading-none">{t('sellABookTitle')}</h2>
-            <div className="space-y-4">
-              {[1, 2, 3].map(step => (
-                <div key={step} className="flex gap-4 group/step">
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-sm text-white/40 border border-white/10 group-hover/step:text-white group-hover/step:border-white transition-all duration-500 flex-shrink-0">
-                    {step}
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-white leading-none">{t('sellABookTitle')}</h2>
+            <div className="space-y-10">
+              {sellSteps.map((step, idx) => (
+                <div key={idx} className="flex gap-6 items-start group/step">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white/60 group-hover/step:bg-white group-hover/step:text-accent transition-all duration-500 border border-white/10">
+                      {step.icon}
+                    </div>
+                    {idx < sellSteps.length - 1 && (
+                      <div className="absolute top-14 left-1/2 -translate-x-1/2 w-0.5 h-8 border-l-2 border-white/10 border-dashed"></div>
+                    )}
                   </div>
-                  <div className="space-y-0.5">
-                    <p className="text-sm md:text-base text-white/90 font-bold leading-relaxed pt-2">
-                      {t(`sellStep${step}` as any)}
+                  <div className="pt-2">
+                    <p className="text-base md:text-lg text-white/90 font-bold leading-snug">
+                      {step.text}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
+            <div className="pt-6">
+              <Link to="/sell" className="inline-flex items-center bg-white text-accent px-10 py-5 rounded-2xl font-black text-[11px] uppercase hover:bg-zinc-900 hover:text-white transition-all duration-500 shadow-2xl active:scale-95 w-full sm:w-auto group/sell justify-center">
+                <span className="flex items-center gap-4">
+                  {t('startSelling')}
+                  <ArrowRight className="w-5 h-5 group-hover/sell:translate-x-1 transition-transform" />
+                </span>
+              </Link>
+            </div>
           </div>
-          <Link to="/sell" className="inline-flex items-center bg-white/10 border border-white/20 text-white px-8 py-4 rounded-2xl font-black text-[9px] md:text-[10px] uppercase hover:bg-white hover:text-accent transition-all duration-500 shadow-xl active:scale-95 w-fit group/sell">
-            <span className="flex items-center gap-3">
-              {t('startSelling')}
-              <div className="w-8 h-px bg-white group-hover/sell:bg-accent transition-colors"></div>
-              <ArrowRight className="w-4 h-4" />
-            </span>
-          </Link>
         </div>
       </section>
     </div>
