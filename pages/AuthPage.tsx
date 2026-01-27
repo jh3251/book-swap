@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { firebase } from '../firebase';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Zap, Eye, EyeOff, ChevronLeft, CheckCircle2, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
@@ -130,7 +131,7 @@ const AuthPage: React.FC = () => {
               href="https://mail.google.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full bg-accent text-white py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-accent-hover transition shadow-xl shadow-accent/20 uppercase tracking-widest"
+              className="w-full bg-accent text-white py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-accent-hover transition shadow-xl shadow-accent/20 uppercase"
             >
               Open Gmail <ExternalLink className="w-4 h-4" />
             </a>
@@ -138,7 +139,7 @@ const AuthPage: React.FC = () => {
             <button 
               onClick={checkVerificationStatus}
               disabled={loading}
-              className="w-full bg-white text-black border-2 border-emerald-100 py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-50 transition uppercase tracking-widest disabled:opacity-50"
+              className="w-full bg-white text-black border-2 border-emerald-100 py-6 rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-50 transition uppercase disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh Status
@@ -146,7 +147,7 @@ const AuthPage: React.FC = () => {
           </div>
 
           <div className="pt-6 border-t border-emerald-50">
-             <button onClick={() => setNeedsVerification(false)} className="text-[10px] font-black text-zinc-400 uppercase tracking-widest hover:text-black transition">
+             <button onClick={() => setNeedsVerification(false)} className="text-[10px] font-black text-zinc-400 uppercase hover:text-black transition">
                Wrong email address? Go back
              </button>
           </div>
@@ -159,7 +160,7 @@ const AuthPage: React.FC = () => {
     <div className="max-w-md mx-auto py-12">
       <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-emerald-900/10 border border-emerald-50 relative overflow-hidden">
         <div className="relative z-10">
-          <div className="flex items-center justify-center gap-2 mb-6 bg-emerald-50/50 w-fit mx-auto px-4 py-1.5 rounded-full text-accent font-bold text-[9px] uppercase tracking-[0.2em] border border-emerald-100">
+          <div className="flex items-center justify-center gap-2 mb-6 bg-emerald-50/50 w-fit mx-auto px-4 py-1.5 rounded-full text-accent font-bold text-[9px] uppercase border border-emerald-100">
              <Zap className="w-3 h-3" /> 100% Free Service
           </div>
           
@@ -187,7 +188,7 @@ const AuthPage: React.FC = () => {
               </div>
               <button 
                 onClick={toggleForgotPassword} 
-                className="w-full flex items-center justify-center gap-2 text-accent font-black text-xs uppercase tracking-widest hover:underline underline-offset-8"
+                className="w-full flex items-center justify-center gap-2 text-accent font-black text-xs uppercase hover:underline underline-offset-8"
               >
                 <ChevronLeft className="w-4 h-4" /> Back to Login
               </button>
@@ -205,7 +206,7 @@ const AuthPage: React.FC = () => {
 
               {!isLogin && !isForgotPassword && (
                 <div>
-                  <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                  <label className="block text-[10px] font-black text-zinc-900 uppercase mb-3 ml-1">
                     {t('fullName')}
                   </label>
                   <div className="relative group">
@@ -216,7 +217,7 @@ const AuthPage: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                <label className="block text-[10px] font-black text-zinc-900 uppercase mb-3 ml-1">
                   {t('emailAddress')}
                 </label>
                 <div className="relative group">
@@ -229,14 +230,14 @@ const AuthPage: React.FC = () => {
                 <>
                   <div>
                     <div className="flex justify-between items-center mb-3 ml-1">
-                      <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em]">
+                      <label className="block text-[10px] font-black text-zinc-900 uppercase">
                         {t('password')}
                       </label>
                       {isLogin && (
                         <button 
                           type="button" 
                           onClick={toggleForgotPassword} 
-                          className="text-[10px] font-black text-accent uppercase tracking-widest hover:text-accent-hover transition"
+                          className="text-[10px] font-black text-accent uppercase hover:text-accent-hover transition"
                         >
                           FORGOT?
                         </button>
@@ -264,7 +265,7 @@ const AuthPage: React.FC = () => {
 
                   {!isLogin && (
                     <div className="animate-in slide-in-from-top-2 duration-300">
-                      <label className="block text-[10px] font-black text-zinc-900 uppercase tracking-[0.2em] mb-3 ml-1">
+                      <label className="block text-[10px] font-black text-zinc-900 uppercase mb-3 ml-1">
                         {t('confirmPassword')}
                       </label>
                       <div className="relative group">
@@ -293,7 +294,7 @@ const AuthPage: React.FC = () => {
               <button 
                 disabled={loading} 
                 type="submit" 
-                className="w-full bg-accent text-white py-6 rounded-full font-black text-sm md:text-base hover:bg-accent-hover transition-all shadow-xl shadow-accent/30 flex items-center justify-center gap-3 mt-8 disabled:opacity-50 uppercase tracking-[0.25em] transform active:scale-[0.98]"
+                className="w-full bg-accent text-white py-6 rounded-full font-black text-sm md:text-base hover:bg-accent-hover transition-all shadow-xl shadow-accent/30 flex items-center justify-center gap-3 mt-8 disabled:opacity-50 uppercase transform active:scale-[0.98]"
               >
                 {loading ? 'Processing...' : (isForgotPassword ? 'Send Link' : (isLogin ? t('signIn') : t('joinNow')))}
                 {!loading && <ArrowRight className="w-5 h-5" />}
@@ -303,7 +304,7 @@ const AuthPage: React.FC = () => {
                 <button 
                   type="button" 
                   onClick={toggleForgotPassword} 
-                  className="w-full flex items-center justify-center gap-2 text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-black transition"
+                  className="w-full flex items-center justify-center gap-2 text-zinc-400 font-black text-[10px] uppercase hover:text-black transition"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back to Login
                 </button>
@@ -322,7 +323,7 @@ const AuthPage: React.FC = () => {
             </div>
           )}
           
-          <div className="mt-10 flex items-center justify-center gap-2 text-[9px] text-zinc-400 uppercase tracking-[0.3em] font-black">
+          <div className="mt-10 flex items-center justify-center gap-2 text-[9px] text-zinc-400 uppercase font-black">
             <ShieldCheck className="w-4 h-4 text-accent" />
             Built for Bangladesh Students
           </div>

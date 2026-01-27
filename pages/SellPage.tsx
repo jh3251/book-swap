@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { firebase } from '../firebase';
@@ -147,7 +148,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
         </div>
         <div className="text-center">
           <h2 className="text-3xl font-serif font-black text-black">Published Successfully!</h2>
-          <p className="text-zinc-500 font-black mt-2 uppercase tracking-widest text-[10px]">Redirecting...</p>
+          <p className="text-zinc-500 font-black mt-2 uppercase text-[10px]">Redirecting...</p>
         </div>
       </div>
     );
@@ -159,7 +160,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
     <div className="max-w-4xl mx-auto pb-12">
       <button 
         onClick={() => navigate(-1)}
-        className="mb-8 flex items-center text-black hover:text-accent transition font-black text-[10px] uppercase tracking-[0.2em]"
+        className="mb-8 flex items-center text-black hover:text-accent transition font-black text-[10px] uppercase"
       >
         <ArrowLeft className="w-4 h-4 mr-2" /> Back
       </button>
@@ -168,12 +169,12 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
+              <span className="text-[10px] font-black text-accent uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 {id ? 'Edit Listing' : 'Post an Ad'}
               </span>
               {!id && (
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full border flex items-center gap-1.5 ${isAtLimit ? 'bg-red-50 text-red-600 border-red-100' : 'bg-zinc-50 text-zinc-500 border-zinc-100'}`}>
+                <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full border flex items-center gap-1.5 ${isAtLimit ? 'bg-red-50 text-red-600 border-red-100' : 'bg-zinc-50 text-zinc-500 border-zinc-100'}`}>
                   <LayoutGrid className="w-3.5 h-3.5" />
                   {lang === 'bn' ? `স্লট: ${userListingCount}/১০ ব্যবহৃত` : `Slots: ${userListingCount}/10 used`}
                 </span>
@@ -217,7 +218,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
                   <div className="w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
                     <ImageIcon className="w-8 h-8 text-emerald-200" />
                   </div>
-                  <p className="font-black text-black text-[10px] uppercase tracking-widest mb-1">Upload Book Photo</p>
+                  <p className="font-black text-black text-[10px] uppercase mb-1">Upload Book Photo</p>
                   <p className="text-zinc-400 text-[10px] font-medium">JPEG or PNG, up to 5MB</p>
                 </div>
               )}
@@ -231,39 +232,39 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">BOOK TITLE *</label>
+                <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">BOOK TITLE *</label>
                 <input required type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base" placeholder="e.g. Physics 1st Paper" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">AUTHOR</label>
+                <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">AUTHOR</label>
                 <input type="text" value={formData.author} onChange={(e) => setFormData({...formData, author: e.target.value})} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base" placeholder="e.g. Dr. Shahjahan Tapan" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">CLASS *</label>
+                <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">CLASS *</label>
                 <select required value={formData.subject} onChange={(e) => setFormData({...formData, subject: e.target.value})} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base appearance-none">
                   <option value="">Select Class</option>
                   {CLASSES.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">CONDITION *</label>
+                <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">CONDITION *</label>
                 <select value={formData.condition} onChange={handleConditionChange} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base appearance-none">
                   {CONDITIONS.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                 </select>
               </div>
               {formData.condition !== 'Donation' && (
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">PRICE (৳) *</label>
+                  <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">PRICE (৳) *</label>
                   <input type="number" value={formData.price || ''} onChange={(e) => setFormData({...formData, price: parseInt(e.target.value) || 0})} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base" placeholder="250" />
                 </div>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">CONTACT PHONE *</label>
+                <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">CONTACT PHONE *</label>
                 <input required type="text" value={formData.contactPhone} onChange={(e) => setFormData({...formData, contactPhone: e.target.value})} className="w-full px-6 py-3 bg-[#f0fdf4] border border-emerald-100/50 rounded-xl outline-none font-black text-black text-base" placeholder="017XXXXXXXX" />
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-2 ml-1">DESCRIPTION</label>
+              <label className="block text-[10px] font-black text-black uppercase mb-2 ml-1">DESCRIPTION</label>
               <textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full px-6 py-4 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl outline-none font-black text-black text-base min-h-[120px]" placeholder="Condition of the pages, edition etc." />
             </div>
           </div>
@@ -279,7 +280,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
             <button 
               type="submit" 
               disabled={loading || isAtLimit}
-              className="w-full md:w-auto bg-accent text-white px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] shadow-3xl shadow-accent/40 hover:bg-accent-hover transition flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full md:w-auto bg-accent text-white px-12 py-4 rounded-2xl font-black text-[10px] uppercase shadow-3xl shadow-accent/40 hover:bg-accent-hover transition flex items-center justify-center gap-3 disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {id ? 'Update Ad' : 'Publish Ad'}

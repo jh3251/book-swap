@@ -124,7 +124,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               <p className="font-black text-black leading-tight text-base md:text-lg truncate">
                 {name || 'Anonymous'}
               </p>
-              <p className="text-[10px] text-accent font-black uppercase tracking-[0.2em] mt-0.5 truncate">
+              <p className="text-[10px] text-accent font-black uppercase mt-0.5 truncate">
                 MEMBER
               </p>
             </div>
@@ -133,7 +133,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
           <nav className="flex lg:flex-col overflow-x-auto lg:overflow-visible gap-2 md:gap-3 no-scrollbar pb-2 lg:pb-0">
             <button 
               onClick={() => setActiveTab('ads')}
-              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase tracking-[0.15em] ${
+              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase ${
                 activeTab === 'ads' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-emerald-50/50 text-black hover:bg-emerald-100'
               }`}
             >
@@ -141,7 +141,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
             </button>
             <button 
               onClick={() => setActiveTab('saved')}
-              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase tracking-[0.15em] ${
+              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase ${
                 activeTab === 'saved' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-emerald-50/50 text-black hover:bg-emerald-100'
               }`}
             >
@@ -149,7 +149,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
             </button>
             <button 
               onClick={() => setActiveTab('account')}
-              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase tracking-[0.15em] ${
+              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase ${
                 activeTab === 'account' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-emerald-50/50 text-black hover:bg-emerald-100'
               }`}
             >
@@ -170,10 +170,10 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 </div>
                 <div>
                   <h2 className="text-xl md:text-2xl font-serif font-black text-black leading-none">Your Ads</h2>
-                  <p className="text-zinc-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mt-1.5">{listings.length} Items Live</p>
+                  <p className="text-zinc-400 text-[9px] md:text-[10px] font-black uppercase mt-1.5">{listings.length} Items Live</p>
                 </div>
               </div>
-              <Link to="/sell" className="w-full sm:w-auto flex items-center justify-center gap-3 bg-black text-white px-8 py-4 rounded-2xl hover:bg-zinc-800 transition text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-black/10">
+              <Link to="/sell" className="w-full sm:w-auto flex items-center justify-center gap-3 bg-black text-white px-8 py-4 rounded-2xl hover:bg-zinc-800 transition text-[10px] font-black uppercase shadow-xl shadow-black/10">
                 <PlusCircle className="w-4 h-4" /> New Ad
               </Link>
             </div>
@@ -210,8 +210,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                    <Package className="w-10 h-10" />
                 </div>
                 <h3 className="text-xl md:text-2xl font-serif font-black text-black mb-2">Nothing listed</h3>
-                <p className="text-zinc-400 mb-10 font-bold uppercase tracking-widest text-[10px]">Empty shelf. Start selling today.</p>
-                <Link to="/sell" className="bg-accent text-white px-10 md:px-12 py-5 rounded-2xl font-black hover:bg-accent-hover transition inline-block uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-accent/20">
+                <p className="text-zinc-400 mb-10 font-bold uppercase text-[10px]">Empty shelf. Start selling today.</p>
+                <Link to="/sell" className="bg-accent text-white px-10 md:px-12 py-5 rounded-2xl font-black hover:bg-accent-hover transition inline-block uppercase text-[10px] shadow-xl shadow-accent/20">
                   Post New Ad
                 </Link>
               </div>
@@ -227,7 +227,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-serif font-black text-black leading-none">Bookmarked</h2>
-                <p className="text-zinc-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] mt-1.5">{savedListings.length} Saved Books</p>
+                <p className="text-zinc-400 text-[9px] md:text-[10px] font-black uppercase mt-1.5">{savedListings.length} Saved Books</p>
               </div>
             </div>
 
@@ -247,8 +247,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               <div className="text-center py-20 md:py-32 bg-white rounded-[2.5rem] md:rounded-[3rem] border border-emerald-50 shadow-sm px-6">
                 <Heart className="w-12 h-12 md:w-16 md:h-16 text-emerald-100 mx-auto mb-6" />
                 <h3 className="text-xl md:text-2xl font-serif font-black text-black">No saved items</h3>
-                <p className="text-zinc-400 mt-2 font-bold uppercase tracking-widest text-[10px]">Items you save will appear here</p>
-                <Link to="/" className="mt-10 inline-block bg-accent text-white px-10 py-4 rounded-xl font-black uppercase tracking-widest text-[10px]">Browse Feed</Link>
+                <p className="text-zinc-400 mt-2 font-bold uppercase text-[10px]">Items you save will appear here</p>
+                <Link to="/" className="mt-10 inline-block bg-accent text-white px-10 py-4 rounded-xl font-black uppercase text-[10px]">Browse Feed</Link>
               </div>
             )}
           </>
@@ -261,7 +261,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
             <form onSubmit={handleUpdateProfile} className="space-y-10 md:space-y-12 max-w-xl">
               <div className="space-y-8 md:space-y-10">
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                  <label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">
                     {t('fullName')}
                   </label>
                   <input 
@@ -274,7 +274,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                  <label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">
                     {t('userName')}
                   </label>
                   <div className="relative">
@@ -290,7 +290,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-black uppercase tracking-[0.2em] mb-3 ml-1">
+                  <label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">
                     {t('emailAddress')}
                   </label>
                   <input 
@@ -306,14 +306,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 <button 
                   type="submit" 
                   disabled={updating}
-                  className="w-full sm:w-auto bg-black text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-xl shadow-black/20 hover:bg-zinc-800 transition disabled:opacity-50"
+                  className="w-full sm:w-auto bg-black text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase flex items-center justify-center gap-4 shadow-xl shadow-black/20 hover:bg-zinc-800 transition disabled:opacity-50"
                 >
                   {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {t('saveProfile')}
                 </button>
                 
                 {updateSuccess && (
-                  <div className="flex items-center gap-3 text-emerald-600 font-black text-[10px] uppercase tracking-[0.2em] animate-in fade-in slide-in-from-left-4">
+                  <div className="flex items-center gap-3 text-emerald-600 font-black text-[10px] uppercase animate-in fade-in slide-in-from-left-4">
                     <CheckCircle2 className="w-5 h-5" /> All changes saved!
                   </div>
                 )}
@@ -323,7 +323,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                 <button 
                   type="button" 
                   onClick={() => setShowDeleteProfileConfirm(true)}
-                  className="text-red-600 hover:text-red-700 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 transition"
+                  className="text-red-600 hover:text-red-700 font-black text-[10px] uppercase flex items-center gap-3 transition"
                 >
                   <Trash2 className="w-4 h-4" />
                   {t('deleteProfile')}
@@ -361,13 +361,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
              <div className="space-y-4">
                <button 
                 onClick={confirmDelete}
-                className="w-full bg-red-600 text-white py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-red-600/20 hover:bg-red-700 transition"
+                className="w-full bg-red-600 text-white py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase shadow-xl shadow-red-600/20 hover:bg-red-700 transition"
                >
                  Confirm Delete
                </button>
                <button 
                 onClick={() => setDeletingId(null)}
-                className="w-full bg-emerald-50 text-black py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-100 transition border border-emerald-100"
+                className="w-full bg-emerald-50 text-black py-4 md:py-5 rounded-2xl font-black text-[10px] uppercase hover:bg-emerald-100 transition border border-emerald-100"
                >
                  Cancel
                </button>
@@ -404,14 +404,14 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
                <button 
                 onClick={handleDeleteProfile}
                 disabled={deletingProfile}
-                className="w-full bg-red-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-red-600/20 hover:bg-red-700 transition flex items-center justify-center gap-3"
+                className="w-full bg-red-600 text-white py-5 rounded-2xl font-black text-[10px] uppercase shadow-xl shadow-red-600/20 hover:bg-red-700 transition flex items-center justify-center gap-3"
                >
                  {deletingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                  {lang === 'bn' ? 'স্থায়ীভাবে ডিলিট করুন' : 'Confirm Permanent Deletion'}
                </button>
                <button 
                 onClick={() => setShowDeleteProfileConfirm(false)}
-                className="w-full bg-zinc-100 text-black py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-200 transition"
+                className="w-full bg-zinc-100 text-black py-5 rounded-2xl font-black text-[10px] uppercase hover:bg-zinc-200 transition"
                >
                  {lang === 'bn' ? 'ফিরে যান' : 'Go Back'}
                </button>

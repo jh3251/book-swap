@@ -121,7 +121,7 @@ const BookDetailsPage: React.FC = () => {
           <ChevronLeft className="w-10 h-10 text-emerald-200" />
         </div>
         <h2 className="text-3xl font-bold font-serif text-black">Listing not found</h2>
-        <button onClick={() => navigate('/')} className="bg-accent text-white px-10 py-4 rounded-xl font-semibold uppercase tracking-widest text-xs shadow-xl">
+        <button onClick={() => navigate('/')} className="bg-accent text-white px-10 py-4 rounded-xl font-semibold uppercase text-xs shadow-xl">
           Return to Feed
         </button>
       </div>
@@ -133,7 +133,7 @@ const BookDetailsPage: React.FC = () => {
       <div className="flex justify-between items-center">
         <button 
           onClick={() => navigate(-1)}
-          className="flex items-center text-black hover:text-accent font-semibold transition uppercase tracking-widest text-xs"
+          className="flex items-center text-black hover:text-accent font-semibold transition uppercase text-xs"
         >
           <ChevronLeft className="w-4 h-4 mr-1.5" /> {t('back')}
         </button>
@@ -182,7 +182,7 @@ const BookDetailsPage: React.FC = () => {
         <div className="space-y-8">
           <div className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 space-y-8 sticky top-24">
             <div>
-              <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em] bg-[#f0fdf4] px-4 py-1.5 rounded-full border border-emerald-100">
+              <span className="text-[10px] font-black text-accent uppercase bg-[#f0fdf4] px-4 py-1.5 rounded-full border border-emerald-100">
                 {t(book.subject as any)}
               </span>
               <h1 className={`text-4xl font-serif font-black text-black mt-5 mb-1.5 leading-tight ${lang === 'bn' ? 'font-bn' : ''}`}>{book.title}</h1>
@@ -199,7 +199,7 @@ const BookDetailsPage: React.FC = () => {
               <span className="text-5xl font-black text-black">
                 {book.condition === 'Donation' ? t('free') : `৳ ${book.price}`}
               </span>
-              <span className="px-5 py-2.5 bg-[#f0fdf4] text-accent rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-2 border-emerald-100">
+              <span className="px-5 py-2.5 bg-[#f0fdf4] text-accent rounded-2xl text-[10px] font-black uppercase border-2 border-emerald-100">
                 {t(book.condition as any)}
               </span>
             </div>
@@ -211,7 +211,7 @@ const BookDetailsPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-black text-black text-2xl leading-none">{localizedLocation?.upazila}</p>
-                  <p className="text-[11px] text-zinc-400 font-black uppercase tracking-widest mt-1">
+                  <p className="text-[11px] text-zinc-400 font-black uppercase mt-1">
                     {localizedLocation?.district}, {localizedLocation?.division}
                   </p>
                 </div>
@@ -222,7 +222,7 @@ const BookDetailsPage: React.FC = () => {
                   <Calendar className="w-7 h-7 text-zinc-300" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-1">{lang === 'bn' ? 'বিজ্ঞাপন তৈরির তারিখ' : 'LISTING CREATED'}</p>
+                  <p className="text-[10px] text-zinc-400 font-black uppercase mb-1">{lang === 'bn' ? 'বিজ্ঞাপন তৈরির তারিখ' : 'LISTING CREATED'}</p>
                   <p className="text-lg text-black font-black">
                     {new Date(book.createdAt).toLocaleDateString(lang === 'bn' ? 'bn-BD' : undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
@@ -234,7 +234,7 @@ const BookDetailsPage: React.FC = () => {
               <a 
                 href={isPhoneRevealed ? `tel:${book.contactPhone}` : '#'}
                 onClick={handleCallClick}
-                className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase tracking-[0.2em] shadow-2xl transition duration-300 transform active:scale-95 ${
+                className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition duration-300 transform active:scale-95 ${
                   isPhoneRevealed 
                     ? 'bg-accent hover:bg-accent-hover shadow-accent/30' 
                     : 'bg-[#16a34a] hover:bg-emerald-700 shadow-emerald-500/30 animate-pulse-soft'
@@ -259,7 +259,7 @@ const BookDetailsPage: React.FC = () => {
             </div>
             
             <div className="pt-8 mt-8 border-t border-emerald-50">
-               <h3 className="font-black text-black mb-6 uppercase tracking-[0.2em] text-[10px] flex items-center gap-2">
+               <h3 className="font-black text-black mb-6 uppercase text-[10px] flex items-center gap-2">
                  <User className="w-4 h-4 text-accent" /> {lang === 'bn' ? 'বিক্রেতার তথ্য' : 'SELLER INFORMATION'}
                </h3>
                
@@ -269,7 +269,7 @@ const BookDetailsPage: React.FC = () => {
                  </div>
                  <div>
                    <p className="font-black text-black text-xl leading-none">{seller?.displayName || book.sellerName}</p>
-                   <p className="text-[10px] text-accent font-black uppercase tracking-[0.2em] mt-1.5">{lang === 'bn' ? 'সদস্য' : 'MEMBER'}</p>
+                   <p className="text-[10px] text-accent font-black uppercase mt-1.5">{lang === 'bn' ? 'সদস্য' : 'MEMBER'}</p>
                  </div>
                </div>
                
@@ -303,7 +303,7 @@ const BookDetailsPage: React.FC = () => {
              <div className="space-y-4">
                 <button 
                   onClick={shareWhatsApp}
-                  className="w-full flex items-center justify-between p-5 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-black text-xs uppercase tracking-[0.15em] border border-[#25D366]/20 hover:bg-[#25D366]/20 transition"
+                  className="w-full flex items-center justify-between p-5 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-black text-xs uppercase border border-[#25D366]/20 hover:bg-[#25D366]/20 transition"
                 >
                   <span className="pl-2">WhatsApp</span>
                   <div className="w-6 h-6 flex items-center justify-center">
@@ -315,7 +315,7 @@ const BookDetailsPage: React.FC = () => {
 
                 <button 
                   onClick={shareFacebook}
-                  className="w-full flex items-center justify-between p-5 bg-[#1877F2]/10 text-[#1877F2] rounded-2xl font-black text-xs uppercase tracking-[0.15em] border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition"
+                  className="w-full flex items-center justify-between p-5 bg-[#1877F2]/10 text-[#1877F2] rounded-2xl font-black text-xs uppercase border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition"
                 >
                   <span className="pl-2">Facebook</span>
                   <Facebook className="w-6 h-6 fill-current" />
@@ -323,7 +323,7 @@ const BookDetailsPage: React.FC = () => {
 
                 <button 
                   onClick={copyToClipboard}
-                  className={`w-full flex items-center justify-between p-5 rounded-2xl font-black text-xs uppercase tracking-[0.15em] border transition ${
+                  className={`w-full flex items-center justify-between p-5 rounded-2xl font-black text-xs uppercase border transition ${
                     copySuccess 
                       ? 'bg-emerald-500 text-white border-emerald-600' 
                       : 'bg-zinc-100 text-black border-zinc-200 hover:bg-zinc-200'
@@ -335,7 +335,7 @@ const BookDetailsPage: React.FC = () => {
              </div>
 
              <div className="mt-8 p-4 bg-emerald-50 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest leading-tight">
+                <p className="text-[10px] font-black text-emerald-800 uppercase leading-tight">
                   {lang === 'bn' ? 'একজন শিক্ষার্থীকে তাদের পরবর্তী বইটি খুঁজে পেতে সাহায্য করুন!' : 'Help a student find their next read!'}
                 </p>
              </div>

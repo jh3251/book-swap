@@ -1,6 +1,6 @@
 {
-  "name": "BookSwap Bangladesh",
-  "description": "A premier marketplace for students in Bangladesh to buy and sell used textbooks and novels with advanced location-based filtering.",
+  "name": "BoiSathi.com (বইসাথী)",
+  "description": "পড়াশোনার সঙ্গী - Bangladesh's premier student marketplace for buying, selling, and donating books.",
   "requestFramePermissions": [
     "geolocation"
   ]

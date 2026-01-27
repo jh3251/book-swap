@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BookListing, UserProfile } from '../types';
@@ -51,15 +52,15 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
         {/* Floating Badges */}
         {book.condition === 'Donation' ? (
           <>
-            <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+            <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
               {t('free')}
             </div>
-            <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+            <div className="absolute top-3 right-3 bg-orange-500 text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
               {t('free')}
             </div>
           </>
         ) : (
-          <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-lg">
+          <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-lg font-black text-[9px] uppercase shadow-lg">
             ৳ {book.price}
           </div>
         )}
@@ -69,10 +70,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
       <div className="flex-grow flex flex-col space-y-4">
         {/* Chips */}
         <div className="flex flex-wrap gap-2">
-          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-500 uppercase tracking-widest border border-zinc-100">
+          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-500 uppercase border border-zinc-100">
             {t(book.subject as any)}
           </span>
-          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-800 uppercase tracking-widest border border-zinc-100">
+          <span className="bg-zinc-50 px-3 py-1 rounded-lg text-[9px] font-black text-zinc-800 uppercase border border-zinc-100">
             {t(book.condition as any)}
           </span>
         </div>
@@ -83,14 +84,14 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
             {book.title}
           </h3>
           {book.author && (
-            <p className="text-[11px] text-zinc-400 font-bold uppercase tracking-wide">{book.author}</p>
+            <p className="text-[11px] text-zinc-400 font-bold uppercase">{book.author}</p>
           )}
         </Link>
 
         {/* Seller Info */}
         <div className="flex items-center gap-2 text-zinc-400">
           <User className="w-3.5 h-3.5 text-zinc-300" />
-          <span className="text-[10px] font-black uppercase tracking-widest truncate">
+          <span className="text-[10px] font-black uppercase truncate">
             {seller?.username || seller?.displayName || book.sellerName}
           </span>
         </div>
@@ -107,7 +108,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
             <>
               <button 
                 onClick={() => onEdit?.(book.id)} 
-                className="flex-1 bg-zinc-100 text-zinc-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-zinc-100 text-zinc-600 py-4 rounded-2xl font-black text-[10px] uppercase hover:bg-zinc-900 hover:text-white transition-all flex items-center justify-center gap-2"
               >
                 <LayoutGrid className="w-4 h-4" />
                 Edit
@@ -123,7 +124,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
             <>
               <Link 
                 to={`/books/${book.id}`} 
-                className="flex-grow bg-[#18181b] text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.25em] flex items-center justify-center hover:bg-black transition-all shadow-xl shadow-zinc-900/10"
+                className="flex-grow bg-[#18181b] text-white py-4 rounded-2xl font-black text-[11px] uppercase flex items-center justify-center hover:bg-black transition-all shadow-xl shadow-zinc-900/10"
               >
                 {t('details')}
               </Link>

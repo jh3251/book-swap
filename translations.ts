@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'bn';
 
 export const translations = {
@@ -49,10 +50,10 @@ export const translations = {
     sellStep2: 'Upload book details and clear cover photos.',
     sellStep3: 'Receive calls and sell to local students.',
     about: 'About Us',
-    aboutMissionTitle: 'Why We Built BookSwap',
-    aboutMissionDesc: 'We have seen many people who cannot afford books because of high prices. We built this platform so that everyone can have the books they need for their education and personal growth.',
+    aboutMissionTitle: 'Why We Built BoiSathi',
+    aboutMissionDesc: 'We have seen many people who cannot afford books because of high prices. We built BoiSathi so that everyone can have a companion for their studies and personal growth.',
     aboutCommunityTitle: 'Built for Students, by the Community',
-    aboutCommunityDesc: 'BookSwap is a student-led initiative in Bangladesh to reduce the financial burden of education. By exchanging books within your local community, we save money and help the environment.',
+    aboutCommunityDesc: 'BoiSathi.com is a student-led initiative in Bangladesh to reduce the financial burden of education. By exchanging books within your local community, we save money and help the environment.',
     showNumber: 'Show Number',
     deleteReminder: 'After selling the book, please delete the listing.',
     fullName: 'Full Name',
@@ -65,10 +66,10 @@ export const translations = {
     deleteProfile: 'Delete Profile',
     confirmDeleteProfile: 'Delete Account?',
     deleteProfileWarning: 'This action is permanent. Your profile and all your active book listings will be deleted from our system forever.',
-    footerDesc: 'Empowering students across Bangladesh to exchange knowledge. We are the premier community-driven marketplace for academic and leisure reading.',
+    footerDesc: 'A student-centric online platform where BoiSathi becomes your study companion. Buying, selling, and donating pre-loved books is now easier than ever.',
     quickNavigation: 'QUICK NAVIGATION',
     studentSupport: 'STUDENT SUPPORT',
-    copyright: '© 2026 BOOKSWAP BANGLADESH. ALL RIGHTS RESERVED.',
+    copyright: '© 2026 BOISATHI.COM. ALL RIGHTS RESERVED.',
     craftedFor: 'CRAFTED FOR',
     knowledgeExchange: 'KNOWLEDGE EXCHANGE',
     // Condition labels
@@ -140,10 +141,10 @@ export const translations = {
     sellStep2: 'বইয়ের বিশদ বিবরণ এবং পরিষ্কার কভার ফটো আপলোড করুন।',
     sellStep3: 'কল পান এবং স্থানীয় শিক্ষার্থীদের কাছে বিক্রি করুন।',
     about: 'আমাদের সম্পর্কে',
-    aboutMissionTitle: 'কেন আমরা বুকসোয়াপ তৈরি করেছি',
-    aboutMissionDesc: 'আমরা দেখেছি অনেক মানুষ চড়া দামের কারণে বই কিনতে পারেন না, তাই আমরা এই প্ল্যাটফর্মটি তৈরি করেছি যাতে প্রত্যেকের কাছে তাদের প্রয়োজনীয় বই থাকে।',
+    aboutMissionTitle: 'কেন আমরা বইসাথী তৈরি করেছি',
+    aboutMissionDesc: 'আমরা দেখেছি অনেক মানুষ চড়া দামের কারণে বই কিনতে পারেন না। আমরা বইসাথী (BoiSathi) তৈরি করেছি যাতে পড়াশোনার যাত্রায় সবাই একজন সঙ্গী পায়।',
     aboutCommunityTitle: 'শিক্ষার্থীদের জন্য, কমিউনিটির দ্বারা তৈরি',
-    aboutCommunityDesc: 'বুকসোয়াপ বাংলাদেশে শিক্ষার আর্থিক বোঝা কমানোর জন্য একটি শিক্ষার্থী-পরিচালিত উদ্যোগ। আপনার স্থানীয় কমিউনিটির মধ্যে বই বিনিময়ের মাধ্যমে, আমরা অর্থ সাশ্রয় করি এবং পরিবেশকে সাহায্য করি।',
+    aboutCommunityDesc: 'বইসাথী (BoiSathi.com) বাংলাদেশে শিক্ষার আর্থিক বোঝা কমানোর জন্য একটি শিক্ষার্থী-পরিচালিত উদ্যোগ। আপনার স্থানীয় কমিউনিটির মধ্যে বই বিনিময়ের মাধ্যমে, আমরা অর্থ সাশ্রয় করি এবং পরিবেশকে সাহায্য করি।',
     showNumber: 'নম্বর দেখুন',
     deleteReminder: 'বইটি বিক্রি করার পর অনুগ্রহ করে বিজ্ঞাপনটি ডিলিট করুন।',
     fullName: 'সম্পূর্ণ নাম',
@@ -156,10 +157,10 @@ export const translations = {
     deleteProfile: 'প্রোফাইল ডিলিট করুন',
     confirmDeleteProfile: 'অ্যাকাউন্ট ডিলিট করবেন?',
     deleteProfileWarning: 'এই কাজটি স্থায়ী। আপনার প্রোফাইল এবং আপনার দেওয়া সব বইয়ের বিজ্ঞাপন আমাদের সিস্টেম থেকে চিরতরে মুছে যাবে।',
-    footerDesc: 'সারা বাংলাদেশের শিক্ষার্থীদের মধ্যে জ্ঞান বিনিময়ে সহায়তা করছি। আমরা একাডেমিক এবং শখের পাঠের জন্য একটি শীর্ষস্থানীয় কমিউনিটি চালিত মার্কেটপ্লেস।',
+    footerDesc: 'একটি শিক্ষার্থী-কেন্দ্রিক অনলাইন প্ল্যাটফর্ম, যেখানে BoiSathi হয়ে ওঠে আপনার পড়াশোনার সঙ্গী। এখানে পুরোনো বই কেনা, বিক্রি এবং দান করা আরও সহজ।',
     quickNavigation: 'দ্রুত নেভিগেশন',
     studentSupport: 'স্টুডেন্ট সাপোর্ট',
-    copyright: '© ২০২৬ বুকসোয়াপ বাংলাদেশ। সর্বস্বত্ব সংরক্ষিত।',
+    copyright: '© ২০২৬ বইসাথী (BOISATHI.COM)। সর্বস্বত্ব সংরক্ষিত।',
     craftedFor: 'তৈরি করা হয়েছে',
     knowledgeExchange: 'জ্ঞান বিনিময়ের জন্য',
     // Condition labels

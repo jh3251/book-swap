@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
@@ -63,32 +64,26 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             <div className="w-9 h-9 flex items-center justify-center">
               <img 
                 src="https://i.ibb.co/kgjLXphC/book-Converted.png" 
-                alt="BookSwap Logo" 
+                alt="BoiSathi Logo" 
                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
               />
             </div>
-            <span className="text-xl font-bold font-serif text-zinc-900 tracking-tight hidden sm:inline-block">BookSwap</span>
+            <span className="text-xl font-bold font-serif text-zinc-900 tracking-tight hidden sm:inline-block">BoiSathi</span>
           </Link>
 
           <div className="flex items-center gap-3 md:gap-6">
-            {/* Language Toggle - Always visible in navbar */}
             <LanguageToggle />
-
-            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-6">
               <Link to="/" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
                 {t('home')}
               </Link>
-
               <Link to="/about" className="text-xs font-semibold text-zinc-600 hover:text-accent transition">
                 {t('aboutUs')}
               </Link>
-
               <Link to="/sell" className="bg-accent text-white px-5 py-2 rounded-xl hover:bg-accent-hover transition flex items-center gap-2 text-xs font-semibold shadow-sm">
                 <PlusCircle className="w-4 h-4" />
                 {t('sellABook')}
               </Link>
-              
               {user ? (
                 <div className="flex items-center space-x-5">
                   <Link to="/dashboard" className="text-zinc-600 hover:text-accent font-semibold text-xs flex items-center gap-2 transition">
@@ -109,8 +104,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                 </Link>
               )}
             </div>
-
-            {/* Mobile Actions Container */}
             <div className="md:hidden flex items-center gap-2">
               <button 
                 onClick={() => setIsMenuOpen(!isMenuOpen)} 
@@ -122,8 +115,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 bg-white z-[90] transition-transform duration-500 md:hidden ${
         isMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
@@ -135,7 +126,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             </div>
             <ChevronRight className="w-4 h-4 text-white/50" />
           </Link>
-
           <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl text-zinc-900 font-semibold text-sm">
             <div className="flex items-center gap-4">
               <Home className="w-5 h-5 text-accent" />
@@ -143,7 +133,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             </div>
             <ChevronRight className="w-4 h-4 text-zinc-300" />
           </Link>
-
           <Link to="/about" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl text-zinc-900 font-semibold text-sm">
             <div className="flex items-center gap-4">
               <Info className="w-5 h-5 text-accent" />
@@ -151,7 +140,6 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             </div>
             <ChevronRight className="w-4 h-4 text-zinc-300" />
           </Link>
-          
           {user ? (
             <>
               <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between p-5 bg-zinc-50 rounded-xl font-semibold text-sm">
@@ -167,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               </button>
             </>
           ) : (
-            <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="block p-6 bg-zinc-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-center shadow-lg">
+            <Link to="/auth" onClick={() => setIsMenuOpen(false)} className="block p-6 bg-zinc-900 text-white rounded-2xl font-black text-xs uppercase text-center shadow-lg">
               {t('signIn')}
             </Link>
           )}
