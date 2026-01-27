@@ -72,6 +72,10 @@ export const translations = {
     copyright: '© 2026 BOISATHI.COM. ALL RIGHTS RESERVED.',
     craftedFor: 'CRAFTED FOR',
     knowledgeExchange: 'KNOWLEDGE EXCHANGE',
+    seoTools: 'SEO Tools',
+    generateSitemap: 'Generate Latest Sitemap',
+    copySitemap: 'Copy XML Code',
+    sitemapDesc: 'Copy this code into your sitemap.xml file to tell Google about your new books.',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -163,6 +167,10 @@ export const translations = {
     copyright: '© ২০২৬ বইসাথী (BOISATHI.COM)। সর্বস্বত্ব সংরক্ষিত।',
     craftedFor: 'তৈরি করা হয়েছে',
     knowledgeExchange: 'জ্ঞান বিনিময়ের জন্য',
+    seoTools: 'এসইও টুলস',
+    generateSitemap: 'সাইটম্যাপ তৈরি করুন',
+    copySitemap: 'XML কোড কপি করুন',
+    sitemapDesc: 'আপনার নতুন বই সম্পর্কে গুগলকে জানাতে এই কোডটি আপনার sitemap.xml ফাইলে কপি করুন।',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',
