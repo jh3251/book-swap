@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
@@ -7,6 +6,7 @@ import BookCard from '../components/BookCard';
 import { Search, MapPin, X, PlusCircle, ArrowRight, ExternalLink, Sparkles, CheckCircle2, BookOpen, BookHeart, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
+import SEO from '../components/SEO';
 
 const HomePage: React.FC = () => {
   const [listings, setListings] = useState<BookListing[]>([]);
@@ -20,45 +20,18 @@ const HomePage: React.FC = () => {
     upazilaId: ''
   });
   
-  // Pagination logic: 8 for desktop, 5 for mobile
   const getPageSize = () => window.innerWidth < 768 ? 5 : 8;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(getPageSize());
   
   const { t, lang } = useTranslation();
-
-  // Hero Animation State
   const [heroIdx, setHeroIdx] = useState(0);
   
   const heroOptions = useMemo(() => [
-    { 
-      parts: [
-        { text: 'আপনার বই,', color: 'text-accent' },
-        { text: 'কারও আশা', color: 'text-red-600' }
-      ],
-      isBengali: true
-    },
-    { 
-      parts: [
-        { text: 'বই হোক', color: 'text-accent' },
-        { text: 'কারও ভরসা', color: 'text-red-600' }
-      ],
-      isBengali: true
-    },
-    { 
-      parts: [
-        { text: 'BoiSathi.com-', color: 'text-accent' },
-        { text: 'বইসাথী', color: 'text-red-600' }
-      ],
-      isBengali: true
-    },
-    { 
-      parts: [
-        { text: 'পুরোনো বই,', color: 'text-accent' },
-        { text: 'নতুন আশা', color: 'text-red-600' }
-      ],
-      isBengali: true
-    }
+    { parts: [{ text: 'আপনার বই,', color: 'text-accent' }, { text: 'কারও আশা', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'বই হোক', color: 'text-accent' }, { text: 'কারও ভরসা', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'BoiSathi.com-', color: 'text-accent' }, { text: 'বইসাথী', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'পুরোনো বই,', color: 'text-accent' }, { text: 'নতুন আশা', color: 'text-red-600' }], isBengali: true }
   ], []);
 
   useEffect(() => {
@@ -69,20 +42,18 @@ const HomePage: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle window resize to adjust page size
   useEffect(() => {
     const handleResize = () => {
       const newPageSize = getPageSize();
       if (newPageSize !== pageSize) {
         setPageSize(newPageSize);
-        setCurrentPage(0); // Reset to first page on layout change to avoid empty views
+        setCurrentPage(0);
       }
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [pageSize]);
 
-  // Cycle hero text
   useEffect(() => {
     const interval = setInterval(() => {
       setHeroIdx((prev) => (prev + 1) % heroOptions.length);
@@ -113,19 +84,8 @@ const HomePage: React.FC = () => {
   const hasMore = currentPage < totalPages - 1;
   const hasPrevious = currentPage > 0;
 
-  const handleNext = () => {
-    if (hasMore) {
-      setCurrentPage(prev => prev + 1);
-      document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handlePrevious = () => {
-    if (hasPrevious) {
-      setCurrentPage(prev => prev - 1);
-      document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const handleNext = () => { if (hasMore) { setCurrentPage(prev => prev + 1); document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); } };
+  const handlePrevious = () => { if (hasPrevious) { setCurrentPage(prev => prev - 1); document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' }); } };
 
   const clearFilters = () => {
     setLocation({ divisionId: '', districtId: '', upazilaId: '' });
@@ -139,6 +99,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-12 md:space-y-20 pb-32">
+      <SEO 
+        title={lang === 'bn' ? 'পুরোনো বই, নতুন আশা' : 'Buy & Sell Used Books in Bangladesh'} 
+        description={lang === 'bn' ? 'BoiSathi.com - বাংলাদেশের শিক্ষার্থীদের জন্য পুরোনো বই কেনাবেচার নির্ভরযোগ্য প্ল্যাটফর্ম।' : 'BoiSathi is the safest student marketplace in Bangladesh for buying and selling used academic books.'}
+      />
+      
       {/* Hero Section */}
       <section className="relative px-4 pt-4 md:pt-8 overflow-hidden rounded-[4rem]">
         <div className="absolute inset-0 alpona-bg opacity-30 -z-10"></div>
@@ -179,7 +144,7 @@ const HomePage: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
-                    setCurrentPage(0); // Reset page on search
+                    setCurrentPage(0);
                   }}
                   className="w-full px-4 py-3 bg-transparent outline-none font-bold text-slate-900 placeholder:text-slate-200 text-sm md:text-base"
                 />

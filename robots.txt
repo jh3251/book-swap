@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://boisathi.com/sitemap.xml

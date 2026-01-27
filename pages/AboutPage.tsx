@@ -1,13 +1,18 @@
-
 import React from 'react';
 import { useTranslation } from '../App';
 import { BookOpen, Heart, Globe, Sparkles, BookHeart, GraduationCap, ArrowRight, ShieldCheck } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const AboutPage: React.FC = () => {
   const { lang } = useTranslation();
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 md:py-20 space-y-20 font-bn">
+      <SEO 
+        title={lang === 'bn' ? 'আমাদের সম্পর্কে' : 'About BoiSathi'} 
+        description={lang === 'bn' ? 'বইসাথী (BoiSathi.com) - বাংলাদেশের শিক্ষার্থীদের জন্য পুরোনো বই কেনাবেচার একটি কমিউনিটি প্ল্যাটফর্ম।' : 'Learn more about BoiSathi, a student-led initiative to make education affordable in Bangladesh.'}
+      />
+      
       {/* Hero Section */}
       <section className="text-center space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
         <div className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 rounded-full border border-emerald-100 text-accent font-black text-[11px] uppercase mb-4">

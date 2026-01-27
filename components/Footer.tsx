@@ -72,8 +72,14 @@ const Footer: React.FC = () => {
                 {t('quickNavigation')}
               </h4>
               <div className="flex flex-col gap-2.5">
-                <Link to="/about" className="w-full bg-accent text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-accent-hover transition text-center shadow-lg shadow-accent/20">
+                <Link to="/about" className="w-full bg-accent/20 text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-accent transition text-center border border-accent/30">
                   {t('about')}
+                </Link>
+                <Link to="/privacy" className="w-full bg-[#1c1c1c] text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-zinc-800 transition text-center border border-zinc-800">
+                  {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}
+                </Link>
+                <Link to="/terms" className="w-full bg-[#1c1c1c] text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-zinc-800 transition text-center border border-zinc-800">
+                  {lang === 'bn' ? 'ব্যবহারের শর্তাবলী' : 'Terms of Use'}
                 </Link>
               </div>
             </div>

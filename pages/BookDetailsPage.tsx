@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
@@ -7,6 +6,7 @@ import { MapPin, Phone, User, Calendar, ChevronLeft, ShieldCheck, Share2, Bookma
 import { useTranslation } from '../App';
 import { DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import LoadingScreen from '../components/LoadingScreen';
+import SEO from '../components/SEO';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,8 +32,6 @@ const BookDetailsPage: React.FC = () => {
         setBook(data);
         const userData = await firebase.db.getUserById(data.sellerId);
         setSeller(userData);
-        
-        // Check if saved
         const savedIds = JSON.parse(localStorage.getItem('bk_saved_v1') || '[]');
         setIsSaved(savedIds.includes(id));
       }
@@ -42,6 +40,37 @@ const BookDetailsPage: React.FC = () => {
     fetchAll();
     return () => unsub();
   }, [id]);
+
+  useEffect(() => {
+    if (book) {
+      // Inject Product JSON-LD
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'product-jsonld';
+      script.text = JSON.stringify({
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": book.title,
+        "image": book.imageUrl,
+        "description": book.description || `Buy ${book.title} by ${book.author} on BoiSathi.`,
+        "brand": { "@type": "Brand", "name": "Used Books" },
+        "offers": {
+          "@type": "Offer",
+          "url": window.location.href,
+          "priceCurrency": "BDT",
+          "price": book.condition === 'Donation' ? "0" : book.price.toString(),
+          "itemCondition": "https://schema.org/UsedCondition",
+          "availability": "https://schema.org/InStock",
+          "seller": { "@type": "Person", "name": seller?.displayName || book.sellerName }
+        }
+      });
+      document.head.appendChild(script);
+      return () => {
+        const existing = document.getElementById('product-jsonld');
+        if (existing) existing.remove();
+      };
+    }
+  }, [book, seller]);
 
   const handleSave = () => {
     if (!id) return;
@@ -62,14 +91,12 @@ const BookDetailsPage: React.FC = () => {
       await navigator.clipboard.writeText(window.location.href);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 3000);
-    } catch (err) {
-      alert('Failed to copy link.');
-    }
+    } catch (err) { alert('Failed to copy link.'); }
   };
 
   const shareWhatsApp = () => {
     if (!book) return;
-    const text = encodeURIComponent(`Check out this book: ${book.title} for ৳${book.price} on BookSwap! ${window.location.href}`);
+    const text = encodeURIComponent(`Check out this book: ${book.title} for ৳${book.price} on BoiSathi! ${window.location.href}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
@@ -87,28 +114,14 @@ const BookDetailsPage: React.FC = () => {
 
   const localizedLocation = useMemo(() => {
     if (!book) return null;
-    if (lang !== 'bn') {
-      return {
-        upazila: book.location.upazilaName,
-        district: book.location.districtName,
-        division: book.location.divisionName
-      };
-    }
-    
+    if (lang !== 'bn') return { upazila: book.location.upazilaName, district: book.location.districtName, division: book.location.divisionName };
     const upazila = UPAZILAS.find(u => u.id === book.location.upazilaId);
     const district = DISTRICTS.find(d => d.id === book.location.districtId);
     const division = DIVISIONS.find(d => d.id === book.location.divisionId);
-    
-    return {
-      upazila: upazila?.nameBn || book.location.upazilaName,
-      district: district?.nameBn || book.location.districtName,
-      division: division?.nameBn || book.location.divisionName
-    };
+    return { upazila: upazila?.nameBn || book.location.upazilaName, district: district?.nameBn || book.location.districtName, division: division?.nameBn || book.location.divisionName };
   }, [book, lang]);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  if (loading) return <LoadingScreen />;
 
   if (!book) {
     return (
@@ -117,15 +130,17 @@ const BookDetailsPage: React.FC = () => {
           <ChevronLeft className="w-10 h-10 text-emerald-200" />
         </div>
         <h2 className="text-3xl font-bold font-serif text-black">Listing not found</h2>
-        <button onClick={() => navigate('/')} className="bg-accent text-white px-10 py-4 rounded-xl font-semibold uppercase text-xs shadow-xl">
-          Return to Feed
-        </button>
+        <button onClick={() => navigate('/')} className="bg-accent text-white px-10 py-4 rounded-xl font-semibold uppercase text-xs shadow-xl">Return to Feed</button>
       </div>
     );
   }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20 relative">
+      <SEO 
+        title={`${book.title} | ${book.author}`} 
+        description={`Buy used ${book.title} for ৳${book.price} in ${book.location.upazilaName}. Condition: ${book.condition}.`}
+      />
       <div className="flex justify-between items-center">
         <button 
           onClick={() => navigate(-1)}
@@ -161,7 +176,7 @@ const BookDetailsPage: React.FC = () => {
             <div className="aspect-[4/3] w-full rounded-2xl overflow-hidden bg-emerald-50/30 flex items-center justify-center">
               <img 
                 src={book.imageUrl || `https://picsum.photos/seed/${book.id}/800/600`} 
-                alt={book.title}
+                alt={`${book.title} Book Cover`}
                 className="max-h-full max-w-full object-contain hover:scale-105 transition duration-1000"
               />
             </div>
@@ -297,10 +312,7 @@ const BookDetailsPage: React.FC = () => {
              <h3 className="text-2xl font-serif font-black text-black mb-8 text-center">{lang === 'bn' ? 'বইটি শেয়ার করুন' : 'Share this Book'}</h3>
              
              <div className="space-y-4">
-                <button 
-                  onClick={shareWhatsApp}
-                  className="w-full flex items-center justify-between p-5 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-black text-xs uppercase border border-[#25D366]/20 hover:bg-[#25D366]/20 transition"
-                >
+                <button onClick={shareWhatsApp} className="w-full flex items-center justify-between p-5 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-black text-xs uppercase border border-[#25D366]/20 hover:bg-[#25D366]/20 transition">
                   <span className="pl-2">WhatsApp</span>
                   <div className="w-6 h-6 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg">
@@ -308,32 +320,14 @@ const BookDetailsPage: React.FC = () => {
                     </svg>
                   </div>
                 </button>
-
-                <button 
-                  onClick={shareFacebook}
-                  className="w-full flex items-center justify-between p-5 bg-[#1877F2]/10 text-[#1877F2] rounded-2xl font-black text-xs uppercase border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition"
-                >
+                <button onClick={shareFacebook} className="w-full flex items-center justify-between p-5 bg-[#1877F2]/10 text-[#1877F2] rounded-2xl font-black text-xs uppercase border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition">
                   <span className="pl-2">Facebook</span>
                   <Facebook className="w-6 h-6 fill-current" />
                 </button>
-
-                <button 
-                  onClick={copyToClipboard}
-                  className={`w-full flex items-center justify-between p-5 rounded-2xl font-black text-xs uppercase border transition ${
-                    copySuccess 
-                      ? 'bg-emerald-500 text-white border-emerald-600' 
-                      : 'bg-zinc-100 text-black border-zinc-200 hover:bg-zinc-200'
-                  }`}
-                >
+                <button onClick={copyToClipboard} className={`w-full flex items-center justify-between p-5 rounded-2xl font-black text-xs uppercase border transition ${copySuccess ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-zinc-100 text-black border-zinc-200 hover:bg-zinc-200'}`}>
                   <span className="pl-2">{copySuccess ? (lang === 'bn' ? 'কপি হয়েছে!' : 'Copied!') : (lang === 'bn' ? 'লিংক কপি করুন' : 'Copy Link')}</span>
                   {copySuccess ? <CheckCircle2 className="w-6 h-6" /> : <LinkIcon className="w-6 h-6" />}
                 </button>
-             </div>
-
-             <div className="mt-8 p-4 bg-emerald-50 rounded-2xl text-center">
-                <p className="text-[10px] font-black text-emerald-800 uppercase leading-tight">
-                  {lang === 'bn' ? 'একজন শিক্ষার্থীকে তাদের পরবর্তী বইটি খুঁজে পেতে সাহায্য করুন!' : 'Help a student find their next read!'}
-                </p>
              </div>
           </div>
         </div>
