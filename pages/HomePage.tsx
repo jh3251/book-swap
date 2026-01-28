@@ -27,6 +27,14 @@ const HomePage: React.FC = () => {
   const [pageSize, setPageSize] = useState(getPageSize());
   
   const { t, lang } = useTranslation();
+  const [heroIdx, setHeroIdx] = useState(0);
+
+  const heroOptions = useMemo(() => [
+    { parts: [{ text: 'আপনার বই,', color: 'text-accent' }, { text: 'কারও আশা', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'বই হোক', color: 'text-accent' }, { text: 'কারও ভরসা', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'BoiSathi.com-', color: 'text-accent' }, { text: 'বইসাথী', color: 'text-red-600' }], isBengali: true },
+    { parts: [{ text: 'পুরোনো বই,', color: 'text-accent' }, { text: 'নতুন আশা', color: 'text-red-600' }], isBengali: true }
+  ], []);
 
   useEffect(() => {
     const unsubscribe = firebase.db.subscribeToListings((data) => {
@@ -35,6 +43,13 @@ const HomePage: React.FC = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroIdx((prev) => (prev + 1) % heroOptions.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [heroOptions.length]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -82,36 +97,52 @@ const HomePage: React.FC = () => {
     setCurrentPage(0);
   };
 
+  const currentHero = heroOptions[heroIdx];
+
   return (
-    <div className="space-y-4 md:space-y-10 pb-32">
+    <div className="space-y-4 md:space-y-10 pb-10">
       <SEO 
         title={lang === 'bn' ? 'পুরোনো বই, নতুন আশা' : 'Buy & Sell Used Books in Bangladesh'} 
         description={lang === 'bn' ? 'BoiSathi.com - বাংলাদেশের শিক্ষার্থীদের জন্য পুরোনো বই কেনাবেচার নির্ভরযোগ্য প্ল্যাটফর্ম।' : 'BoiSathi is the safest student marketplace in Bangladesh for buying and selling used academic books.'}
       />
       
-      {/* Hero Section - Updated to match screenshot (Text + Buttons) */}
-      <section className="relative px-4 pt-10 md:pt-20 pb-10 md:pb-20 overflow-hidden">
-        <div className="absolute inset-0 alpona-bg opacity-10 -z-10"></div>
-        <div className="max-w-4xl mx-auto text-center space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
-          <h1 className="text-2xl md:text-5xl font-serif font-black text-slate-900 leading-tight md:leading-[1.2]">
-            {lang === 'bn' 
-              ? 'আপনার পড়াশোনার সঙ্গীকে খুঁজে নিন অথবা পুরোনো বইগুলো দিয়ে অন্যের সঙ্গী হোন।' 
-              : 'Find your study companion or help others by sharing your pre-loved books today.'}
-          </h1>
+      {/* Restored Dynamic Hero Section */}
+      <section className="relative px-4 pt-4 md:pt-10 overflow-hidden rounded-[4rem]">
+        <div className="absolute inset-0 alpona-bg opacity-20 -z-10"></div>
+        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load">
+          <div className="min-h-[5rem] sm:min-h-[8rem] md:min-h-[12rem] flex items-center justify-center overflow-visible">
+            <h1 
+              key={heroIdx}
+              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-1 md:py-6 flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
+            >
+              {currentHero.parts.map((part, i) => (
+                <span key={i} className={`${part.color} inline-block transform hover:scale-105 transition-transform`}>
+                  {part.text}
+                </span>
+              ))}
+            </h1>
+          </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button 
-              onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto bg-accent text-white px-12 py-4 rounded-2xl font-black text-[11px] uppercase hover:bg-accent-hover transition shadow-2xl shadow-accent/20 active:scale-95"
-            >
-              {t('browse')}
-            </button>
-            <Link 
-              to="/sell" 
-              className="w-full sm:w-auto bg-zinc-900 text-white px-12 py-4 rounded-2xl font-black text-[11px] uppercase hover:bg-zinc-800 transition shadow-2xl shadow-black/10 active:scale-95"
-            >
-              {t('sellABook')}
-            </Link>
+          <div className="max-w-3xl mx-auto relative pt-0.5">
+            <div className="bg-white p-1.5 md:p-3 rounded-[1.2rem] md:rounded-[2rem] shadow-[0_25px_50px_rgba(0,0,0,0.08)] border border-slate-100 flex flex-col md:flex-row items-center gap-1.5 transform hover:scale-[1.01] transition-transform">
+              <div className="flex-grow flex items-center px-3 md:px-5 w-full">
+                <Search className="w-4 h-4 md:w-5 md:h-5 text-zinc-300" />
+                <input 
+                  type="text"
+                  placeholder={lang === 'bn' ? 'বই বা লেখকের নাম লিখুন...' : 'Search for titles, authors or subjects...'}
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(0);
+                  }}
+                  className="w-full px-3 py-2 md:py-3 bg-transparent outline-none font-bold text-slate-900 placeholder:text-slate-200 text-sm md:text-base"
+                />
+              </div>
+              <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full md:w-auto px-5 py-2.5 md:px-8 md:py-4 bg-slate-900 text-white rounded-[0.8rem] md:rounded-[1.5rem] font-black text-[9px] md:text-[11px] uppercase flex items-center justify-center gap-2 md:gap-3 hover:bg-black transition-all shadow-xl active:scale-95 tracking-widest">
+                <ArrowRight className="w-3.5 h-3.5" />
+                {t('browse')}
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -129,21 +160,6 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4">
-               {/* Search Integrated into Filters as Hero Search is removed */}
-               <div className="space-y-1 md:space-y-2 lg:col-span-1">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('lookingFor')}</label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-300" />
-                    <input 
-                      type="text" 
-                      value={searchTerm}
-                      onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
-                      className="w-full pl-8 pr-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 shadow-sm"
-                      placeholder={lang === 'bn' ? 'বই খুঁজুন...' : 'Search...'}
-                    />
-                  </div>
-               </div>
-
                <div className="space-y-1 md:space-y-2">
                   <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('division')}</label>
                   <select 
@@ -206,6 +222,21 @@ const HomePage: React.FC = () => {
                   </select>
                </div>
 
+               <div className="space-y-1 md:space-y-2">
+                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{lang === 'bn' ? 'অবস্থা' : 'CONDITION'}</label>
+                  <select 
+                    value={selectedCondition}
+                    onChange={(e) => {
+                      setSelectedCondition(e.target.value);
+                      setCurrentPage(0);
+                    }}
+                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+                  >
+                    <option value="">{t('allConditions')}</option>
+                    {CONDITIONS.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
+                  </select>
+               </div>
+
                <div className="flex items-end mt-1 md:mt-0">
                   <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full px-5 py-2 md:px-8 md:py-3 bg-accent text-white rounded-md md:rounded-xl font-black text-[9px] md:text-[11px] uppercase hover:bg-accent-hover shadow-xl active:scale-95 transition-all">
                     {t('find')}
@@ -242,7 +273,6 @@ const HomePage: React.FC = () => {
           </div>
         ) : filteredListings.length > 0 ? (
           <div className="space-y-4 md:space-y-6">
-            {/* Gap set to 0 as requested for both mobile and desktop */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border-t border-l border-zinc-100">
               {visibleListings.map(book => (
                 <div key={book.id} className="border-r border-b border-zinc-100">

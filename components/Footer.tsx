@@ -8,8 +8,8 @@ const Footer: React.FC = () => {
   const { t, lang } = useTranslation();
 
   return (
-    <footer className="relative mt-20">
-      <div className="container mx-auto px-4 max-w-5xl mb-16">
+    <footer className="relative mt-4">
+      <div className="container mx-auto px-4 max-w-5xl mb-12">
         <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-emerald-900/5 border border-emerald-50 text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
            <p className="text-zinc-800 font-bold text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
              {lang === 'bn' 
@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-[9px] font-black text-white/40 uppercase tracking-[0.15em] leading-none mb-1.5">{t('appLabel')}</p>
+                  <p className="text-[9px] font-black text-white/40 uppercase tracking-[0.15em] mb-1.5">{t('appLabel')}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-xs md:text-sm font-black text-white whitespace-nowrap">{lang === 'bn' ? 'অ্যান্ড্রয়েড অ্যাপ' : 'Android App'}</span>
                     <span className="text-[7px] font-black bg-accent text-white px-2 py-0.5 rounded-full uppercase animate-pulse-soft">
