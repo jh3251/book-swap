@@ -40,25 +40,36 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
 
   const timeAgo = useMemo(() => {
     const seconds = Math.floor((Date.now() - book.createdAt) / 1000);
+    
+    // Years
     let interval = seconds / 31536000;
-    if (interval > 1) return Math.floor(interval) + (lang === 'bn' ? ' বছর আগে' : 'y ago');
+    if (interval >= 1) return Math.floor(interval) + (lang === 'bn' ? ' বছর আগে' : 'y ago');
+    
+    // Months
     interval = seconds / 2592000;
-    if (interval > 1) return Math.floor(interval) + (lang === 'bn' ? ' মাস আগে' : 'mo ago');
-    interval = seconds / 864000;
-    if (interval > 1) return Math.floor(interval) + (lang === 'bn' ? ' দিন আগে' : 'd ago');
+    if (interval >= 1) return Math.floor(interval) + (lang === 'bn' ? ' মাস আগে' : 'mo ago');
+    
+    // Days - Exactly after 24 hours (86400 seconds)
+    interval = seconds / 86400;
+    if (interval >= 1) return Math.floor(interval) + (lang === 'bn' ? ' দিন আগে' : 'd ago');
+    
+    // Hours
     interval = seconds / 3600;
-    if (interval > 1) return Math.floor(interval) + (lang === 'bn' ? ' ঘণ্টা আগে' : 'h ago');
+    if (interval >= 1) return Math.floor(interval) + (lang === 'bn' ? ' ঘণ্টা আগে' : 'h ago');
+    
+    // Minutes
     interval = seconds / 60;
-    if (interval > 1) return Math.floor(interval) + (lang === 'bn' ? ' মিনিট আগে' : 'm ago');
+    if (interval >= 1) return Math.floor(interval) + (lang === 'bn' ? ' মিনিট আগে' : 'm ago');
+    
     return lang === 'bn' ? 'এইমাত্র' : 'just now';
   }, [book.createdAt, lang]);
 
   return (
-    <div className="bg-white p-3 md:p-4 flex gap-3 md:gap-4 group hover:bg-zinc-50/80 transition-all duration-300 relative overflow-hidden h-full rounded-[1.5rem] md:rounded-[2rem] border border-zinc-50">
+    <div className="bg-white p-3 md:p-4 flex gap-3 md:gap-5 group hover:bg-zinc-50/80 transition-all duration-300 relative overflow-hidden h-full rounded-[1.5rem] md:rounded-[2rem] border border-zinc-50">
       {/* Compact Image Section */}
       <Link 
         to={`/books/${book.id}`} 
-        className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden rounded-[1rem] md:rounded-[1.2rem] bg-zinc-50 relative border border-zinc-100 shadow-sm"
+        className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex-shrink-0 overflow-hidden rounded-[1.2rem] md:rounded-[1.5rem] bg-zinc-50 relative border border-zinc-100 shadow-sm"
       >
         <img 
           src={book.imageUrl || `https://picsum.photos/seed/${book.id}/300/300`} 
@@ -67,7 +78,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
           loading="lazy"
         />
         {book.condition === 'Donation' && (
-          <div className="absolute top-1.5 left-1.5 bg-orange-500 text-white px-1.5 py-0.5 rounded-md font-black text-[6px] md:text-[8px] uppercase shadow-md tracking-wider z-10">
+          <div className="absolute top-1.5 left-1.5 bg-orange-500 text-white px-1.5 py-0.5 rounded-md font-black text-[7px] md:text-[9px] uppercase shadow-md tracking-wider z-10">
             {t('free')}
           </div>
         )}
@@ -75,84 +86,85 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
       
       {/* Information Content Section */}
       <div className="flex-grow flex flex-col justify-between py-0.5 min-w-0">
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <Link to={`/books/${book.id}`} className="block">
-            <h3 className={`text-xs sm:text-sm md:text-lg font-black text-zinc-900 line-clamp-1 leading-tight transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
+            <h3 className={`text-sm sm:text-base md:text-xl font-black text-zinc-900 line-clamp-1 leading-tight transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
               {book.title}
             </h3>
             {book.author && (
-              <p className="text-[7px] md:text-[9px] text-zinc-300 font-bold uppercase tracking-[0.05em] mt-0.5 truncate">
+              <p className="text-[8px] md:text-[10px] text-zinc-300 font-bold uppercase tracking-[0.05em] mt-0.5 truncate flex items-center gap-1.5">
+                <span className="w-3 h-[1px] bg-zinc-100"></span>
                 {book.author}
               </p>
             )}
           </Link>
 
           <div className="flex flex-col gap-1 mt-1">
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit max-w-full">
-              <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-zinc-400 flex-shrink-0" />
-              <span className="text-[6px] md:text-[8px] font-black uppercase truncate tracking-tight">{localizedLocation}</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit max-w-full">
+              <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3 text-zinc-400 flex-shrink-0" />
+              <span className="text-[7px] md:text-[9px] font-black uppercase truncate tracking-tight">{localizedLocation}</span>
             </div>
             
-            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit">
-              <BookOpen className="w-2 h-2 md:w-2.5 md:h-2.5 text-zinc-400 flex-shrink-0" />
-              <span className="text-[6px] md:text-[8px] font-black uppercase tracking-tight">{t(book.subject as any)}</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit">
+              <BookOpen className="w-2.5 h-2.5 md:w-3 md:h-3 text-zinc-400 flex-shrink-0" />
+              <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight">{t(book.subject as any)}</span>
             </div>
           </div>
         </div>
 
-        {/* Action Row - Optimized for visibility */}
-        <div className="flex flex-wrap items-end justify-between gap-2 pt-2 border-t border-zinc-50 mt-2">
+        {/* Action Row - Optimized for visibility and wrapping */}
+        <div className="flex flex-wrap items-end justify-between gap-2 pt-2.5 border-t border-zinc-50 mt-3">
           <div className="flex flex-col flex-shrink-0">
              {book.condition === 'Donation' ? (
-              <span className="text-orange-600 font-black text-[9px] md:text-base uppercase tracking-tight leading-none">{t('free')}</span>
+              <span className="text-orange-600 font-black text-[11px] md:text-xl uppercase tracking-tight leading-none">{t('free')}</span>
             ) : (
               <div className="flex items-baseline gap-0.5 leading-none">
-                <span className="text-zinc-400 font-bold text-[7px] md:text-xs">৳</span>
-                <span className="text-emerald-600 font-black text-[10px] md:text-lg">{book.price}</span>
+                <span className="text-zinc-400 font-bold text-[8px] md:text-xs">৳</span>
+                <span className="text-emerald-600 font-black text-[12px] md:text-2xl">{book.price}</span>
               </div>
             )}
-            <div className="flex items-center gap-0.5 text-[6px] md:text-[8px] text-zinc-300 font-bold leading-none mt-0.5">
-              <Clock className="w-2 h-2" />
+            <div className="flex items-center gap-1 text-[8px] md:text-[10px] text-zinc-300 font-bold leading-none mt-1.5">
+              <Clock className="w-3 h-3" />
               <span className="truncate">{timeAgo}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 md:gap-2">
             {showActions ? (
-              <div className="flex gap-1">
+              <div className="flex items-center gap-1 md:gap-2">
                 <button 
                   onClick={() => onEdit?.(book.id)} 
-                  className="bg-[#F3F4F6] text-zinc-600 px-2 py-1.5 md:px-3 md:py-2 rounded-lg hover:bg-zinc-200 transition-all flex items-center gap-1 shadow-sm active:scale-95 border border-zinc-100"
+                  className="bg-[#F3F4F6] text-zinc-600 px-2 py-2 md:px-5 md:py-3 rounded-xl hover:bg-zinc-200 transition-all flex items-center gap-1.5 shadow-sm active:scale-95 border border-zinc-100"
                 >
-                  <LayoutGrid className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
-                  <span className="text-[7px] md:text-[9px] font-black uppercase">
+                  <LayoutGrid className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
+                  <span className="text-[8px] md:text-[11px] font-black uppercase tracking-wider">
                     {t('edit')}
                   </span>
                 </button>
                 <button 
                   onClick={() => onDelete?.(book.id)} 
-                  className="bg-[#FEF2F2] text-[#EF4444] px-2 py-1.5 md:px-3 md:py-2 rounded-lg hover:bg-red-100 transition-all flex items-center gap-1 shadow-sm active:scale-95 border border-red-50"
+                  className="bg-[#FEF2F2] text-[#EF4444] px-2 py-2 md:px-5 md:py-3 rounded-xl hover:bg-red-100 transition-all flex items-center gap-1.5 shadow-sm active:scale-95 border border-red-50"
                 >
-                  <Trash2 className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
-                  <span className="text-[7px] md:text-[9px] font-black uppercase">
+                  <Trash2 className="w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
+                  <span className="text-[8px] md:text-[11px] font-black uppercase tracking-wider">
                     {t('delete')}
                   </span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5 md:gap-2">
                 <Link 
                   to={`/books/${book.id}`} 
-                  className="bg-zinc-900 text-white px-2.5 py-1.5 md:px-4 md:py-2.5 rounded-lg font-black text-[7px] md:text-[9px] uppercase hover:bg-black transition-all shadow-md active:scale-95 flex items-center gap-1"
+                  className="bg-zinc-900 text-white px-3 py-2 md:px-6 md:py-3 rounded-xl font-black text-[8px] md:text-[11px] uppercase hover:bg-black transition-all shadow-md active:scale-95 flex items-center gap-1"
                 >
                   {t('details')}
-                  <ChevronRight className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+                  <ChevronRight className="w-3 h-3 md:w-4 h-4" />
                 </Link>
                 <a 
                   href={`tel:${book.contactPhone}`} 
-                  className="w-7 h-7 md:w-9 md:h-9 bg-accent text-white rounded-lg flex items-center justify-center hover:bg-accent-hover transition-all shadow-md active:scale-95"
+                  className="w-8 h-8 md:w-11 md:h-11 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-hover transition-all shadow-md active:scale-95"
                 >
-                  <Phone className="w-3 h-3 md:w-4 h-4" />
+                  <Phone className="w-4 h-4 md:w-5 md:h-5" />
                 </a>
               </div>
             )}

@@ -19,6 +19,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
   const { t, lang } = useTranslation();
   
   const [loading, setLoading] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -75,10 +76,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        setError("Image is too large. Please select a file under 10MB.");
-        return;
-      }
       
       // Clear previous image if replaced during the same session
       if (currentDeleteToken) {
@@ -91,9 +88,12 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
       }
       setImagePreview(URL.createObjectURL(file));
       setError('');
+      setIsCompressing(true);
 
       try {
-        const res = await firebase.db.uploadBookImage(file);
+        // Automatically compress before upload
+        const compressed = await firebase.db.compressImage(file);
+        const res = await firebase.db.uploadBookImage(compressed);
         setCurrentDeleteToken(res.delete_token || null);
         setFormData(prev => ({ 
           ...prev, 
@@ -101,14 +101,15 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
           imageDeleteToken: res.delete_token || "" 
         }));
       } catch (err: any) {
-        setError("Image upload failed. " + err.message);
+        setError(lang === 'bn' ? "ছবি আপলোড ব্যর্থ হয়েছে।" : "Image upload failed. " + err.message);
+      } finally {
+        setIsCompressing(false);
       }
     }
   };
 
   const removeImage = async () => {
     if (currentDeleteToken) {
-      // Physically remove from Cloudinary
       await firebase.db.deleteImageByToken(currentDeleteToken);
     }
 
@@ -123,7 +124,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
   };
 
   const validate = () => {
-    // 1. Photo is now MANDATORY
     if (!imagePreview && !formData.imageUrl) {
       return lang === 'bn' ? "অনুগ্রহ করে বইয়ের একটি ছবি দিন।" : "Please upload at least one photo of the book.";
     }
@@ -157,7 +157,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (loading || isCompressing) return;
 
     const validationError = validate();
     if (validationError) {
@@ -208,7 +208,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
 
   return (
     <div className="max-w-4xl mx-auto pb-12 pt-4">
-      {/* Back Button matching screenshot */}
       <div className="flex items-center gap-2 mb-4">
          <button 
           onClick={() => navigate(-1)}
@@ -245,7 +244,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
         )}
 
         <form onSubmit={handleSubmit} className={`space-y-16 ${isAtLimit ? 'opacity-30 pointer-events-none grayscale' : ''}`}>
-          {/* Photo Section - MANDATORY */}
+          {/* Photo Section */}
           <div className="space-y-8">
             <h3 className="text-2xl md:text-3xl font-serif font-black text-black flex items-center gap-3">
               <Camera className="w-7 h-7 text-accent" /> 1. Photos
@@ -257,8 +256,14 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
             >
               {imagePreview ? (
                 <div className="w-full h-full relative">
-                  <img src={imagePreview} className="w-full h-full object-contain p-4" alt="Book Preview" />
-                  {!loading && (
+                  <img src={imagePreview} className={`w-full h-full object-contain p-4 transition-opacity ${isCompressing ? 'opacity-40' : 'opacity-100'}`} alt="Book Preview" />
+                  {isCompressing && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                      <Loader2 className="w-10 h-10 text-accent animate-spin" />
+                      <p className="text-[10px] font-black uppercase text-accent bg-white/80 px-4 py-1.5 rounded-full">Optimizing...</p>
+                    </div>
+                  )}
+                  {!loading && !isCompressing && (
                     <button 
                       type="button" 
                       onClick={(e) => { e.stopPropagation(); removeImage(); }} 
@@ -271,7 +276,7 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
               ) : (
                 <button 
                   type="button"
-                  onClick={() => !loading && fileInputRef.current?.click()}
+                  onClick={() => !loading && !isCompressing && fileInputRef.current?.click()}
                   className="w-full h-full flex flex-col items-center justify-center space-y-6 hover:bg-emerald-50/50 transition-colors"
                 >
                   <div className="w-24 h-24 bg-white rounded-[2.5rem] shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 border border-emerald-50">
@@ -287,7 +292,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
             </div>
           </div>
 
-          {/* Details Section */}
           <div className="space-y-10">
             <h3 className="text-2xl md:text-3xl font-serif font-black text-black flex items-center gap-3">
               <Sparkles className="w-7 h-7 text-accent" /> 2. Details
@@ -331,7 +335,6 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
             </div>
           </div>
 
-          {/* Location Section */}
           <div className="space-y-10">
             <h3 className="text-2xl md:text-3xl font-serif font-black text-black flex items-center gap-3">
               <MapPin className="w-7 h-7 text-accent" /> 3. Meetup Location
@@ -342,15 +345,15 @@ const SellPage: React.FC<SellPageProps> = ({ user }) => {
           <div className="pt-16 border-t border-emerald-50 flex flex-col items-center md:items-start">
             <button 
               type="submit" 
-              disabled={loading || isAtLimit}
+              disabled={loading || isAtLimit || isCompressing}
               className="w-full md:w-auto bg-black text-white px-20 py-6 rounded-[1.5rem] font-black text-xs uppercase tracking-widest shadow-[0_20px_40px_rgba(0,0,0,0.15)] hover:bg-zinc-800 transition-all flex items-center justify-center gap-4 disabled:opacity-50 active:scale-[0.98]"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
               {id ? 'Update Ad' : 'Publish Ad'}
             </button>
-            {loading && (
+            {(loading || isCompressing) && (
               <p className="text-[10px] font-black text-zinc-400 mt-8 uppercase tracking-[0.3em] animate-pulse">
-                {imageFile ? "Saving and uploading... please wait." : "Processing listing..."}
+                {isCompressing ? "Optimizing photo for faster upload..." : "Saving listing... please wait."}
               </p>
             )}
           </div>
