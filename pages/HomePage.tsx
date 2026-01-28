@@ -111,7 +111,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-12 md:space-y-20 pb-32">
+    <div className="space-y-6 md:space-y-20 pb-32">
       <SEO 
         title={lang === 'bn' ? 'পুরোনো বই, নতুন আশা' : 'Buy & Sell Used Books in Bangladesh'} 
         description={lang === 'bn' ? 'BoiSathi.com - বাংলাদেশের শিক্ষার্থীদের জন্য পুরোনো বই কেনাবেচার নির্ভরযোগ্য প্ল্যাটফর্ম।' : 'BoiSathi is the safest student marketplace in Bangladesh for buying and selling used academic books.'}
@@ -163,8 +163,8 @@ const HomePage: React.FC = () => {
 
       {/* Filter Bento Grid */}
       <section className="container mx-auto max-w-7xl px-4">
-        <div className="bg-[#f0fdf9]/60 rounded-[2.5rem] p-8 md:p-12 border border-emerald-50 relative overflow-hidden group shadow-sm">
-           <div className="flex justify-between items-center mb-10">
+        <div className="bg-[#f0fdf9]/60 rounded-[2.5rem] p-5 md:p-12 border border-emerald-50 relative overflow-hidden group shadow-sm">
+           <div className="flex justify-between items-center mb-6 md:mb-10">
               <h3 className="flex items-center gap-2.5 text-[11px] font-black text-slate-400 uppercase">
                 <MapPin className="w-4 h-4 text-accent" /> {lang === 'bn' ? 'স্থান ও শ্রেণী নির্বাচন' : 'REFINE SEARCH'}
               </h3>
@@ -173,7 +173,7 @@ const HomePage: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-5">
                <div className="space-y-3">
                   <label className="text-[9px] font-black text-slate-400 uppercase ml-1">{t('division')}</label>
                   <div className="relative group/sel">
@@ -276,7 +276,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Results Section */}
-      <section id="results-section" className="container mx-auto max-w-7xl px-4 space-y-10">
+      <section id="results-section" className="container mx-auto max-w-7xl px-4 space-y-6 md:space-y-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
             <h2 className="text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight">
