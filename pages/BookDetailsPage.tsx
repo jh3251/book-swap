@@ -3,12 +3,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
 import { BookListing, UserProfile } from '../types';
-import { MapPin, Phone, User, Calendar, ChevronLeft, ShieldCheck, Share2, Bookmark, Mail, CheckCircle2, X, Link as LinkIcon, Facebook } from 'lucide-react';
+import { MapPin, Phone, User, Calendar, ChevronLeft, ShieldCheck, Share2, Bookmark, Mail, CheckCircle2, X, Link as LinkIcon, Facebook, MessageCircle, Loader2 } from 'lucide-react';
 import { useTranslation } from '../App';
 import { DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import LoadingScreen from '../components/LoadingScreen';
 import SEO from '../components/SEO';
-import AdSense from '../components/AdSense';
 
 const BookDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +21,7 @@ const BookDetailsPage: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isPhoneRevealed, setIsPhoneRevealed] = useState(false);
+  const [isInitiatingChat, setIsInitiatingChat] = useState(false);
 
   useEffect(() => {
     const unsub = firebase.auth.onAuthStateChanged(setCurrentUser);
@@ -45,7 +45,6 @@ const BookDetailsPage: React.FC = () => {
 
   useEffect(() => {
     if (book) {
-      // Inject Product JSON-LD
       const script = document.createElement('script');
       script.type = 'application/ld+json';
       script.id = 'product-jsonld';
@@ -73,6 +72,23 @@ const BookDetailsPage: React.FC = () => {
       };
     }
   }, [book, seller]);
+
+  const handleChatInitiate = async () => {
+    if (!currentUser) {
+      navigate('/auth');
+      return;
+    }
+    if (!book) return;
+    setIsInitiatingChat(true);
+    try {
+      const conversationId = await firebase.db.createOrGetConversation(book, currentUser);
+      navigate(`/chat/${conversationId}`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsInitiatingChat(false);
+    }
+  };
 
   const handleSave = () => {
     if (!id) return;
@@ -137,6 +153,8 @@ const BookDetailsPage: React.FC = () => {
     );
   }
 
+  const isSeller = currentUser?.uid === book.sellerId;
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20 relative">
       <SEO 
@@ -190,9 +208,6 @@ const BookDetailsPage: React.FC = () => {
               {book.description || (lang === 'bn' ? "বিক্রেতা এই বইটির জন্য কোনো বিস্তারিত বিবরণ প্রদান করেননি। আরও তথ্যের জন্য সরাসরি তাদের সাথে যোগাযোগ করুন।" : "The seller hasn't provided a detailed description for this book. Please contact them directly for more information.")}
             </div>
           </div>
-
-          {/* AdSense below description */}
-          <AdSense slot="5566778899" className="rounded-2xl" />
         </div>
 
         <div className="space-y-8">
@@ -247,24 +262,48 @@ const BookDetailsPage: React.FC = () => {
             </div>
 
             <div className="pt-6 space-y-4">
-              <a 
-                href={isPhoneRevealed ? `tel:${book.contactPhone}` : '#'}
-                onClick={handleCallClick}
-                className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition duration-300 transform active:scale-[0.98] ${
-                  isPhoneRevealed 
-                    ? 'bg-accent hover:bg-accent-hover shadow-accent/30' 
-                    : 'bg-[#16a34a] hover:bg-emerald-700 shadow-emerald-500/30 animate-pulse-soft'
-                }`}
-              >
-                <Phone className={`w-5 h-5 !text-white ${!isPhoneRevealed ? 'animate-ring' : ''}`} />
-                <span className="transition-all duration-500 !text-white">
-                  {isPhoneRevealed ? (
-                    <span className="animate-in fade-in slide-in-from-left-2 !text-white">{book.contactPhone}</span>
-                  ) : (
-                    <span className="!text-white">{book.contactPhone.substring(0, 5)}XXXXXX</span>
-                  )}
-                </span>
-              </a>
+              <div className="flex flex-col gap-3">
+                {/* 1. Phone Button */}
+                <a 
+                  href={isPhoneRevealed ? `tel:${book.contactPhone}` : '#'}
+                  onClick={handleCallClick}
+                  className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition duration-300 transform active:scale-95 ${
+                    isPhoneRevealed 
+                      ? 'bg-[#16a34a] hover:bg-emerald-700 shadow-[#16a34a]/30' 
+                      : 'bg-[#16a34a] hover:bg-emerald-700 shadow-emerald-500/30'
+                  }`}
+                >
+                  <Phone className={`w-5 h-5 !text-white ${!isPhoneRevealed ? 'animate-ring' : ''}`} />
+                  <span className="!text-white">
+                    {isPhoneRevealed ? book.contactPhone : `${book.contactPhone.substring(0, 5)}XXXXXX`}
+                  </span>
+                </a>
+
+                {!isSeller && (
+                  <>
+                    {/* 2. Message Seller (Inbox) Button */}
+                    <button 
+                      onClick={handleChatInitiate}
+                      disabled={isInitiatingChat}
+                      className="w-full bg-zinc-900 text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition hover:bg-black active:scale-95 disabled:opacity-50"
+                    >
+                      {isInitiatingChat ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageCircle className="w-5 h-5" />}
+                      {lang === 'bn' ? 'ইনবক্স বার্তা' : 'MESSAGE SELLER'}
+                    </button>
+
+                    {/* 3. WhatsApp Message Button */}
+                    <a 
+                      href={`https://wa.me/88${book.contactPhone}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-[#25D366] text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition hover:bg-[#128C7E] active:scale-95"
+                    >
+                      <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.001 12.046c0 2.121.54 4.191 1.566 6.06L0 24l6.102-1.6c1.805.984 3.837 1.503 5.908 1.503h.005c6.635 0 12.045-5.412 12.048-12.047a11.82 11.82 0 00-3.414-8.504z"/></svg>
+                      {lang === 'bn' ? 'WhatsApp বার্তা' : 'WHATSAPP MESSAGE'}
+                    </a>
+                  </>
+                )}
+              </div>
               
               <div className="p-6 bg-[#fff7ed] rounded-2xl flex items-center gap-4 border border-orange-100 shadow-sm">
                 <ShieldCheck className="w-6 h-6 text-[#ea580c] flex-shrink-0" />
@@ -288,17 +327,7 @@ const BookDetailsPage: React.FC = () => {
                    <p className="text-[10px] text-accent font-black uppercase mt-1.5">{lang === 'bn' ? 'সদস্য' : 'MEMBER'}</p>
                  </div>
                </div>
-               
-               {seller?.email && (
-                 <div className="mt-6 flex items-center gap-3 p-4 bg-emerald-50/30 rounded-2xl border border-emerald-50/50">
-                   <Mail className="w-4 h-4 text-accent" />
-                   <span className="text-xs font-black text-black truncate">{seller.email}</span>
-                 </div>
-               )}
             </div>
-
-            {/* AdSense in Sidebar */}
-            <AdSense slot="1122334455" format="fluid" />
           </div>
         </div>
       </div>
@@ -310,22 +339,15 @@ const BookDetailsPage: React.FC = () => {
             onClick={() => setShowShareModal(false)}
           ></div>
           <div className="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm p-10 animate-in zoom-in duration-300">
-             <button 
-              onClick={() => setShowShareModal(false)}
-              className="absolute top-8 right-8 p-2 text-zinc-300 hover:text-black transition"
-             >
+             <button onClick={() => setShowShareModal(false)} className="absolute top-8 right-8 p-2 text-zinc-300 hover:text-black transition">
                <X className="w-6 h-6" />
              </button>
-
              <h3 className="text-2xl font-serif font-black text-black mb-8 text-center">{lang === 'bn' ? 'বইটি শেয়ার করুন' : 'Share this Book'}</h3>
-             
              <div className="space-y-4">
                 <button onClick={shareWhatsApp} className="w-full flex items-center justify-between p-5 bg-[#25D366]/10 text-[#25D366] rounded-2xl font-black text-xs uppercase border border-[#25D366]/20 hover:bg-[#25D366]/20 transition">
                   <span className="pl-2">WhatsApp</span>
                   <div className="w-6 h-6 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.001 12.046c0 2.121.54 4.191 1.566 6.06L0 24l6.102-1.6c1.805.984 3.837 1.503 5.908 1.503h.005c6.635 0 12.045-5.412 12.048-12.047a11.82 11.82 0 00-3.414-8.504z"/>
-                    </svg>
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.001 12.046c0 2.121.54 4.191 1.566 6.06L0 24l6.102-1.6c1.805.984 3.837 1.503 5.908 1.503h.005c6.635 0 12.045-5.412 12.048-12.047a11.82 11.82 0 00-3.414-8.504z"/></svg>
                   </div>
                 </button>
                 <button onClick={shareFacebook} className="w-full flex items-center justify-between p-5 bg-[#1877F2]/10 text-[#1877F2] rounded-2xl font-black text-xs uppercase border border-[#1877F2]/20 hover:bg-[#1877F2]/20 transition">

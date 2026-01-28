@@ -42,10 +42,10 @@ const AuthPage: React.FC = () => {
       if (user?.emailVerified) {
         window.location.reload(); 
       } else {
-        setError('Email not verified yet. Please check your inbox.');
+        setError(lang === 'bn' ? 'ইমেইল এখনো ভেরিফাই করা হয়নি। অনুগ্রহ করে আপনার ইনবক্স চেক করুন।' : 'Email not verified yet. Please check your inbox.');
       }
     } catch (err) {
-      setError('Could not refresh status.');
+      setError(lang === 'bn' ? 'স্ট্যাটাস আপডেট করা সম্ভব হয়নি।' : 'Could not refresh status.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ const AuthPage: React.FC = () => {
 
     if (isForgotPassword) {
       if (!trimmedEmail) {
-        setError('Please enter your email.');
+        setError(lang === 'bn' ? 'অনুগ্রহ করে আপনার ইমেইল প্রদান করুন।' : 'Please enter your email.');
         return;
       }
       setLoading(true);
@@ -67,7 +67,7 @@ const AuthPage: React.FC = () => {
         await firebase.auth.resetPassword(trimmedEmail);
         setResetSent(true);
       } catch (err: any) {
-        setError('Could not send reset email. Please check the address.');
+        setError(lang === 'bn' ? 'রিসেট ইমেইল পাঠানো সম্ভব হয়নি। অনুগ্রহ করে ইমেইলটি চেক করুন।' : 'Could not send reset email. Please check the address.');
       } finally {
         setLoading(false);
       }
@@ -95,22 +95,25 @@ const AuthPage: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('This email is already registered. Please login instead.');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Password is too weak. Use at least 6 characters.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Please enter a valid email address.');
+      const errorCode = err.code || '';
+      
+      if (errorCode === 'auth/email-already-in-use') {
+        setError(lang === 'bn' ? 'এই ইমেইলটি ইতিমধ্যে ব্যবহৃত হয়েছে। লগইন করার চেষ্টা করুন।' : 'This email is already registered. Please login instead.');
+      } else if (errorCode === 'auth/weak-password') {
+        setError(lang === 'bn' ? 'পাসওয়ার্ডটি অত্যন্ত দুর্বল। কমপক্ষে ৬টি অক্ষর ব্যবহার করুন।' : 'Password is too weak. Use at least 6 characters.');
+      } else if (errorCode === 'auth/invalid-email') {
+        setError(lang === 'bn' ? 'অনুগ্রহ করে সঠিক ইমেইল প্রদান করুন।' : 'Please enter a valid email address.');
       } else if (
-        err.code === 'auth/user-not-found' || 
-        err.code === 'auth/wrong-password' || 
-        err.code === 'auth/invalid-credential'
+        errorCode === 'auth/user-not-found' || 
+        errorCode === 'auth/wrong-password' || 
+        errorCode === 'auth/invalid-credential' ||
+        err.message?.includes('invalid-credential')
       ) {
-        setError('Incorrect email or password. Please try again.');
-      } else if (err.code === 'auth/too-many-requests') {
-        setError('Too many failed attempts. Account temporarily locked. Try again later.');
+        setError(lang === 'bn' ? 'ভুল ইমেইল অথবা পাসওয়ার্ড। আবার চেষ্টা করুন।' : 'Incorrect email or password. Please try again.');
+      } else if (errorCode === 'auth/too-many-requests') {
+        setError(lang === 'bn' ? 'অতিরিক্ত বার ভুল চেষ্টা করা হয়েছে। অ্যাকাউন্ট সাময়িকভাবে বন্ধ করা হয়েছে।' : 'Too many failed attempts. Account temporarily locked. Try again later.');
       } else {
-        setError('Authentication failed. Please check your connection and try again.');
+        setError(lang === 'bn' ? 'অথেনটিকেশন ব্যর্থ হয়েছে। ইন্টাররেট সংযোগ চেক করুন।' : 'Authentication failed. Please check your connection and try again.');
       }
     } finally {
       setLoading(false);
@@ -173,7 +176,7 @@ const AuthPage: React.FC = () => {
           
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold font-serif text-black mb-4">
-              {isForgotPassword ? 'Reset Password' : (isLogin ? 'Welcome Back!' : 'Join BookSwap')}
+              {isForgotPassword ? 'Reset Password' : (isLogin ? 'Welcome Back!' : 'Join BoiSathi')}
             </h1>
             <p className="text-zinc-500 font-medium text-sm">
               {isForgotPassword 
@@ -273,7 +276,9 @@ const AuthPage: React.FC = () => {
                   {!isLogin && (
                     <div className="animate-in slide-in-from-top-2 duration-300">
                       <label className="block text-[10px] font-black text-zinc-900 uppercase mb-3 ml-1">
-                        {t('confirmPassword')}
+                        {confirmPassword && password !== confirmPassword ? (
+                          <span className="text-red-500">Mismatched</span>
+                        ) : t('confirmPassword')}
                       </label>
                       <div className="relative group">
                         <Lock className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-200 group-focus-within:text-accent w-5 h-5 transition-colors" />
@@ -322,7 +327,7 @@ const AuthPage: React.FC = () => {
           {!isForgotPassword && (
             <div className="mt-10 pt-10 border-t border-emerald-50 text-center">
               <p className="text-zinc-500 text-[13px] font-bold">
-                {isLogin ? "New to BookSwap?" : "Member already?"}{' '}
+                {isLogin ? "New to BoiSathi?" : "Member already?"}{' '}
                 <button onClick={toggleMode} className="text-accent font-black hover:text-accent-hover transition underline-offset-4 hover:underline">
                   {isLogin ? 'Sign Up Free' : 'Log In'}
                 </button>

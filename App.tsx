@@ -13,6 +13,7 @@ import AuthPage from './pages/AuthPage';
 import AboutPage from './pages/AboutPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsPage from './pages/TermsPage';
+import ChatPage from './pages/ChatPage';
 import LoadingScreen from './components/LoadingScreen';
 import { Language, translations } from './translations';
 
@@ -88,6 +89,7 @@ const App: React.FC = () => {
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/books/:id" element={<BookDetailsPage />} />
+                <Route path="/chat/:id" element={user ? <ChatPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />

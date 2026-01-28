@@ -35,6 +35,24 @@ export interface BookListing {
   imageDeleteToken?: string;
 }
 
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  text: string;
+  createdAt: number;
+}
+
+export interface Conversation {
+  id: string;
+  bookId: string;
+  bookTitle: string;
+  bookImageUrl?: string;
+  participants: string[]; // [buyerId, sellerId]
+  participantNames: { [uid: string]: string };
+  lastMessage?: string;
+  updatedAt: number;
+}
+
 export interface Division {
   id: string;
   name: string;

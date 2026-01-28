@@ -160,12 +160,14 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
                   {t('details')}
                   <ChevronRight className="w-3 h-3 md:w-4 h-4" />
                 </Link>
-                <a 
-                  href={`tel:${book.contactPhone}`} 
-                  className="w-8 h-8 md:w-11 md:h-11 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-hover transition-all shadow-md active:scale-95"
-                >
-                  <Phone className="w-4 h-4 md:w-5 md:h-5" />
-                </a>
+                <div className="flex items-center gap-1.5">
+                  <a 
+                    href={`tel:${book.contactPhone}`} 
+                    className="w-8 h-8 md:w-11 md:h-11 bg-accent text-white rounded-xl flex items-center justify-center hover:bg-accent-hover transition-all shadow-md active:scale-95"
+                  >
+                    <Phone className="w-4 h-4 md:w-5 md:h-5" />
+                  </a>
+                </div>
               </div>
             )}
           </div>
