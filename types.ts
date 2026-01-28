@@ -32,6 +32,7 @@ export interface BookListing {
   location: LocationInfo;
   createdAt: number;
   imageUrl?: string;
+  imageDeleteToken?: string;
 }
 
 export interface Division {

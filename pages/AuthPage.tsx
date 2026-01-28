@@ -55,10 +55,16 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     setError('');
     
+    const trimmedEmail = email.trim();
+
     if (isForgotPassword) {
+      if (!trimmedEmail) {
+        setError('Please enter your email.');
+        return;
+      }
       setLoading(true);
       try {
-        await firebase.auth.resetPassword(email);
+        await firebase.auth.resetPassword(trimmedEmail);
         setResetSent(true);
       } catch (err: any) {
         setError('Could not send reset email. Please check the address.');
@@ -82,14 +88,13 @@ const AuthPage: React.FC = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        await firebase.auth.signIn(email, password);
+        await firebase.auth.signIn(trimmedEmail, password);
       } else {
-        await firebase.auth.signUp(email, password, name, undefined);
+        await firebase.auth.signUp(trimmedEmail, password, name.trim(), undefined);
         setNeedsVerification(true);
       }
     } catch (err: any) {
       console.error("Auth Error:", err);
-      // Modern Firebase uses 'auth/invalid-credential' for both wrong password and user not found
       if (err.code === 'auth/email-already-in-use') {
         setError('This email is already registered. Please login instead.');
       } else if (err.code === 'auth/weak-password') {
@@ -102,6 +107,8 @@ const AuthPage: React.FC = () => {
         err.code === 'auth/invalid-credential'
       ) {
         setError('Incorrect email or password. Please try again.');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Account temporarily locked. Try again later.');
       } else {
         setError('Authentication failed. Please check your connection and try again.');
       }

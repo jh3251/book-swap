@@ -2,6 +2,7 @@
   "name": "BoiSathi.com (বইসাথী)",
   "description": "পুরোনো বই, নতুন আশা - Bangladesh's premier student marketplace for buying, selling, and donating books.",
   "requestFramePermissions": [
-    "geolocation"
+    "geolocation",
+    "camera"
   ]
 }

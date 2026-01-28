@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
 import { BookListing, UserProfile } from '../types';
 import BookCard from '../components/BookCard';
-import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, X, Save, Loader2, CheckCircle2, Info, AlertTriangle, FileCode, Copy, Globe } from 'lucide-react';
+import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, Save, Loader2, CheckCircle2, Info, AlertTriangle } from 'lucide-react';
 import { useTranslation } from '../App';
 
 interface DashboardPageProps {
@@ -12,15 +12,13 @@ interface DashboardPageProps {
 }
 
 const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
-  const [activeTab, setActiveTab] = useState<'ads' | 'saved' | 'account' | 'seo'>('ads');
+  const [activeTab, setActiveTab] = useState<'ads' | 'saved' | 'account'>('ads');
   const [listings, setListings] = useState<BookListing[]>([]);
-  const [allListingsForSitemap, setAllListingsForSitemap] = useState<BookListing[]>([]);
   const [savedListings, setSavedListings] = useState<BookListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showDeleteProfileConfirm, setShowDeleteProfileConfirm] = useState(false);
   const [deletingProfile, setDeletingProfile] = useState(false);
-  const [copyXmlSuccess, setCopyXmlSuccess] = useState(false);
   
   const { t, lang } = useTranslation();
 
@@ -39,8 +37,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
         setListings(userAds);
         
         const allListings = await firebase.db.getListings();
-        setAllListingsForSitemap(allListings);
-        
         const savedIds = JSON.parse(localStorage.getItem('bk_saved_v1') || '[]');
         setSavedListings(allListings.filter(l => savedIds.includes(l.id)));
       } catch (e) {
@@ -93,39 +89,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
     }
   };
 
-  const generateSitemapXml = () => {
-    const baseUrl = 'https://boisathi.com';
-    const date = new Date().toISOString().split('T')[0];
-    
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-    
-    // Static Pages
-    const staticPages = ['', '/about', '/sell', '/privacy', '/terms'];
-    staticPages.forEach(page => {
-      xml += `  <url>\n    <loc>${baseUrl}/#${page}</loc>\n    <lastmod>${date}</lastmod>\n    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n  </url>\n`;
-    });
-
-    // Dynamic Book Pages
-    allListingsForSitemap.forEach(book => {
-      xml += `  <url>\n    <loc>${baseUrl}/#/books/${book.id}</loc>\n    <lastmod>${new Date(book.createdAt).toISOString().split('T')[0]}</lastmod>\n    <priority>0.6</priority>\n  </url>\n`;
-    });
-
-    xml += `</urlset>`;
-    return xml;
-  };
-
-  const copyXmlToClipboard = async () => {
-    const xml = generateSitemapXml();
-    try {
-      await navigator.clipboard.writeText(xml);
-      setCopyXmlSuccess(true);
-      setTimeout(() => setCopyXmlSuccess(false), 3000);
-    } catch (err) {
-      alert("Failed to copy XML.");
-    }
-  };
-
   return (
     <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4 mt-4 md:mt-8 pb-20">
       <aside className="lg:col-span-1">
@@ -158,12 +121,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase ${activeTab === 'account' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-emerald-50/50 text-black hover:bg-emerald-100'}`}
             >
               <Settings className={`w-4 h-4 md:w-5 md:h-5 ${activeTab === 'account' ? 'text-white' : 'text-accent'}`} /> Profile
-            </button>
-            <button 
-              onClick={() => setActiveTab('seo')}
-              className={`flex-shrink-0 lg:w-full flex items-center justify-start gap-4 p-4 font-black rounded-2xl transition text-[10px] md:text-xs uppercase ${activeTab === 'seo' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'bg-emerald-50/50 text-black hover:bg-emerald-100'}`}
-            >
-              <Globe className={`w-4 h-4 md:w-5 md:h-5 ${activeTab === 'seo' ? 'text-white' : 'text-accent'}`} /> SEO
             </button>
           </nav>
         </div>
@@ -219,51 +176,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
               </div>
               <div className="pt-10 border-t border-emerald-50"><button type="button" onClick={() => setShowDeleteProfileConfirm(true)} className="text-red-600 font-black text-[10px] uppercase flex items-center gap-3 hover:text-red-700 transition"><Trash2 className="w-4 h-4" />{t('deleteProfile')}</button></div>
             </form>
-          </div>
-        )}
-
-        {activeTab === 'seo' && (
-          <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-emerald-900/5 border border-emerald-50 space-y-8 animate-in fade-in duration-500">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-emerald-50 rounded-xl shadow-sm">
-                 <FileCode className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-serif font-black text-black leading-none">{t('seoTools')}</h2>
-                <p className="text-zinc-400 text-[10px] font-black uppercase mt-1.5">{allListingsForSitemap.length} Books to Index</p>
-              </div>
-            </div>
-
-            <div className="bg-[#f8fafc] p-6 rounded-[1.5rem] border border-slate-100 space-y-4">
-              <p className="text-zinc-600 text-sm font-medium leading-relaxed">
-                {t('sitemapDesc')}
-              </p>
-              
-              <div className="relative group">
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <button 
-                    onClick={copyXmlToClipboard}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[9px] uppercase transition-all shadow-sm ${copyXmlSuccess ? 'bg-emerald-500 text-white' : 'bg-white text-zinc-600 hover:bg-zinc-50'}`}
-                  >
-                    {copyXmlSuccess ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copyXmlSuccess ? 'Copied' : t('copySitemap')}
-                  </button>
-                </div>
-                <textarea 
-                  readOnly 
-                  className="w-full h-80 bg-slate-900 text-emerald-400 p-6 rounded-2xl font-mono text-xs overflow-auto outline-none border border-slate-800 shadow-inner"
-                  value={generateSitemapXml()}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-5 bg-blue-50/50 rounded-2xl border border-blue-100">
-               <Globe className="w-5 h-5 text-blue-500 mt-0.5" />
-               <div className="space-y-1">
-                 <p className="text-[11px] font-black text-blue-900 uppercase">Expert Tip</p>
-                 <p className="text-xs text-blue-700 font-medium">Search engines like Google will automatically find your new books eventually, but updating your sitemap.xml helps them do it much faster!</p>
-               </div>
-            </div>
           </div>
         )}
       </main>

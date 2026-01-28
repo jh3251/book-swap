@@ -78,6 +78,9 @@ export const translations = {
     sitemapDesc: 'Copy this code into your sitemap.xml file to tell Google about your new books.',
     androidAppComingSoon: 'Android App Coming Soon',
     appLabel: 'Get the App',
+    edit: 'Edit',
+    delete: 'Delete',
+    editListing: 'EDIT LISTING',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -105,7 +108,7 @@ export const translations = {
     browse: 'ব্রাউজ',
     sellABook: 'বই বিক্রি করুন',
     dashboard: 'ড্যাশবোর্ড',
-    logout: 'লগ আউট',
+    logout: 'Log Out',
     signIn: 'সাইন ইন',
     findYour: 'খুঁজুন আপনার',
     books: 'বই।',
@@ -175,6 +178,9 @@ export const translations = {
     sitemapDesc: 'আপনার নতুন বই সম্পর্কে গুগলকে জানাতে এই কোডটি আপনার sitemap.xml ফাইলে কপি করুন।',
     androidAppComingSoon: 'অ্যান্ড্রয়েড অ্যাপ আসছে...',
     appLabel: 'অ্যাপটি ডাউনলোড করুন',
+    edit: 'এডিট',
+    delete: 'ডিলিট',
+    editListing: 'এডিট লিস্টিং',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',

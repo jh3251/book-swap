@@ -1,3 +1,4 @@
+
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -26,14 +27,14 @@ import {
   orderBy,
   onSnapshot
 } from "firebase/firestore";
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  getDownloadURL,
-  deleteObject
-} from "firebase/storage";
 import { BookListing, UserProfile } from './types';
+
+// ==========================================
+// 1. YOUR CLOUDINARY CONFIG
+// ==========================================
+const CLOUDINARY_CLOUD_NAME = "dxbqn8ms0";
+const CLOUDINARY_UPLOAD_PRESET = "boisathi_preset"; 
+// ==========================================
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2oJQc8Al6WNtjseonLG7cpLWZ557Nw98",
@@ -47,50 +48,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
-
-// Helper to compress images before upload
-const compressImage = async (file: File, maxWidth: number = 1000, quality: number = 0.7): Promise<Blob> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target?.result as string;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth) {
-          height = (maxWidth / width) * height;
-          width = maxWidth;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error('Canvas to Blob failed'));
-        }, 'image/jpeg', quality);
-      };
-    };
-    reader.onerror = (error) => reject(error);
-  });
-};
-
-// Helper to force a timeout on cloud operations
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T> => {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) => 
-      setTimeout(() => reject(new Error('Operation timed out')), timeoutMs)
-    )
-  ]);
-};
 
 const mapUser = async (user: FirebaseUser): Promise<UserProfile & { emailVerified: boolean }> => {
   let username = "";
@@ -127,11 +84,11 @@ export const firebase = {
       return null;
     },
     signIn: async (email: string, pass: string) => {
-      const { user } = await signInWithEmailAndPassword(auth, email, pass);
+      const { user } = await signInWithEmailAndPassword(auth, email.trim(), pass);
       return await mapUser(user);
     },
     signUp: async (email: string, pass: string, name: string, photoFile?: File) => {
-      const { user } = await createUserWithEmailAndPassword(auth, email, pass);
+      const { user } = await createUserWithEmailAndPassword(auth, email.trim(), pass);
       
       try {
         await sendEmailVerification(user);
@@ -142,17 +99,15 @@ export const firebase = {
       let photoURL = "";
       if (photoFile) {
         try {
-          const compressed = await compressImage(photoFile, 400, 0.8);
-          const storageRef = ref(storage, `profiles/${user.uid}`);
-          await withTimeout(uploadBytes(storageRef, compressed));
-          photoURL = await getDownloadURL(storageRef);
+          const res = await firebase.db.uploadBookImage(photoFile);
+          photoURL = res.secure_url;
         } catch (e) {
           console.warn("Profile photo upload failed");
         }
       }
       
-      await updateProfile(user, { displayName: name, photoURL });
-      const userProfile: UserProfile = { uid: user.uid, displayName: name, email, photoURL: photoURL || undefined, createdAt: Date.now(), username: "" };
+      await updateProfile(user, { displayName: name.trim(), photoURL });
+      const userProfile: UserProfile = { uid: user.uid, displayName: name.trim(), email: email.trim(), photoURL: photoURL || undefined, createdAt: Date.now(), username: "" };
       try { await setDoc(doc(db, "users", user.uid), userProfile); } catch (e) {}
       
       return await mapUser(user);
@@ -164,22 +119,20 @@ export const firebase = {
       let photoURL = user.photoURL || "";
       if (photoFile) {
         try {
-          const compressed = await compressImage(photoFile, 400, 0.8);
-          const storageRef = ref(storage, `profiles/${user.uid}`);
-          await withTimeout(uploadBytes(storageRef, compressed));
-          photoURL = await getDownloadURL(storageRef);
+          const res = await firebase.db.uploadBookImage(photoFile);
+          photoURL = res.secure_url;
         } catch (e) {
           console.warn("Profile photo upload failed");
         }
       }
       
-      await updateProfile(user, { displayName: name, photoURL });
+      await updateProfile(user, { displayName: name.trim(), photoURL });
       
       try {
         await updateDoc(doc(db, "users", user.uid), {
-          displayName: name,
+          displayName: name.trim(),
           photoURL: photoURL || undefined,
-          username: username || ""
+          username: (username || "").trim().toLowerCase()
         });
       } catch (e) {}
 
@@ -187,7 +140,7 @@ export const firebase = {
     },
     signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, email.trim());
     },
     deleteAccount: async () => {
       const user = auth.currentUser;
@@ -197,11 +150,6 @@ export const firebase = {
       const snapshot = await getDocs(q);
       for (const d of snapshot.docs) {
         await firebase.db.deleteListing(d.id);
-      }
-      if (user.photoURL) {
-        try {
-          await deleteObject(ref(storage, `profiles/${uid}`));
-        } catch (e) {}
       }
       try { await deleteDoc(doc(db, "users", uid)); } catch (e) {}
       await deleteUser(user);
@@ -218,41 +166,90 @@ export const firebase = {
         console.error("Firestore Error:", error);
       });
     },
-    uploadBookImage: async (file: File) => {
-      const compressed = await compressImage(file, 1000, 0.7);
-      const storageRef = ref(storage, `books/${Date.now()}_${file.name}`);
-      await uploadBytes(storageRef, compressed);
-      return await getDownloadURL(storageRef);
+    uploadBookImage: async (file: File): Promise<{ secure_url: string, delete_token?: string }> => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      formData.append("folder", "boisathi_uploads");
+
+      try {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: formData }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "Upload failed");
+        }
+
+        const data = await response.json();
+        return { 
+          secure_url: data.secure_url, 
+          delete_token: data.delete_token 
+        };
+      } catch (error: any) {
+        throw new Error(error.message || "Connection failed.");
+      }
     },
-    deleteStorageImage: async (url: string) => {
-      if (url && url.includes('firebasestorage.googleapis.com')) {
-        try {
-          const imageRef = ref(storage, url);
-          await deleteObject(imageRef);
-        } catch (e) {}
+    deleteImageByToken: async (token: string): Promise<void> => {
+      try {
+        const formData = new FormData();
+        formData.append("token", token);
+        
+        await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/delete_by_token`,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+      } catch (e) {
+        console.warn("Cloudinary delete failed", e);
       }
     },
     addListing: async (listing: Omit<BookListing, 'id' | 'createdAt'>, imageFile?: File) => {
       const createdAt = Date.now();
       let imageUrl = listing.imageUrl || "";
-      if (imageFile) imageUrl = await firebase.db.uploadBookImage(imageFile);
-      const docRef = await addDoc(collection(db, "bookListings"), { ...listing, imageUrl, createdAt });
-      return { id: docRef.id, ...listing, imageUrl, createdAt } as BookListing;
+      let imageDeleteToken = listing.imageDeleteToken || "";
+      
+      if (imageFile) {
+        const res = await firebase.db.uploadBookImage(imageFile);
+        imageUrl = res.secure_url;
+        imageDeleteToken = res.delete_token || "";
+      }
+      
+      const docRef = await addDoc(collection(db, "bookListings"), { ...listing, imageUrl, imageDeleteToken, createdAt });
+      return { id: docRef.id, ...listing, imageUrl, imageDeleteToken, createdAt } as BookListing;
     },
     updateListing: async (id: string, data: Partial<BookListing>, imageFile?: File) => {
       let imageUrl = data.imageUrl;
+      let imageDeleteToken = data.imageDeleteToken;
+
       if (imageFile) {
-        imageUrl = await firebase.db.uploadBookImage(imageFile);
-        const existing = await firebase.db.getListingById(id);
-        if (existing?.imageUrl) await firebase.db.deleteStorageImage(existing.imageUrl);
+        const res = await firebase.db.uploadBookImage(imageFile);
+        imageUrl = res.secure_url;
+        imageDeleteToken = res.delete_token || "";
       }
+
       const finalData = { ...data };
-      if (imageUrl) finalData.imageUrl = imageUrl;
+      finalData.imageUrl = imageUrl || ""; 
+      finalData.imageDeleteToken = imageDeleteToken || "";
       await updateDoc(doc(db, "bookListings", id), finalData);
     },
     deleteListing: async (id: string) => {
-      const listing = await firebase.db.getListingById(id);
-      if (listing?.imageUrl) await firebase.db.deleteStorageImage(listing.imageUrl);
+      try {
+        // Try to delete image from Cloudinary if listing exists and has token
+        const snapshot = await getDoc(doc(db, "bookListings", id));
+        if (snapshot.exists()) {
+          const data = snapshot.data() as BookListing;
+          if (data.imageDeleteToken) {
+            await firebase.db.deleteImageByToken(data.imageDeleteToken);
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to delete image during listing removal", e);
+      }
       await deleteDoc(doc(db, "bookListings", id));
     },
     getUserListings: async (uid: string) => {

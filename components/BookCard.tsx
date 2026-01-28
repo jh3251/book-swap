@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BookListing, UserProfile } from '../types';
-import { MapPin, Phone, LayoutGrid, PlusCircle, BookOpen, Clock, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, LayoutGrid, BookOpen, Clock, ChevronRight, X, Trash2 } from 'lucide-react';
 import { firebase } from '../firebase';
 import { useTranslation } from '../App';
 import { DISTRICTS, UPAZILAS } from '../constants';
@@ -54,102 +54,105 @@ const BookCard: React.FC<BookCardProps> = ({ book, showActions, onDelete, onEdit
   }, [book.createdAt, lang]);
 
   return (
-    <div className="bg-white p-2 md:p-4 flex gap-2 md:gap-5 group hover:bg-zinc-50 transition-all duration-300 relative overflow-hidden h-full">
-      {/* Visual Image Section */}
+    <div className="bg-white p-3 md:p-4 flex gap-3 md:gap-4 group hover:bg-zinc-50/80 transition-all duration-300 relative overflow-hidden h-full rounded-[1.5rem] md:rounded-[2rem] border border-zinc-50">
+      {/* Compact Image Section */}
       <Link 
         to={`/books/${book.id}`} 
-        className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 flex-shrink-0 overflow-hidden rounded-[1rem] md:rounded-[1.5rem] bg-zinc-50 relative border border-zinc-100/50 shadow-inner"
+        className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden rounded-[1rem] md:rounded-[1.2rem] bg-zinc-50 relative border border-zinc-100 shadow-sm"
       >
         <img 
-          src={book.imageUrl || `https://picsum.photos/seed/${book.id}/400/400`} 
+          src={book.imageUrl || `https://picsum.photos/seed/${book.id}/300/300`} 
           alt={book.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
           loading="lazy"
         />
         {book.condition === 'Donation' && (
-          <div className="absolute top-1.5 left-1.5 bg-orange-500/90 backdrop-blur-md text-white px-2 py-0.5 rounded-full font-black text-[6px] md:text-[8px] uppercase shadow-lg tracking-wider z-10 animate-pulse-soft">
+          <div className="absolute top-1.5 left-1.5 bg-orange-500 text-white px-1.5 py-0.5 rounded-md font-black text-[6px] md:text-[8px] uppercase shadow-md tracking-wider z-10">
             {t('free')}
           </div>
         )}
       </Link>
       
       {/* Information Content Section */}
-      <div className="flex-grow flex flex-col justify-between py-0.5 md:py-1 min-w-0">
-        <div className="space-y-1 md:space-y-2.5">
-          <Link to={`/books/${book.id}`} className="block group/title">
-            <h3 className={`text-sm sm:text-base md:text-xl font-black text-zinc-900 line-clamp-1 leading-tight group-hover/title:text-accent transition-colors ${lang === 'bn' ? 'font-bn md:text-2xl' : ''}`}>
+      <div className="flex-grow flex flex-col justify-between py-0.5 min-w-0">
+        <div className="space-y-1">
+          <Link to={`/books/${book.id}`} className="block">
+            <h3 className={`text-xs sm:text-sm md:text-lg font-black text-zinc-900 line-clamp-1 leading-tight transition-colors ${lang === 'bn' ? 'font-bn' : ''}`}>
               {book.title}
             </h3>
             {book.author && (
-              <p className="text-[8px] md:text-[10px] text-zinc-400 font-bold uppercase tracking-[0.05em] mt-0.5 truncate flex items-center gap-1.5">
-                <span className="w-3 h-[1px] bg-zinc-200"></span>
+              <p className="text-[7px] md:text-[9px] text-zinc-300 font-bold uppercase tracking-[0.05em] mt-0.5 truncate">
                 {book.author}
               </p>
             )}
           </Link>
 
-          <div className="flex flex-wrap gap-1 md:gap-2">
-            <div className="inline-flex items-center gap-1 px-1.5 py-0.5 md:px-3 md:py-1.5 bg-zinc-50/80 border border-zinc-100 rounded-lg md:rounded-xl text-zinc-600 group-hover:bg-blue-50/30 group-hover:border-blue-100/50 transition-colors max-w-full">
-              <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3 text-zinc-400 flex-shrink-0" />
-              <span className="text-[7px] md:text-[9px] font-black uppercase truncate tracking-tight">{localizedLocation}</span>
+          <div className="flex flex-col gap-1 mt-1">
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit max-w-full">
+              <MapPin className="w-2 h-2 md:w-2.5 md:h-2.5 text-zinc-400 flex-shrink-0" />
+              <span className="text-[6px] md:text-[8px] font-black uppercase truncate tracking-tight">{localizedLocation}</span>
             </div>
             
-            <div className="inline-flex items-center gap-1 px-1.5 py-0.5 md:px-3 md:py-1.5 bg-zinc-50/80 border border-zinc-100 rounded-lg md:rounded-xl text-zinc-600 group-hover:bg-emerald-50/30 group-hover:border-emerald-100/50 transition-colors">
-              <BookOpen className="w-2.5 h-2.5 md:w-3 md:h-3 text-zinc-400 flex-shrink-0" />
-              <span className="text-[7px] md:text-[9px] font-black uppercase tracking-tight">{t(book.subject as any)}</span>
+            <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#F3F4F6] rounded-full text-zinc-500 w-fit">
+              <BookOpen className="w-2 h-2 md:w-2.5 md:h-2.5 text-zinc-400 flex-shrink-0" />
+              <span className="text-[6px] md:text-[8px] font-black uppercase tracking-tight">{t(book.subject as any)}</span>
             </div>
           </div>
         </div>
 
-        {/* Action Row */}
-        <div className="flex items-center justify-between gap-1 md:gap-4 pt-1 md:pt-3 border-t border-zinc-50 mt-auto">
-          <div className="flex flex-col gap-0 min-w-0">
+        {/* Action Row - Optimized for visibility */}
+        <div className="flex flex-wrap items-end justify-between gap-2 pt-2 border-t border-zinc-50 mt-2">
+          <div className="flex flex-col flex-shrink-0">
              {book.condition === 'Donation' ? (
-              <span className="text-orange-600 font-black text-[10px] md:text-lg uppercase tracking-tighter leading-none">{t('free')}</span>
+              <span className="text-orange-600 font-black text-[9px] md:text-base uppercase tracking-tight leading-none">{t('free')}</span>
             ) : (
               <div className="flex items-baseline gap-0.5 leading-none">
-                <span className="text-zinc-400 font-bold text-[8px] md:text-xs">৳</span>
-                <span className="text-emerald-600 font-black text-xs md:text-xl">{book.price}</span>
+                <span className="text-zinc-400 font-bold text-[7px] md:text-xs">৳</span>
+                <span className="text-emerald-600 font-black text-[10px] md:text-lg">{book.price}</span>
               </div>
             )}
-            <div className="flex items-center gap-0.5 text-[6px] md:text-[9px] text-zinc-300 font-bold leading-none mt-0.5">
-              <Clock className="w-1.5 h-1.5 md:w-2.5 md:h-2.5" />
+            <div className="flex items-center gap-0.5 text-[6px] md:text-[8px] text-zinc-300 font-bold leading-none mt-0.5">
+              <Clock className="w-2 h-2" />
               <span className="truncate">{timeAgo}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 md:gap-2 shrink-0">
+          <div className="flex items-center gap-1.5">
             {showActions ? (
-              <div className="flex gap-1 md:gap-1.5">
+              <div className="flex gap-1">
                 <button 
                   onClick={() => onEdit?.(book.id)} 
-                  className="bg-zinc-100 text-zinc-600 px-2 py-1.5 md:px-5 md:py-2.5 rounded-lg md:rounded-2xl hover:bg-zinc-900 hover:text-white transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                  className="bg-[#F3F4F6] text-zinc-600 px-2 py-1.5 md:px-3 md:py-2 rounded-lg hover:bg-zinc-200 transition-all flex items-center gap-1 shadow-sm active:scale-95 border border-zinc-100"
                 >
                   <LayoutGrid className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
-                  <span className="text-[7px] md:text-[10px] font-black uppercase tracking-widest hidden xs:block">Edit</span>
+                  <span className="text-[7px] md:text-[9px] font-black uppercase">
+                    {t('edit')}
+                  </span>
                 </button>
                 <button 
                   onClick={() => onDelete?.(book.id)} 
-                  className="bg-red-50 text-red-500 p-1.5 md:p-2.5 rounded-lg md:rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm active:scale-95"
+                  className="bg-[#FEF2F2] text-[#EF4444] px-2 py-1.5 md:px-3 md:py-2 rounded-lg hover:bg-red-100 transition-all flex items-center gap-1 shadow-sm active:scale-95 border border-red-50"
                 >
-                  <PlusCircle className="w-3 h-3 md:w-4 md:h-4 rotate-45" />
+                  <Trash2 className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+                  <span className="text-[7px] md:text-[9px] font-black uppercase">
+                    {t('delete')}
+                  </span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1 md:gap-2">
+              <div className="flex items-center gap-1">
                 <Link 
                   to={`/books/${book.id}`} 
-                  className="group/btn relative bg-zinc-900 text-white px-2 py-1.5 md:px-6 md:py-3 rounded-lg md:rounded-2xl font-black text-[7px] md:text-[10px] uppercase whitespace-nowrap hover:bg-black transition-all shadow-lg active:scale-95 flex items-center gap-1 md:gap-1.5 overflow-hidden"
+                  className="bg-zinc-900 text-white px-2.5 py-1.5 md:px-4 md:py-2.5 rounded-lg font-black text-[7px] md:text-[9px] uppercase hover:bg-black transition-all shadow-md active:scale-95 flex items-center gap-1"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
                   {t('details')}
-                  <ChevronRight className="w-2 md:w-3.5 h-2 md:h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
                 </Link>
                 <a 
                   href={`tel:${book.contactPhone}`} 
-                  className="w-7 h-7 md:w-11 md:h-11 bg-accent text-white rounded-lg md:rounded-2xl flex items-center justify-center hover:bg-accent-hover transition-all shadow-xl shadow-accent/10 active:scale-95 group/phone"
+                  className="w-7 h-7 md:w-9 md:h-9 bg-accent text-white rounded-lg flex items-center justify-center hover:bg-accent-hover transition-all shadow-md active:scale-95"
                 >
-                  <Phone className="w-3 md:w-4.5 h-3 md:h-4.5 group-hover/phone:rotate-12 transition-transform" />
+                  <Phone className="w-3 h-3 md:w-4 h-4" />
                 </a>
               </div>
             )}
