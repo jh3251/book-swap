@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { useTranslation } from '../App';
 import { FileText, UserCheck, AlertTriangle, Scale } from 'lucide-react';
+import AdSense from '../components/AdSense';
 
 const TermsPage: React.FC = () => {
   const { lang } = useTranslation();
@@ -53,6 +55,8 @@ const TermsPage: React.FC = () => {
           </p>
         </section>
       </div>
+
+      <AdSense slot="1122334455" />
     </div>
   );
 };

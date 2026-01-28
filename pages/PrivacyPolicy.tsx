@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTranslation } from '../App';
 import { ShieldCheck, Eye, Lock, Globe } from 'lucide-react';
+import AdSense from '../components/AdSense';
 
 const PrivacyPolicy: React.FC = () => {
   const { lang } = useTranslation();
@@ -54,6 +55,8 @@ const PrivacyPolicy: React.FC = () => {
           </p>
         </section>
       </div>
+
+      <AdSense slot="2468013579" />
     </div>
   );
 };

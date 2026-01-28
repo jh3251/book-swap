@@ -8,6 +8,7 @@ import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, P
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 import SEO from '../components/SEO';
+import AdSense from '../components/AdSense';
 
 const HomePage: React.FC = () => {
   const [listings, setListings] = useState<BookListing[]>([]);
@@ -246,6 +247,11 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* AdSense Unit 1 */}
+      <div className="container mx-auto max-w-7xl px-4">
+        <AdSense slot="1234567890" />
+      </div>
+
       {/* Results Section */}
       <section id="results-section" className="container mx-auto max-w-7xl px-4 space-y-1 md:space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-1.5 md:gap-4">
@@ -355,6 +361,11 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Bottom AdSense */}
+      <div className="container mx-auto max-w-7xl px-4">
+        <AdSense slot="0987654321" />
+      </div>
     </div>
   );
 };

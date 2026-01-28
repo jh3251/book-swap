@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { useTranslation } from '../App';
 import { BookOpen, Heart, Globe, Sparkles, BookHeart, GraduationCap, ArrowRight, ShieldCheck } from 'lucide-react';
 import SEO from '../components/SEO';
+import AdSense from '../components/AdSense';
 
 const AboutPage: React.FC = () => {
   const { lang } = useTranslation();
@@ -104,6 +106,9 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* AdSense Unit */}
+      <AdSense slot="1357924680" />
 
       {/* Footer Tagline */}
       <section className="text-center pt-10">
