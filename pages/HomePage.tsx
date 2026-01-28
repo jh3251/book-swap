@@ -4,7 +4,7 @@ import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
 import { CLASSES, CONDITIONS, DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import BookCard from '../components/BookCard';
-import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, PhoneCall } from 'lucide-react';
+import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 import SEO from '../components/SEO';
@@ -21,7 +21,6 @@ const HomePage: React.FC = () => {
     upazilaId: ''
   });
   
-  // Mobile and Desktop both show 10 cards per page as requested
   const getPageSize = () => 10;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(getPageSize());
@@ -50,18 +49,6 @@ const HomePage: React.FC = () => {
     }, 4000);
     return () => clearInterval(interval);
   }, [heroOptions.length]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const newPageSize = getPageSize();
-      if (newPageSize !== pageSize) {
-        setPageSize(newPageSize);
-        setCurrentPage(0);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [pageSize]);
 
   const filteredListings = useMemo(() => {
     const term = searchTerm.toLowerCase().trim();
@@ -106,7 +93,7 @@ const HomePage: React.FC = () => {
         description={lang === 'bn' ? 'BoiSathi.com - বাংলাদেশের শিক্ষার্থীদের জন্য পুরোনো বই কেনাবেচার নির্ভরযোগ্য প্ল্যাটফর্ম।' : 'BoiSathi is the safest student marketplace in Bangladesh for buying and selling used academic books.'}
       />
       
-      {/* Restored Dynamic Hero Section */}
+      {/* Hero Section */}
       <section className="relative px-4 pt-4 md:pt-10 overflow-hidden rounded-[4rem]">
         <div className="absolute inset-0 alpona-bg opacity-20 -z-10"></div>
         <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load">
@@ -154,14 +141,14 @@ const HomePage: React.FC = () => {
               <h3 className="flex items-center gap-2 text-[9px] md:text-[11px] font-black text-slate-400 uppercase">
                 <MapPin className="w-3 h-3 md:w-4 md:h-4 text-accent" /> {lang === 'bn' ? 'স্থান ও শ্রেণী' : 'FILTERS'}
               </h3>
-              <button onClick={clearFilters} className="text-[7px] md:text-[9px] font-black text-slate-400 hover:text-red-500 transition-colors flex items-center gap-1 uppercase bg-white/80 px-2 py-1 rounded-md border border-emerald-50 shadow-sm">
+              <button onClick={clearFilters} className="text-[7px] md:text-[9px] font-black text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-1 uppercase bg-white/80 px-2 py-1 rounded-md border border-emerald-50 shadow-sm">
                 <X className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" /> {t('reset')}
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4">
                <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('division')}</label>
+                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('division')}</label>
                   <select 
                     value={location.divisionId}
                     onChange={(e) => {
@@ -176,7 +163,7 @@ const HomePage: React.FC = () => {
                </div>
 
                <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('district')}</label>
+                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('district')}</label>
                   <select 
                     disabled={!location.divisionId}
                     value={location.districtId}
@@ -192,7 +179,7 @@ const HomePage: React.FC = () => {
                </div>
 
                <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('upazilaThana')}</label>
+                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('upazilaThana')}</label>
                   <select 
                     disabled={!location.districtId}
                     value={location.upazilaId}
@@ -208,7 +195,7 @@ const HomePage: React.FC = () => {
                </div>
 
                <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{t('classLevel')}</label>
+                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('classLevel')}</label>
                   <select 
                     value={selectedClass}
                     onChange={(e) => {
@@ -223,7 +210,7 @@ const HomePage: React.FC = () => {
                </div>
 
                <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-slate-400 uppercase ml-0.5">{lang === 'bn' ? 'অবস্থা' : 'CONDITION'}</label>
+                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{lang === 'bn' ? 'অবস্থা' : 'CONDITION'}</label>
                   <select 
                     value={selectedCondition}
                     onChange={(e) => {
@@ -332,8 +319,49 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
+      {/* NEW: Safety Guidelines Section (AdSense Friendly Rich Content) */}
+      <section className="container mx-auto max-w-7xl px-4 py-8">
+        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-emerald-50 shadow-sm">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="p-3 bg-emerald-50 rounded-2xl">
+              <ShieldCheck className="w-8 h-8 text-accent" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-serif font-black text-black leading-tight">
+              {t('safetyTipsTitle')}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             <div className="space-y-3">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">1</div>
+                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'সঠিক স্থান' : 'RIGHT PLACE'}</h4>
+               </div>
+               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip1')}</p>
+             </div>
+             <div className="space-y-3">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">2</div>
+                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'যাচাই করুন' : 'VERIFY CONDITION'}</h4>
+               </div>
+               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip2')}</p>
+             </div>
+             <div className="space-y-3">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">3</div>
+                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'সতর্কতা' : 'BE CAREFUL'}</h4>
+               </div>
+               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip3')}</p>
+             </div>
+          </div>
+          <div className="mt-10 pt-8 border-t border-emerald-50 flex items-center gap-4 text-emerald-600 font-bold text-xs uppercase">
+            <CheckCircle2 className="w-5 h-5" />
+            {lang === 'bn' ? 'আপনার নিরাপত্তা আমাদের অগ্রাধিকার।' : 'Your safety is our priority.'}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Toolsybro Banner */}
-      <section className="container mx-auto max-w-7xl px-4 pt-6">
+      <section className="container mx-auto max-w-7xl px-4">
         <div className="bg-[#0f172a] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden relative group p-5 md:p-8 shadow-xl">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-5 relative z-10 text-center lg:text-left">
             <div className="space-y-3 max-w-xl">

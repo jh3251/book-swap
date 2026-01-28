@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                   {lang === 'bn' ? 'বইসাথী (BoiSathi)' : 'BoiSathi.com'}
                 </span>
               </div>
-              <p className="max-w-md text-[12px] leading-relaxed font-medium text-white">
+              <p className="max-w-md text-[12px] leading-relaxed font-medium text-zinc-400">
                 {t('footerDesc')}
               </p>
               <div className="flex space-x-4 mt-8">
@@ -93,8 +93,11 @@ const Footer: React.FC = () => {
                 {t('quickNavigation')}
               </h4>
               <div className="flex flex-col gap-2.5">
-                <Link to="/about" className="w-full bg-accent/20 text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-accent transition text-center border border-accent/30">
-                  {t('about')}
+                <Link to="/about" className="w-full bg-[#1c1c1c] text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-zinc-800 transition text-center border border-zinc-800">
+                  {t('aboutUs')}
+                </Link>
+                <Link to="/contact" className="w-full bg-[#1c1c1c] text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-zinc-800 transition text-center border border-zinc-800">
+                  {t('contactUs')}
                 </Link>
                 <Link to="/privacy" className="w-full bg-[#1c1c1c] text-white px-6 py-3.5 rounded-2xl font-black text-[9px] uppercase hover:bg-zinc-800 transition text-center border border-zinc-800">
                   {lang === 'bn' ? 'গোপনীয়তা নীতি' : 'Privacy Policy'}

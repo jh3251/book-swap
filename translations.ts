@@ -5,6 +5,7 @@ export const translations = {
   en: {
     home: 'Home',
     aboutUs: 'About Us',
+    contactUs: 'Contact Us',
     browse: 'Browse',
     sellABook: 'Sell a Book',
     dashboard: 'Dashboard',
@@ -81,6 +82,12 @@ export const translations = {
     edit: 'Edit',
     delete: 'Delete',
     editListing: 'EDIT LISTING',
+    safetyTipsTitle: 'Safety Guidelines for Students',
+    safetyTip1: 'Always meet in a public, well-lit place like a campus library or a popular cafe.',
+    safetyTip2: 'Inspect the book condition thoroughly before making any payment.',
+    safetyTip3: 'Avoid sharing sensitive personal information or digital payments before meeting.',
+    contactInfo: 'Get in Touch',
+    contactDesc: 'Have questions or feedback? Our team is here to help you.',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -105,6 +112,7 @@ export const translations = {
   bn: {
     home: 'হোম',
     aboutUs: 'আমাদের সম্পর্কে',
+    contactUs: 'যোগাযোগ',
     browse: 'ব্রাউজ',
     sellABook: 'বই বিক্রি করুন',
     dashboard: 'ড্যাশবোর্ড',
@@ -181,6 +189,12 @@ export const translations = {
     edit: 'এডিট',
     delete: 'ডিলিট',
     editListing: 'এডিট লিস্টিং',
+    safetyTipsTitle: 'শিক্ষার্থীদের জন্য নিরাপত্তা নির্দেশিকা',
+    safetyTip1: 'সবসময় জনাকীর্ণ স্থানে দেখা করুন, যেমন- লাইব্রেরি বা পরিচিত ক্যাফে।',
+    safetyTip2: 'টাকা দেওয়ার আগে বইটির অবস্থা ভালোভাবে যাচাই করে নিন।',
+    safetyTip3: 'দেখা করার আগে ডিজিটাল পেমেন্ট বা ব্যক্তিগত তথ্য শেয়ার করা থেকে বিরত থাকুন।',
+    contactInfo: 'যোগাযোগ করুন',
+    contactDesc: 'আপনার কোনো প্রশ্ন বা মতামত থাকলে আমাদের সাথে যোগাযোগ করতে দ্বিধা করবেন না।',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',

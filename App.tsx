@@ -11,6 +11,7 @@ import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
 import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsPage from './pages/TermsPage';
 import ChatPage from './pages/ChatPage';
@@ -86,6 +87,7 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/books/:id" element={<BookDetailsPage />} />
