@@ -1,39 +1,8 @@
 
-// Add missing React import
 import React from 'react';
 import { Facebook, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
-
-const PlayStoreIcon = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    className={className} 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path 
-      fill="#00A1F1" 
-      d="M3.209 1.135A1.892 1.892 0 0 0 3 2.508v18.984c0 .546.21 1.055.572 1.433l.061.055 10.662-10.661L3.633 1.66z"
-    />
-    <path 
-      fill="#F2B200" 
-      d="M17.842 14.86l-3.548-3.542-10.662 10.661c.338.352.83.561 1.368.561.493 0 .943-.171 1.303-.456l.044-.035 11.445-6.524a1.88 1.88 0 0 0 .002-3.32z"
-    />
-    <path 
-      fill="#EA4335" 
-      d="M3.633 1.66l10.661 10.662 3.548-3.543a1.88 1.88 0 0 0-1.258-3.131 1.88 1.88 0 0 0-1.393.364l-.044.035-11.445 6.523-.069-.91z"
-    />
-    <path 
-      fill="#34A853" 
-      d="M14.294 12.322L3.633 1.661a1.88 1.88 0 0 0-.633-.526 1.89 1.89 0 0 0-.209-.085L14.294 12.32z"
-      opacity=".2"
-    />
-    <path 
-      fill="#34A853" 
-      d="M21.341 10.662l-3.5 1.996-3.547-3.543L17.842 5.57l3.501 1.996a1.88 1.88 0 0 1-.002 3.096z"
-    />
-  </svg>
-);
 
 const Footer: React.FC = () => {
   const { t, lang } = useTranslation();
@@ -89,7 +58,9 @@ const Footer: React.FC = () => {
                   <Facebook className="w-4 h-4 text-white" />
                 </a>
                 <a 
-                  href="#" 
+                  href="https://www.instagram.com/boisathi_com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
                   className="w-9 h-9 bg-accent rounded-xl flex items-center justify-center hover:opacity-80 hover:scale-110 transition-all duration-300 shadow-lg shadow-accent/20"
                 >
                   <Instagram className="w-4 h-4 text-white" />
@@ -98,8 +69,12 @@ const Footer: React.FC = () => {
 
               {/* Android App Coming Soon Block */}
               <div className="mt-10 p-4 md:p-5 bg-white/5 border border-white/10 rounded-[1.5rem] flex items-center gap-4 max-w-xs group hover:bg-white/10 transition-all duration-500">
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-xl flex items-center justify-center border border-white/5 shadow-xl group-hover:scale-110 transition-transform">
-                  <PlayStoreIcon className="w-5 h-5 md:w-6 md:h-6" />
+                <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl flex items-center justify-center border border-white/5 shadow-xl group-hover:scale-110 transition-transform overflow-hidden">
+                  <img 
+                    src="https://i.ibb.co/qVfygTr/google-play-png-logo-3798.png" 
+                    alt="Google Play Logo" 
+                    className="w-6 h-6 md:w-8 md:h-8 object-contain"
+                  />
                 </div>
                 <div className="flex flex-col">
                   <p className="text-[9px] font-black text-white/40 uppercase tracking-[0.15em] leading-none mb-1.5">{t('appLabel')}</p>
