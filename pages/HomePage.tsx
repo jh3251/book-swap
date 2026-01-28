@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
@@ -20,7 +21,7 @@ const HomePage: React.FC = () => {
     upazilaId: ''
   });
   
-  const getPageSize = () => window.innerWidth < 768 ? 5 : 8;
+  const getPageSize = () => window.innerWidth < 1024 ? 6 : 10;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(getPageSize());
   
@@ -122,24 +123,14 @@ const HomePage: React.FC = () => {
         <div className="absolute top-20 left-10 w-24 h-24 bg-red-500/10 rounded-full blur-2xl animate-pulse -z-10"></div>
         <div className="absolute bottom-20 right-10 w-32 h-32 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000 -z-10"></div>
         
-        <div className="absolute top-1/4 right-[10%] opacity-20 animate-float-3d -z-10 hidden lg:block">
-           <BookOpen className="w-24 h-24 text-accent" />
-        </div>
-        <div className="absolute bottom-1/4 left-[10%] opacity-15 animate-float-3d delay-1000 -z-10 hidden lg:block">
-           <BookHeart className="w-20 h-20 text-red-500" />
-        </div>
-
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] md:h-[600px] bg-emerald-50/20 rounded-[4rem] -z-20 blur-3xl"></div>
-        
-        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load overflow-visible">
-          <div className="min-h-[6rem] sm:min-h-[8rem] md:min-h-[10rem] lg:min-h-[12rem] flex items-center justify-center overflow-visible perspective-1000">
+        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load">
+          <div className="min-h-[6rem] sm:min-h-[8rem] md:min-h-[10rem] lg:min-h-[12rem] flex items-center justify-center overflow-visible">
             <h1 
               key={heroIdx}
-              className={`text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-2 md:py-8 text-3d flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
-              style={{ transformStyle: 'preserve-3d' }}
+              className={`text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-2 md:py-8 flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
             >
               {currentHero.parts.map((part, i) => (
-                <span key={i} className={`${part.color} inline-block transform hover:scale-105 transition-transform cursor-default`}>
+                <span key={i} className={`${part.color} inline-block transform hover:scale-105 transition-transform`}>
                   {part.text}
                 </span>
               ))}
@@ -170,7 +161,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Filter Bento Grid - Compact Styling */}
+      {/* Filter Bento Grid */}
       <section className="container mx-auto max-w-7xl px-4">
         <div className="bg-[#f0fdf9]/60 rounded-[2.5rem] p-8 md:p-12 border border-emerald-50 relative overflow-hidden group shadow-sm">
            <div className="flex justify-between items-center mb-10">
@@ -304,16 +295,17 @@ const HomePage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-slate-50 rounded-[2rem] aspect-[4/5] animate-pulse border border-slate-100 relative overflow-hidden">
+              <div key={i} className="bg-slate-50 rounded-[2rem] h-40 md:h-52 animate-pulse border border-slate-100 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 to-transparent animate-glimmer"></div>
               </div>
             ))}
           </div>
         ) : filteredListings.length > 0 ? (
           <div className="space-y-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Horizontal Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
               {visibleListings.map(book => (
                 <BookCard key={book.id} book={book} />
               ))}
@@ -379,7 +371,7 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
-      {/* Featured Toolsybro Banner (Compact Version) */}
+      {/* Featured Toolsybro Banner */}
       <section className="container mx-auto max-w-7xl px-4">
         <div className="bg-[#0f172a] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden relative group p-6 md:p-8 shadow-xl">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/20 blur-[100px] -z-10 group-hover:scale-125 transition-transform duration-1000"></div>

@@ -76,6 +76,8 @@ export const translations = {
     generateSitemap: 'Generate Latest Sitemap',
     copySitemap: 'Copy XML Code',
     sitemapDesc: 'Copy this code into your sitemap.xml file to tell Google about your new books.',
+    androidAppComingSoon: 'Android App Coming Soon',
+    appLabel: 'Get the App',
     // Condition labels
     'Donation': 'Donation',
     'Like New': 'Like New',
@@ -171,6 +173,8 @@ export const translations = {
     generateSitemap: 'সাইটম্যাপ তৈরি করুন',
     copySitemap: 'XML কোড কপি করুন',
     sitemapDesc: 'আপনার নতুন বই সম্পর্কে গুগলকে জানাতে এই কোডটি আপনার sitemap.xml ফাইলে কপি করুন।',
+    androidAppComingSoon: 'অ্যান্ড্রয়েড অ্যাপ আসছে...',
+    appLabel: 'অ্যাপটি ডাউনলোড করুন',
     // Condition labels
     'Donation': 'দান',
     'Like New': 'নতুনের মতো',
