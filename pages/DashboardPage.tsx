@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
 import { BookListing, UserProfile, Conversation } from '../types';
 import BookCard from '../components/BookCard';
-import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, Save, Loader2, CheckCircle2, Info, AlertTriangle, MessageCircle, ChevronRight, User, Lock, Eye, EyeOff } from 'lucide-react';
+import { PlusCircle, Package, Heart, Settings, LayoutGrid, Trash2, Save, Loader2, CheckCircle2, Info, AlertTriangle, MessageCircle, ChevronRight, User } from 'lucide-react';
 import { useTranslation } from '../App';
 
 interface DashboardPageProps {
@@ -27,14 +27,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
   const [username, setUsername] = useState(user.username || '');
   const [updating, setUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
-
-  // Password Update State
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPass, setShowPass] = useState(false);
-  const [passUpdating, setPassUpdating] = useState(false);
-  const [passSuccess, setPassSuccess] = useState(false);
-  const [passError, setPassError] = useState('');
   
   const navigate = useNavigate();
 
@@ -62,6 +54,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
     return () => unsubConv();
   }, [user.uid]);
 
+  // Sort conversations client-side to avoid needing a Firestore composite index
   const sortedConversations = useMemo(() => {
     return [...conversations].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
   }, [conversations]);
@@ -92,32 +85,6 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
       alert("Failed to update profile.");
     } finally {
       setUpdating(false);
-    }
-  };
-
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPassError('');
-    if (newPassword.length < 6) {
-      setPassError(lang === 'bn' ? 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।' : 'Password must be at least 6 characters.');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setPassError(lang === 'bn' ? 'পাসওয়ার্ড মেলেনি।' : 'Passwords do not match.');
-      return;
-    }
-
-    setPassUpdating(true);
-    try {
-      await firebase.auth.updatePassword(newPassword);
-      setPassSuccess(true);
-      setNewPassword('');
-      setConfirmPassword('');
-      setTimeout(() => setPassSuccess(false), 3000);
-    } catch (err: any) {
-      setPassError(lang === 'bn' ? 'পাসওয়ার্ড আপডেট করা সম্ভব হয়নি। পুনরায় লগইন করে চেষ্টা করুন।' : 'Failed to update password. Please re-login and try again.');
-    } finally {
-      setPassUpdating(false);
     }
   };
 
@@ -226,75 +193,20 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user }) => {
         )}
 
         {activeTab === 'account' && (
-          <div className="space-y-8">
-            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-emerald-900/5 border border-emerald-50">
-              <h2 className="text-3xl font-serif font-black text-black mb-8">Profile Settings</h2>
-              <form onSubmit={handleUpdateProfile} className="space-y-10 max-w-xl">
-                <div className="space-y-8">
-                  <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('fullName')}</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-6 py-4 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl outline-none font-black text-black text-base" /></div>
-                  <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('userName')}</label><div className="relative"><span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-emerald-300 text-lg">@</span><input type="text" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))} className="w-full pl-12 pr-6 py-4 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl outline-none font-black text-black text-base" /></div></div>
-                  <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('emailAddress')}</label><input type="text" value={user.email} disabled className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl font-black text-zinc-400 opacity-60 text-base cursor-not-allowed" /></div>
-                </div>
-                <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
-                  <button type="submit" disabled={updating} className="w-full sm:w-auto bg-black text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase flex items-center justify-center gap-4 shadow-xl disabled:opacity-50">{updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{t('saveProfile')}</button>
-                  {updateSuccess && <div className="flex items-center gap-3 text-emerald-600 font-black text-[10px] uppercase"><CheckCircle2 className="w-5 h-5" /> Saved!</div>}
-                </div>
-              </form>
-            </div>
-
-            {/* Change Password Section */}
-            <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-emerald-900/5 border border-emerald-50">
-              <h2 className="text-3xl font-serif font-black text-black mb-8 flex items-center gap-3"><Lock className="w-8 h-8 text-accent" /> Security</h2>
-              <form onSubmit={handleUpdatePassword} className="space-y-8 max-w-xl">
-                {passError && <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-[12px] font-black uppercase border border-red-100 flex items-center gap-3"><Info className="w-4 h-4" /> {passError}</div>}
-                
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">New Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-emerald-200 w-5 h-5" />
-                      <input 
-                        required 
-                        type={showPass ? "text" : "password"} 
-                        value={newPassword} 
-                        onChange={(e) => setNewPassword(e.target.value)} 
-                        className="w-full pl-14 pr-14 py-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl outline-none font-black text-black text-base" 
-                        placeholder="............" 
-                      />
-                      <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-6 top-1/2 -translate-y-1/2 text-emerald-200 hover:text-accent p-1 transition-colors">
-                        {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">Confirm New Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-emerald-200 w-5 h-5" />
-                      <input 
-                        required 
-                        type="password" 
-                        value={confirmPassword} 
-                        onChange={(e) => setConfirmPassword(e.target.value)} 
-                        className="w-full pl-14 pr-6 py-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl outline-none font-black text-black text-base" 
-                        placeholder="............" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
-                  <button type="submit" disabled={passUpdating} className="w-full sm:w-auto bg-accent text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase flex items-center justify-center gap-4 shadow-xl shadow-accent/20 disabled:opacity-50">
-                    {passUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Update Password
-                  </button>
-                  {passSuccess && <div className="flex items-center gap-3 text-emerald-600 font-black text-[10px] uppercase"><CheckCircle2 className="w-5 h-5" /> Password Updated!</div>}
-                </div>
-              </form>
-            </div>
-
-            <div className="bg-red-50/30 rounded-[2rem] p-6 md:p-10 border border-red-100/50">
-              <button type="button" onClick={() => setShowDeleteProfileConfirm(true)} className="text-red-600 font-black text-[10px] uppercase flex items-center gap-3 hover:text-red-700 transition"><Trash2 className="w-4 h-4" />{t('deleteProfile')}</button>
-            </div>
+          <div className="bg-white rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-emerald-900/5 border border-emerald-50">
+            <h2 className="text-3xl font-serif font-black text-black mb-8">Profile Settings</h2>
+            <form onSubmit={handleUpdateProfile} className="space-y-10 max-w-xl">
+              <div className="space-y-8">
+                <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('fullName')}</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-6 py-4 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl outline-none font-black text-black text-base" /></div>
+                <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('userName')}</label><div className="relative"><span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-emerald-300 text-lg">@</span><input type="text" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ''))} className="w-full pl-12 pr-6 py-4 bg-[#f0fdf4] border border-emerald-100/50 rounded-2xl outline-none font-black text-black text-base" /></div></div>
+                <div><label className="block text-[10px] font-black text-black uppercase mb-3 ml-1">{t('emailAddress')}</label><input type="text" value={user.email} disabled className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl font-black text-zinc-400 opacity-60 text-base cursor-not-allowed" /></div>
+              </div>
+              <div className="pt-4 flex flex-col sm:flex-row items-center gap-6">
+                <button type="submit" disabled={updating} className="w-full sm:w-auto bg-black text-white px-12 py-5 rounded-2xl font-black text-[10px] uppercase flex items-center justify-center gap-4 shadow-xl disabled:opacity-50">{updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{t('saveProfile')}</button>
+                {updateSuccess && <div className="flex items-center gap-3 text-emerald-600 font-black text-[10px] uppercase"><CheckCircle2 className="w-5 h-5" /> Saved!</div>}
+              </div>
+              <div className="pt-10 border-t border-emerald-50"><button type="button" onClick={() => setShowDeleteProfileConfirm(true)} className="text-red-600 font-black text-[10px] uppercase flex items-center gap-3 hover:text-red-700 transition"><Trash2 className="w-4 h-4" />{t('deleteProfile')}</button></div>
+            </form>
           </div>
         )}
       </main>

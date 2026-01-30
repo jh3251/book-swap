@@ -8,10 +8,9 @@ import {
   signOut, 
   updateProfile,
   sendPasswordResetEmail,
-  sendEmailVerification,
   confirmPasswordReset,
   verifyPasswordResetCode,
-  updatePassword as firebaseUpdatePassword,
+  sendEmailVerification,
   deleteUser,
   User as FirebaseUser
 } from "firebase/auth";
@@ -111,19 +110,14 @@ export const firebase = {
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, { displayName: name.trim(), photoURL, username });
     },
-    updatePassword: async (newPass: string) => {
-      const user = auth.currentUser;
-      if (!user) throw new Error("No active session found");
-      await firebaseUpdatePassword(user, newPass);
-    },
     signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
       await sendPasswordResetEmail(auth, email.trim());
     },
-    verifyResetCode: async (code: string) => {
+    verifyPasswordCode: async (code: string) => {
       return await verifyPasswordResetCode(auth, code);
     },
-    confirmReset: async (code: string, newPass: string) => {
+    confirmPasswordReset: async (code: string, newPass: string) => {
       await confirmPasswordReset(auth, code, newPass);
     },
     deleteAccount: async () => {
@@ -260,6 +254,8 @@ export const firebase = {
     },
 
     subscribeToConversations: (userId: string, callback: (conversations: Conversation[]) => void) => {
+      // Note: orderBy is removed here to prevent 'failed-precondition' error without manual index creation.
+      // We sort manually on the client side in the DashboardPage component.
       const q = query(
         collection(db, "conversations"),
         where("participants", "array-contains", userId)

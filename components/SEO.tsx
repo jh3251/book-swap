@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -34,7 +33,7 @@ const SEO: React.FC<SEOProps> = ({ title, description, canonical }) => {
     // Update Canonical Link
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (canonicalLink) {
-      canonicalLink.setAttribute('href', canonical || `https://boisathi.com${location.pathname}`);
+      canonicalLink.setAttribute('href', canonical || `https://boisathi.com/#${location.pathname}`);
     }
   }, [title, description, canonical, location]);
 
