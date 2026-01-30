@@ -4,7 +4,7 @@ import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
 import { CLASSES, CONDITIONS, DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import BookCard from '../components/BookCard';
-import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, MousePointer2, PhoneCall, Handshake, UserPlus, UploadCloud, Smartphone, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 import SEO from '../components/SEO';
@@ -24,6 +24,7 @@ const HomePage: React.FC = () => {
   const getPageSize = () => 10;
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(getPageSize());
+  const [howToTab, setHowToTab] = useState<'buy' | 'sell'>('buy');
   
   const { t, lang } = useTranslation();
   const [heroIdx, setHeroIdx] = useState(0);
@@ -100,7 +101,7 @@ const HomePage: React.FC = () => {
           <div className="min-h-[5rem] sm:min-h-[8rem] md:min-h-[12rem] flex items-center justify-center overflow-visible">
             <h1 
               key={heroIdx}
-              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-1 md:py-6 flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
+              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-1 md:py-6 flex flex-col sm:row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
             >
               {currentHero.parts.map((part, i) => (
                 <span key={i} className={`${part.color} inline-block transform hover:scale-105 transition-transform`}>
@@ -319,43 +320,86 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
-      {/* NEW: Safety Guidelines Section (AdSense Friendly Rich Content) */}
-      <section className="container mx-auto max-w-7xl px-4 py-8">
-        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-emerald-50 shadow-sm">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 bg-emerald-50 rounded-2xl">
-              <ShieldCheck className="w-8 h-8 text-accent" />
+      {/* COMPACT: How it Works Section (Replaced Safety Guidelines) */}
+      <section className="container mx-auto max-w-7xl px-4 py-4">
+        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-emerald-50 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-emerald-50 rounded-xl">
+                <HelpCircle className="w-6 h-6 text-accent" />
+              </div>
+              <h2 className="text-lg md:text-xl font-serif font-black text-black leading-tight">
+                {t('howItWorks')}
+              </h2>
             </div>
-            <h2 className="text-2xl md:text-3xl font-serif font-black text-black leading-tight">
-              {t('safetyTipsTitle')}
-            </h2>
+            
+            {/* Minimal Tab Switcher */}
+            <div className="bg-zinc-100 p-1 rounded-full flex border border-zinc-200">
+               <button 
+                 onClick={() => setHowToTab('buy')}
+                 className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase transition-all ${howToTab === 'buy' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400'}`}
+               >
+                 {t('buyABook')}
+               </button>
+               <button 
+                 onClick={() => setHowToTab('sell')}
+                 className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase transition-all ${howToTab === 'sell' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400'}`}
+               >
+                 {t('sellABookTitle')}
+               </button>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             <div className="space-y-3">
-               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">1</div>
-                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'সঠিক স্থান' : 'RIGHT PLACE'}</h4>
-               </div>
-               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip1')}</p>
-             </div>
-             <div className="space-y-3">
-               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">2</div>
-                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'যাচাই করুন' : 'VERIFY CONDITION'}</h4>
-               </div>
-               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip2')}</p>
-             </div>
-             <div className="space-y-3">
-               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-xs">3</div>
-                 <h4 className="font-black text-black text-sm uppercase">{lang === 'bn' ? 'সতর্কতা' : 'BE CAREFUL'}</h4>
-               </div>
-               <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('safetyTip3')}</p>
-             </div>
-          </div>
-          <div className="mt-10 pt-8 border-t border-emerald-50 flex items-center gap-4 text-emerald-600 font-bold text-xs uppercase">
-            <CheckCircle2 className="w-5 h-5" />
-            {lang === 'bn' ? 'আপনার নিরাপত্তা আমাদের অগ্রাধিকার।' : 'Your safety is our priority.'}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500" key={howToTab}>
+            {howToTab === 'buy' ? (
+              <>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">1</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বই খুঁজুন' : 'FIND BOOKS'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep1')}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">2</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'যোগাযোগ করুন' : 'CONTACT'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep2')}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">3</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'সংগ্রহ করুন' : 'COLLECT'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep3')}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">1</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'অ্যাকাউন্ট' : 'SIGN UP'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep1')}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">2</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বই দিন' : 'UPLOAD'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep2')}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">3</div>
+                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বিক্রি করুন' : 'SELL'}</h4>
+                  </div>
+                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep3')}</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

@@ -1,3 +1,4 @@
+
 {
   "cleanUrls": true,
   "rewrites": [
@@ -14,7 +15,7 @@
       "destination": "/ads.txt"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|static|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]

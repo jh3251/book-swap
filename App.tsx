@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { firebase } from './firebase';
 import { UserProfile } from './types';
 import Navbar from './components/Navbar';
@@ -15,6 +15,7 @@ import ContactPage from './pages/ContactPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsPage from './pages/TermsPage';
 import ChatPage from './pages/ChatPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import LoadingScreen from './components/LoadingScreen';
 import { Language, translations } from './translations';
 
@@ -78,7 +79,7 @@ const App: React.FC = () => {
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
-      <HashRouter>
+      <BrowserRouter>
         <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Navbar user={user} onLogout={handleLogout} />
@@ -91,17 +92,19 @@ const App: React.FC = () => {
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/books/:id" element={<BookDetailsPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/chat/:id" element={user ? <ChatPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
           </main>
           <Footer />
         </div>
-      </HashRouter>
+      </BrowserRouter>
     </LanguageContext.Provider>
   );
 };
