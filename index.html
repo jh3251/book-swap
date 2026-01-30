@@ -10,18 +10,6 @@
     <meta name="keywords" content="books, used books, bangladesh, buy books, sell books, students, education, boisathi, বইসাথী, পুরোনো বই" />
     <link rel="icon" type="image/png" href="https://i.ibb.co/kgjLXphC/book-Converted.png" />
 
-    <!-- Organization Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "BoiSathi",
-      "url": "https://boisathi.com",
-      "logo": "https://i.ibb.co/kgjLXphC/book-Converted.png",
-      "description": "Bangladesh's premier student marketplace for buying, selling, and donating books."
-    }
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,10 +29,7 @@
       };
     </script>
     <style>
-      :root {
-        --accent: #059669;
-      }
-
+      :root { --accent: #059669; }
       body {
         background-color: #FDFDFD;
         font-family: 'Inter', sans-serif;
@@ -52,66 +37,16 @@
         overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
       }
-      
-      html[lang="bn"] body {
-        font-family: 'Hind Siliguri', 'Inter', sans-serif;
-      }
-
-      /* Custom Animations */
+      html[lang="bn"] body { font-family: 'Hind Siliguri', 'Inter', sans-serif; }
       @keyframes reveal-up {
         0% { transform: translateY(30px); opacity: 0; }
         100% { transform: translateY(0); opacity: 1; }
       }
-
-      @keyframes float {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        33% { transform: translate(30px, -50px) scale(1.05); }
-        66% { transform: translate(-20px, 20px) scale(0.95); }
-      }
-
-      @keyframes glimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-      }
-
-      .animate-reveal-up {
-        animation: reveal-up 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-      }
-
+      .animate-reveal-up { animation: reveal-up 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
       .alpona-bg {
         background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0c16.569 0 30 13.431 30 30S46.569 60 30 60 0 46.569 0 30 13.431 0 30 0zm0 4c-14.359 0-26 11.641-26 26s11.641 26 26 26 26-11.641 26-26S44.359 4 30 4z' fill='%23059669' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
       }
-
-      /* Stagger Load with Fallback */
-      .stagger-load > * {
-        opacity: 0;
-        animation: reveal-up 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-      }
-      .stagger-load > *:nth-child(1) { animation-delay: 0.1s; }
-      .stagger-load > *:nth-child(2) { animation-delay: 0.2s; }
-      .stagger-load > *:nth-child(3) { animation-delay: 0.3s; }
-      .stagger-load > *:nth-child(4) { animation-delay: 0.4s; }
-
-      .glimmer-btn {
-        position: relative;
-        overflow: hidden;
-      }
-      .glimmer-btn::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transform: translateX(-100%);
-      }
-      .glimmer-btn:hover::after {
-        animation: glimmer 1.5s infinite;
-      }
-
       ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
     <script type="importmap">

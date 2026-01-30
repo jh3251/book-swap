@@ -40,6 +40,21 @@ const ScrollToTop: React.FC = () => {
   return null;
 };
 
+/**
+ * Handles incoming Firebase Auth action links (e.g., password reset).
+ */
+const AuthActionHandler: React.FC = () => {
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const mode = query.get('mode');
+  const oobCode = query.get('oobCode');
+
+  if (mode === 'resetPassword' && oobCode) {
+    return <Navigate to={`/reset-password?oobCode=${oobCode}`} replace />;
+  }
+  return <Navigate to="/" replace />;
+};
+
 const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,9 +87,7 @@ const App: React.FC = () => {
     return localizedSet[key] || englishSet[key] || key;
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
@@ -97,6 +110,12 @@ const App: React.FC = () => {
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                
+                {/* 
+                  Catching standard Firebase paths arriving on the domain.
+                */}
+                <Route path="/__/auth/action" element={<AuthActionHandler />} />
+                
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
