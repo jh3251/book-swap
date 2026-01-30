@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { firebase } from '../firebase';
 import { BookListing, LocationInfo } from '../types';
 import { CLASSES, CONDITIONS, DIVISIONS, DISTRICTS, UPAZILAS } from '../constants';
 import BookCard from '../components/BookCard';
-import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, MousePointer2, PhoneCall, Handshake, UserPlus, UploadCloud, Smartphone, HelpCircle } from 'lucide-react';
+import { Search, MapPin, X, PlusCircle, ArrowRight, ChevronRight, ChevronLeft, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../App';
 import SEO from '../components/SEO';
@@ -21,9 +20,8 @@ const HomePage: React.FC = () => {
     upazilaId: ''
   });
   
-  const getPageSize = () => 10;
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(getPageSize());
+  const pageSize = 10;
   const [howToTab, setHowToTab] = useState<'buy' | 'sell'>('buy');
   
   const { t, lang } = useTranslation();
@@ -85,7 +83,7 @@ const HomePage: React.FC = () => {
     setCurrentPage(0);
   };
 
-  const currentHero = heroOptions[heroIdx];
+  const currentHero = heroOptions[heroIdx] || heroOptions[0];
 
   return (
     <div className="space-y-4 md:space-y-10 pb-10">
@@ -95,26 +93,26 @@ const HomePage: React.FC = () => {
       />
       
       {/* Hero Section */}
-      <section className="relative px-4 pt-4 md:pt-10 overflow-hidden rounded-[4rem]">
-        <div className="absolute inset-0 alpona-bg opacity-20 -z-10"></div>
-        <div className="max-w-5xl mx-auto text-center space-y-4 md:space-y-8 stagger-load">
-          <div className="min-h-[5rem] sm:min-h-[8rem] md:min-h-[12rem] flex items-center justify-center overflow-visible">
+      <section className="relative px-4 pt-4 md:pt-10 overflow-hidden rounded-[3rem] md:rounded-[4rem] min-h-[350px] md:min-h-[450px] flex flex-col items-center justify-center bg-white border border-emerald-50">
+        <div className="absolute inset-0 alpona-bg opacity-10 -z-10"></div>
+        <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-10 stagger-load">
+          <div className="min-h-[8rem] sm:min-h-[10rem] md:min-h-[14rem] flex items-center justify-center">
             <h1 
               key={heroIdx}
-              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-none tracking-tight animate-reveal-up px-2 py-1 md:py-6 flex flex-col sm:row items-center justify-center gap-y-1 sm:gap-y-0 sm:gap-x-[0.3em] ${currentHero.isBengali ? 'font-bn' : ''}`}
+              className={`text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] font-serif font-black leading-tight tracking-tight px-2 flex flex-col sm:flex-row items-center justify-center gap-y-2 sm:gap-y-0 sm:gap-x-4 transition-all duration-700 animate-reveal-up ${currentHero.isBengali ? 'font-bn' : ''}`}
             >
               {currentHero.parts.map((part, i) => (
-                <span key={i} className={`${part.color} inline-block transform hover:scale-105 transition-transform`}>
+                <span key={i} className={`${part.color} inline-block`}>
                   {part.text}
                 </span>
               ))}
             </h1>
           </div>
           
-          <div className="max-w-3xl mx-auto relative pt-0.5">
-            <div className="bg-white p-1.5 md:p-3 rounded-[1.2rem] md:rounded-[2rem] shadow-[0_25px_50px_rgba(0,0,0,0.08)] border border-slate-100 flex flex-col md:flex-row items-center gap-1.5 transform hover:scale-[1.01] transition-transform">
-              <div className="flex-grow flex items-center px-3 md:px-5 w-full">
-                <Search className="w-4 h-4 md:w-5 md:h-5 text-zinc-300" />
+          <div className="max-w-3xl mx-auto relative px-2">
+            <div className="bg-white p-2 md:p-3 rounded-[1.5rem] md:rounded-[2.5rem] shadow-[0_25px_60px_rgba(5,150,105,0.1)] border border-emerald-50 flex flex-col md:flex-row items-center gap-2 transform hover:scale-[1.01] transition-transform duration-500">
+              <div className="flex-grow flex items-center px-4 md:px-6 w-full h-full">
+                <Search className="w-5 h-5 md:w-6 md:h-6 text-emerald-300" />
                 <input 
                   type="text"
                   placeholder={lang === 'bn' ? 'বই বা লেখকের নাম লিখুন...' : 'Search for titles, authors or subjects...'}
@@ -123,11 +121,11 @@ const HomePage: React.FC = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(0);
                   }}
-                  className="w-full px-3 py-2 md:py-3 bg-transparent outline-none font-bold text-slate-900 placeholder:text-slate-200 text-sm md:text-base"
+                  className="w-full px-4 py-3 md:py-4 bg-transparent outline-none font-bold text-slate-900 placeholder:text-slate-300 text-sm md:text-base"
                 />
               </div>
-              <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full md:w-auto px-5 py-2.5 md:px-8 md:py-4 bg-slate-900 text-white rounded-[0.8rem] md:rounded-[1.5rem] font-black text-[9px] md:text-[11px] uppercase flex items-center justify-center gap-2 md:gap-3 hover:bg-black transition-all shadow-xl active:scale-95 tracking-widest">
-                <ArrowRight className="w-3.5 h-3.5" />
+              <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full md:w-auto px-8 py-4 md:py-5 bg-accent text-white rounded-[1.2rem] md:rounded-[2rem] font-black text-[10px] md:text-xs uppercase flex items-center justify-center gap-3 hover:bg-accent-hover transition-all shadow-xl active:scale-95 tracking-widest">
+                <ArrowRight className="w-4 h-4" />
                 {t('browse')}
               </button>
             </div>
@@ -137,34 +135,34 @@ const HomePage: React.FC = () => {
 
       {/* Filter Bento Grid */}
       <section className="container mx-auto max-w-7xl px-4">
-        <div className="bg-[#f0fdf9]/60 rounded-[1.2rem] md:rounded-[2rem] p-3 md:p-8 border border-emerald-50 relative overflow-hidden group shadow-sm">
-           <div className="flex justify-between items-center mb-3 md:mb-6">
-              <h3 className="flex items-center gap-2 text-[9px] md:text-[11px] font-black text-slate-400 uppercase">
-                <MapPin className="w-3 h-3 md:w-4 md:h-4 text-accent" /> {lang === 'bn' ? 'স্থান ও শ্রেণী' : 'FILTERS'}
+        <div className="bg-emerald-50/40 rounded-[2rem] p-6 md:p-8 border border-emerald-100/50 shadow-sm">
+           <div className="flex justify-between items-center mb-6">
+              <h3 className="flex items-center gap-2 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
+                <MapPin className="w-4 h-4 text-accent" /> {lang === 'bn' ? 'স্থান ও শ্রেণী' : 'LOCATION & FILTERS'}
               </h3>
-              <button onClick={clearFilters} className="text-[7px] md:text-[9px] font-black text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-1 uppercase bg-white/80 px-2 py-1 rounded-md border border-emerald-50 shadow-sm">
-                <X className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" /> {t('reset')}
+              <button onClick={clearFilters} className="text-[10px] font-black text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-2 uppercase">
+                <X className="w-4 h-4" /> {t('reset')}
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4">
-               <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('division')}</label>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-wider">{t('division')}</label>
                   <select 
                     value={location.divisionId}
                     onChange={(e) => {
                       setLocation({...location, divisionId: e.target.value, districtId: '', upazilaId: ''});
                       setCurrentPage(0);
                     }}
-                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+                    className="w-full px-4 py-3 bg-white border border-emerald-100 rounded-xl outline-none text-xs font-bold text-slate-900 appearance-none cursor-pointer shadow-sm hover:border-accent transition-colors"
                   >
                     <option value="">{t('selectDivision')}</option>
                     {DIVISIONS.map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
                   </select>
                </div>
 
-               <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('district')}</label>
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-wider">{t('district')}</label>
                   <select 
                     disabled={!location.divisionId}
                     value={location.districtId}
@@ -172,15 +170,15 @@ const HomePage: React.FC = () => {
                       setLocation({...location, districtId: e.target.value, upazilaId: ''});
                       setCurrentPage(0);
                     }}
-                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm disabled:opacity-30"
+                    className="w-full px-4 py-3 bg-white border border-emerald-100 rounded-xl outline-none text-xs font-bold text-slate-900 appearance-none cursor-pointer shadow-sm disabled:opacity-50"
                   >
                     <option value="">{t('selectDistrict')}</option>
                     {DISTRICTS.filter(d => d.divisionId === location.divisionId).map(d => <option key={d.id} value={d.id}>{lang === 'bn' ? d.nameBn : d.name}</option>)}
                   </select>
                </div>
 
-               <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('upazilaThana')}</label>
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-wider">{t('upazilaThana')}</label>
                   <select 
                     disabled={!location.districtId}
                     value={location.upazilaId}
@@ -188,45 +186,45 @@ const HomePage: React.FC = () => {
                       setLocation({...location, upazilaId: e.target.value});
                       setCurrentPage(0);
                     }}
-                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm disabled:opacity-30"
+                    className="w-full px-4 py-3 bg-white border border-emerald-100 rounded-xl outline-none text-xs font-bold text-slate-900 appearance-none cursor-pointer shadow-sm disabled:opacity-50"
                   >
                     <option value="">{t('selectUpazila')}</option>
                     {UPAZILAS.filter(u => u.districtId === location.districtId).map(u => <option key={u.id} value={u.id}>{lang === 'bn' ? u.nameBn : u.name}</option>)}
                   </select>
                </div>
 
-               <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{t('classLevel')}</label>
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-wider">{t('classLevel')}</label>
                   <select 
                     value={selectedClass}
                     onChange={(e) => {
                       setSelectedClass(e.target.value);
                       setCurrentPage(0);
                     }}
-                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+                    className="w-full px-4 py-3 bg-white border border-emerald-100 rounded-xl outline-none text-xs font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
                   >
                     <option value="">{t('allClasses')}</option>
                     {CLASSES.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                   </select>
                </div>
 
-               <div className="space-y-1 md:space-y-2">
-                  <label className="text-[7px] md:text-[9px] font-black text-zinc-400 uppercase ml-0.5">{lang === 'bn' ? 'অবস্থা' : 'CONDITION'}</label>
+               <div className="space-y-2">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase ml-1 tracking-wider">{lang === 'bn' ? 'অবস্থা' : 'CONDITION'}</label>
                   <select 
                     value={selectedCondition}
                     onChange={(e) => {
                       setSelectedCondition(e.target.value);
                       setCurrentPage(0);
                     }}
-                    className="w-full px-3 py-2 md:px-4 md:py-2.5 bg-white border border-emerald-50/50 rounded-md md:rounded-xl outline-none text-[10px] md:text-[11px] font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+                    className="w-full px-4 py-3 bg-white border border-emerald-100 rounded-xl outline-none text-xs font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
                   >
                     <option value="">{t('allConditions')}</option>
                     {CONDITIONS.map(c => <option key={c} value={c}>{t(c as any)}</option>)}
                   </select>
                </div>
 
-               <div className="flex items-end mt-1 md:mt-0">
-                  <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full px-5 py-2 md:px-8 md:py-3 bg-accent text-white rounded-md md:rounded-xl font-black text-[9px] md:text-[11px] uppercase hover:bg-accent-hover shadow-xl active:scale-95 transition-all">
+               <div className="flex items-end">
+                  <button onClick={() => document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' })} className="w-full px-6 py-3.5 bg-accent text-white rounded-xl font-black text-xs uppercase hover:bg-accent-hover shadow-lg shadow-accent/20 transition-all">
                     {t('find')}
                   </button>
                </div>
@@ -235,53 +233,51 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Results Section */}
-      <section id="results-section" className="container mx-auto max-w-7xl px-4 space-y-1 md:space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-1.5 md:gap-4">
-          <div className="space-y-0 md:space-y-1">
-            <h2 className="text-xl md:text-3xl font-serif font-black text-slate-900 tracking-tight">
+      <section id="results-section" className="container mx-auto max-w-7xl px-4 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-2xl md:text-3xl font-serif font-black text-slate-900 tracking-tight">
               {t('availableBooks')}
             </h2>
-            <div className="flex items-center gap-1.5 md:gap-3">
-              <span className="w-0.5 h-0.5 rounded-full bg-accent"></span>
-              <p className="text-slate-400 font-bold uppercase text-[7px] md:text-[9px]">{filteredListings.length} {lang === 'bn' ? 'টি বই পাওয়া গেছে' : 'results'}</p>
+            <div className="flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+              <p className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">{filteredListings.length} {lang === 'bn' ? 'টি বই পাওয়া গেছে' : 'results'}</p>
             </div>
           </div>
           
-          <Link to="/sell" className="group flex items-center justify-center gap-1.5 bg-emerald-50 text-accent px-4 py-2 md:px-6 md:py-3 rounded-lg md:rounded-2xl font-black text-[8px] md:text-[10px] uppercase shadow-sm">
-            <PlusCircle className="w-3 h-3 md:w-4 md:h-4" />
-            Post Ad
+          <Link to="/sell" className="group flex items-center justify-center gap-3 bg-white text-accent border border-emerald-100 px-6 py-4 rounded-2xl font-black text-xs uppercase shadow-sm hover:bg-emerald-50 transition-colors">
+            <PlusCircle className="w-5 h-5" />
+            Post New Ad
           </Link>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-slate-50 h-28 md:h-40 animate-pulse border border-slate-100"></div>
+              <div key={i} className="bg-slate-50 h-40 animate-pulse rounded-[2rem] border border-slate-100"></div>
             ))}
           </div>
         ) : filteredListings.length > 0 ? (
-          <div className="space-y-4 md:space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border-t border-l border-zinc-100">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {visibleListings.map(book => (
-                <div key={book.id} className="border-r border-b border-zinc-100">
-                   <BookCard book={book} />
-                </div>
+                 <BookCard key={book.id} book={book} />
               ))}
             </div>
             
             {totalPages > 1 && (
-              <div className="flex flex-col items-center gap-4 md:gap-6 pt-4 md:pt-6">
-                <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+              <div className="flex flex-col items-center gap-6 pt-10">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   {hasPrevious && (
                     <button 
                       onClick={handlePrevious}
-                      className="flex items-center gap-1.5 px-4 py-2 md:px-6 md:py-3 bg-white text-zinc-900 border border-zinc-100 rounded-lg md:rounded-xl font-black text-[8px] md:text-[10px] uppercase shadow-md active:scale-95"
+                      className="flex items-center gap-2 px-6 py-4 bg-white text-zinc-900 border border-zinc-200 rounded-xl font-black text-xs uppercase shadow-md active:scale-95 transition-all"
                     >
-                      <ChevronLeft className="w-3 h-3" /> {lang === 'bn' ? 'আগে' : 'Prev'}
+                      <ChevronLeft className="w-4 h-4" /> {lang === 'bn' ? 'আগে' : 'Prev'}
                     </button>
                   )}
                   
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {[...Array(totalPages)].map((_, i) => (
                       <button
                         key={i}
@@ -289,9 +285,9 @@ const HomePage: React.FC = () => {
                           setCurrentPage(i);
                           document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        className={`w-8 h-8 md:w-10 md:h-10 rounded-lg text-[9px] md:text-[10px] font-black transition-all flex items-center justify-center border ${
+                        className={`w-10 h-10 md:w-12 md:h-12 rounded-xl text-xs font-black transition-all flex items-center justify-center border ${
                           currentPage === i 
-                            ? 'bg-zinc-900 text-white border-zinc-900 shadow-md' 
+                            ? 'bg-zinc-900 text-white border-zinc-900 shadow-xl' 
                             : 'bg-white text-zinc-400 border-zinc-100 hover:border-zinc-300'
                         }`}
                       >
@@ -303,9 +299,9 @@ const HomePage: React.FC = () => {
                   {hasMore && (
                     <button 
                       onClick={handleNext}
-                      className="flex items-center gap-1.5 px-4 py-2 md:px-6 md:py-3 bg-zinc-900 text-white rounded-lg md:rounded-xl font-black text-[8px] md:text-[10px] uppercase shadow-md active:scale-95"
+                      className="flex items-center gap-2 px-6 py-4 bg-zinc-900 text-white rounded-xl font-black text-xs uppercase shadow-xl active:scale-95 transition-all"
                     >
-                      {lang === 'bn' ? 'পরে' : 'Next'} <ChevronRight className="w-3 h-3" />
+                      {lang === 'bn' ? 'পরে' : 'Next'} <ChevronRight className="w-4 h-4" />
                     </button>
                   )}
                 </div>
@@ -313,90 +309,81 @@ const HomePage: React.FC = () => {
             )}
           </div>
         ) : (
-          <div className="text-center py-16 bg-slate-50 rounded-[2rem] border-2 border-dashed border-emerald-100 shadow-sm px-6">
-            <h3 className="text-xl font-black text-black mb-2">{t('noBooksFound')}</h3>
-            <button onClick={clearFilters} className="bg-accent text-white px-10 py-4 rounded-xl font-black uppercase text-[10px] active:scale-95">{t('showEverything')}</button>
+          <div className="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-emerald-100 shadow-sm px-6">
+            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Search className="w-10 h-10 text-emerald-200" />
+            </div>
+            <h3 className="text-2xl font-serif font-black text-black mb-3">{t('noBooksFound')}</h3>
+            <p className="text-zinc-400 font-medium mb-10 max-w-sm mx-auto">{t('tryDifferent')}</p>
+            <button onClick={clearFilters} className="bg-accent text-white px-12 py-5 rounded-2xl font-black uppercase text-xs shadow-xl active:scale-95 transition-all">{t('showEverything')}</button>
           </div>
         )}
       </section>
 
-      {/* COMPACT: How it Works Section (Replaced Safety Guidelines) */}
-      <section className="container mx-auto max-w-7xl px-4 py-4">
-        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-emerald-50 shadow-sm relative overflow-hidden">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-50 rounded-xl">
-                <HelpCircle className="w-6 h-6 text-accent" />
+      {/* How it Works Section */}
+      <section className="container mx-auto max-w-7xl px-4 py-10">
+        <div className="bg-white p-8 md:p-12 rounded-[3rem] border border-emerald-50 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
+            <div className="flex items-center gap-4">
+              <div className="p-4 bg-emerald-50 rounded-2xl">
+                <HelpCircle className="w-8 h-8 text-accent" />
               </div>
-              <h2 className="text-lg md:text-xl font-serif font-black text-black leading-tight">
+              <h2 className="text-2xl md:text-3xl font-serif font-black text-black">
                 {t('howItWorks')}
               </h2>
             </div>
             
-            {/* Minimal Tab Switcher */}
             <div className="bg-zinc-100 p-1 rounded-full flex border border-zinc-200">
                <button 
                  onClick={() => setHowToTab('buy')}
-                 className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase transition-all ${howToTab === 'buy' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400'}`}
+                 className={`px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${howToTab === 'buy' ? 'bg-accent text-white shadow-md' : 'text-zinc-400 hover:text-zinc-600'}`}
                >
                  {t('buyABook')}
                </button>
                <button 
                  onClick={() => setHowToTab('sell')}
-                 className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase transition-all ${howToTab === 'sell' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400'}`}
+                 className={`px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${howToTab === 'sell' ? 'bg-accent text-white shadow-md' : 'text-zinc-400 hover:text-zinc-600'}`}
                >
                  {t('sellABookTitle')}
                </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 animate-in fade-in duration-500" key={howToTab}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-in fade-in duration-700" key={howToTab}>
             {howToTab === 'buy' ? (
               <>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">1</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বই খুঁজুন' : 'FIND BOOKS'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep1')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">1</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'বই খুঁজুন' : 'FIND BOOKS'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('buyStep1')}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">2</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'যোগাযোগ করুন' : 'CONTACT'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep2')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">2</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'যোগাযোগ করুন' : 'CONTACT'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('buyStep2')}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">3</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'সংগ্রহ করুন' : 'COLLECT'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('buyStep3')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">3</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'সংগ্রহ করুন' : 'COLLECT'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('buyStep3')}</p>
                 </div>
               </>
             ) : (
               <>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">1</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'অ্যাকাউন্ট' : 'SIGN UP'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep1')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">1</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'অ্যাকাউন্ট' : 'SIGN UP'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('sellStep1')}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">2</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বই দিন' : 'UPLOAD'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep2')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">2</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'বই দিন' : 'UPLOAD'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('sellStep2')}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-zinc-900 text-white rounded-full flex items-center justify-center font-black text-[10px]">3</div>
-                    <h4 className="font-black text-black text-xs uppercase">{lang === 'bn' ? 'বিক্রি করুন' : 'SELL'}</h4>
-                  </div>
-                  <p className="text-zinc-500 text-[13px] leading-relaxed font-medium">{t('sellStep3')}</p>
+                <div className="space-y-4 p-6 bg-zinc-50 rounded-3xl border border-zinc-100">
+                  <div className="w-10 h-10 bg-zinc-900 text-white rounded-xl flex items-center justify-center font-black text-sm">3</div>
+                  <h4 className="font-black text-black text-sm uppercase tracking-wider">{lang === 'bn' ? 'বিক্রি করুন' : 'SELL'}</h4>
+                  <p className="text-zinc-500 text-sm leading-relaxed font-medium">{t('sellStep3')}</p>
                 </div>
               </>
             )}
@@ -405,14 +392,15 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Featured Toolsybro Banner */}
-      <section className="container mx-auto max-w-7xl px-4">
-        <div className="bg-[#0f172a] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden relative group p-5 md:p-8 shadow-xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-5 relative z-10 text-center lg:text-left">
-            <div className="space-y-3 max-w-xl">
-              <h2 className="text-xl md:text-2xl font-serif font-black text-white leading-tight">
+      <section className="container mx-auto max-w-7xl px-4 py-6">
+        <div className="bg-[#0f172a] rounded-[3rem] overflow-hidden relative group p-8 md:p-16 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none"></div>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10 text-center lg:text-left">
+            <div className="space-y-6 max-w-2xl">
+              <h2 className="text-3xl md:text-5xl font-serif font-black text-white leading-tight">
                 Supercharge your <span className="text-accent italic">Workflow.</span>
               </h2>
-              <p className="text-slate-400 text-xs md:text-sm font-medium leading-relaxed">
+              <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed">
                 Toolsybro offers 50+ professional online utilities for students. Convert PDFs, edit images, and organize your studies with one click.
               </p>
             </div>
@@ -420,7 +408,7 @@ const HomePage: React.FC = () => {
               href="https://toolsybro.com" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="bg-white text-slate-900 px-6 py-3 rounded-lg md:rounded-xl font-black text-[9px] md:text-[10px] uppercase hover:bg-accent hover:text-white transition-all shadow-xl active:scale-95 flex-shrink-0"
+              className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black text-xs uppercase hover:bg-accent hover:text-white transition-all shadow-xl active:scale-95 flex-shrink-0 tracking-widest"
             >
               Visit toolsybro.com
             </a>

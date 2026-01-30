@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { firebase } from './firebase';
@@ -10,6 +9,7 @@ import SellPage from './pages/SellPage';
 import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -93,9 +93,11 @@ const App: React.FC = () => {
                 <Route path="/books/:id" element={<BookDetailsPage />} />
                 <Route path="/chat/:id" element={user ? <ChatPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
           </main>
