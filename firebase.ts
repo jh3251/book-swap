@@ -8,6 +8,8 @@ import {
   signOut, 
   updateProfile,
   sendPasswordResetEmail,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
   sendEmailVerification,
   deleteUser,
   User as FirebaseUser
@@ -37,7 +39,7 @@ const CLOUDINARY_UPLOAD_PRESET = "boisathi_preset";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2oJQc8Al6WNtjseonLG7cpLWZ557Nw98",
-  authDomain: "book-5963d.firebaseapp.com",
+  authDomain: "boisathi.com", // Updated to custom domain
   projectId: "book-5963d",
   storageBucket: "book-5963d.firebasestorage.app",
   messagingSenderId: "839574744012",
@@ -111,6 +113,12 @@ export const firebase = {
     signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
       await sendPasswordResetEmail(auth, email.trim());
+    },
+    verifyPasswordCode: async (code: string) => {
+      return await verifyPasswordResetCode(auth, code);
+    },
+    confirmPasswordReset: async (code: string, newPass: string) => {
+      await confirmPasswordReset(auth, code, newPass);
     },
     deleteAccount: async () => {
       const user = auth.currentUser;
