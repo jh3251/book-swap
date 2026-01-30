@@ -8,8 +8,6 @@ import {
   signOut, 
   updateProfile,
   sendPasswordResetEmail,
-  confirmPasswordReset,
-  verifyPasswordResetCode,
   sendEmailVerification,
   deleteUser,
   User as FirebaseUser
@@ -113,12 +111,6 @@ export const firebase = {
     signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
       await sendPasswordResetEmail(auth, email.trim());
-    },
-    verifyPasswordCode: async (code: string) => {
-      return await verifyPasswordResetCode(auth, code);
-    },
-    confirmPasswordReset: async (code: string, newPass: string) => {
-      await confirmPasswordReset(auth, code, newPass);
     },
     deleteAccount: async () => {
       const user = auth.currentUser;
