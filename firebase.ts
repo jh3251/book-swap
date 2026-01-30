@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { 
   getAuth, 
@@ -8,10 +7,10 @@ import {
   signOut, 
   updateProfile,
   sendPasswordResetEmail,
-  confirmPasswordReset,
-  verifyPasswordResetCode,
   sendEmailVerification,
   deleteUser,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
   User as FirebaseUser
 } from "firebase/auth";
 import { 
@@ -39,7 +38,7 @@ const CLOUDINARY_UPLOAD_PRESET = "boisathi_preset";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2oJQc8Al6WNtjseonLG7cpLWZ557Nw98",
-  authDomain: "boisathi.com", // Updated to custom domain
+  authDomain: "book-5963d.firebaseapp.com",
   projectId: "book-5963d",
   storageBucket: "book-5963d.firebasestorage.app",
   messagingSenderId: "839574744012",
@@ -114,11 +113,11 @@ export const firebase = {
     resetPassword: async (email: string) => {
       await sendPasswordResetEmail(auth, email.trim());
     },
-    verifyPasswordCode: async (code: string) => {
-      return await verifyPasswordResetCode(auth, code);
-    },
     confirmPasswordReset: async (code: string, newPass: string) => {
       await confirmPasswordReset(auth, code, newPass);
+    },
+    verifyPasswordResetCode: async (code: string) => {
+      return await verifyPasswordResetCode(auth, code);
     },
     deleteAccount: async () => {
       const user = auth.currentUser;
@@ -254,8 +253,6 @@ export const firebase = {
     },
 
     subscribeToConversations: (userId: string, callback: (conversations: Conversation[]) => void) => {
-      // Note: orderBy is removed here to prevent 'failed-precondition' error without manual index creation.
-      // We sort manually on the client side in the DashboardPage component.
       const q = query(
         collection(db, "conversations"),
         where("participants", "array-contains", userId)

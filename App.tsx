@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { firebase } from './firebase';
@@ -9,7 +10,6 @@ import SellPage from './pages/SellPage';
 import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
-import ResetPasswordPage from './pages/ResetPasswordPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -38,21 +38,6 @@ const ScrollToTop: React.FC = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
   return null;
-};
-
-/**
- * Handles incoming Firebase Auth action links (e.g., password reset).
- */
-const AuthActionHandler: React.FC = () => {
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const mode = query.get('mode');
-  const oobCode = query.get('oobCode');
-
-  if (mode === 'resetPassword' && oobCode) {
-    return <Navigate to={`/reset-password?oobCode=${oobCode}`} replace />;
-  }
-  return <Navigate to="/" replace />;
 };
 
 const App: React.FC = () => {
@@ -87,7 +72,9 @@ const App: React.FC = () => {
     return localizedSet[key] || englishSet[key] || key;
   };
 
-  if (loading) return <LoadingScreen />;
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
@@ -106,17 +93,9 @@ const App: React.FC = () => {
                 <Route path="/books/:id" element={<BookDetailsPage />} />
                 <Route path="/chat/:id" element={user ? <ChatPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
-                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
-                
-                {/* 
-                  Catching standard Firebase paths arriving on the domain.
-                */}
-                <Route path="/__/auth/action" element={<AuthActionHandler />} />
-                
-                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
           </main>
