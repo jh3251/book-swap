@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { firebase } from './firebase';
 import { UserProfile } from './types';
 import Navbar from './components/Navbar';
@@ -10,6 +9,7 @@ import SellPage from './pages/SellPage';
 import BookDetailsPage from './pages/BookDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -37,6 +37,28 @@ const ScrollToTop: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+  return null;
+};
+
+/**
+ * AuthBridge: 
+ * Handles cleaning up the URL and ensuring we route to the reset page
+ * if the parameters are caught within the React context.
+ */
+const AuthBridge: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const mode = params.get('mode');
+    const code = params.get('oobCode');
+
+    if (mode === 'resetPassword' && code) {
+      navigate(`/reset-password?oobCode=${code}`, { replace: true });
+    }
+  }, [location, navigate]);
+
   return null;
 };
 
@@ -79,6 +101,7 @@ const App: React.FC = () => {
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       <HashRouter>
+        <AuthBridge />
         <ScrollToTop />
         <div className="flex flex-col min-h-screen">
           <Navbar user={user} onLogout={handleLogout} />
@@ -93,9 +116,11 @@ const App: React.FC = () => {
                 <Route path="/books/:id" element={<BookDetailsPage />} />
                 <Route path="/chat/:id" element={user ? <ChatPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/sell" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/auth" />} />
                 <Route path="/edit/:id" element={user ? <SellPage user={user} /> : <Navigate to="/auth" />} />
+                <Route path="*" element={<Navigate to="/" />} />
               </Routes>
             </div>
           </main>

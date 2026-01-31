@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { firebase } from '../firebase';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Zap, Eye, EyeOff, ChevronLeft, CheckCircle2, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
@@ -90,7 +89,7 @@ const AuthPage: React.FC = () => {
       if (isLogin) {
         await firebase.auth.signIn(trimmedEmail, password);
       } else {
-        await firebase.auth.signUp(trimmedEmail, password, name.trim(), undefined);
+        await firebase.auth.signUp(trimmedEmail, password, name.trim());
         setNeedsVerification(true);
       }
     } catch (err: any) {
@@ -107,13 +106,14 @@ const AuthPage: React.FC = () => {
         errorCode === 'auth/user-not-found' || 
         errorCode === 'auth/wrong-password' || 
         errorCode === 'auth/invalid-credential' ||
+        errorCode === 'auth/invalid-login-credentials' ||
         err.message?.includes('invalid-credential')
       ) {
         setError(lang === 'bn' ? 'ভুল ইমেইল অথবা পাসওয়ার্ড। আবার চেষ্টা করুন।' : 'Incorrect email or password. Please try again.');
       } else if (errorCode === 'auth/too-many-requests') {
         setError(lang === 'bn' ? 'অতিরিক্ত বার ভুল চেষ্টা করা হয়েছে। অ্যাকাউন্ট সাময়িকভাবে বন্ধ করা হয়েছে।' : 'Too many failed attempts. Account temporarily locked. Try again later.');
       } else {
-        setError(lang === 'bn' ? 'অথেনটিকেশন ব্যর্থ হয়েছে। ইন্টাররেট সংযোগ চেক করুন।' : 'Authentication failed. Please check your connection and try again.');
+        setError(lang === 'bn' ? 'অথেনটিকেশন ব্যর্থ হয়েছে। ইন্টাররেট সংযোগ চেক করুন।' : 'Authentication failed. Please check your credentials and connection.');
       }
     } finally {
       setLoading(false);

@@ -5,13 +5,14 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
-  updateProfile,
+  updateProfile as firebaseUpdateProfile,
   sendPasswordResetEmail,
   sendEmailVerification,
   deleteUser,
   confirmPasswordReset,
   verifyPasswordResetCode,
-  User as FirebaseUser
+  User as FirebaseUser,
+  ActionCodeSettings
 } from "firebase/auth";
 import { 
   getFirestore, 
@@ -26,10 +27,7 @@ import {
   query, 
   where, 
   orderBy,
-  onSnapshot,
-  Timestamp,
-  serverTimestamp,
-  limit
+  onSnapshot
 } from "firebase/firestore";
 import { BookListing, UserProfile, Conversation, ChatMessage } from './types';
 
@@ -38,7 +36,8 @@ const CLOUDINARY_UPLOAD_PRESET = "boisathi_preset";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA2oJQc8Al6WNtjseonLG7cpLWZ557Nw98",
-  authDomain: "book-5963d.firebaseapp.com",
+  // This MUST match your custom domain for branding to work correctly
+  authDomain: "boisathi.com",
   projectId: "book-5963d",
   storageBucket: "book-5963d.firebasestorage.app",
   messagingSenderId: "839574744012",
@@ -48,6 +47,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const BOISATHI_DOMAIN = "https://boisathi.com";
+
+const getActionCodeSettings = (): ActionCodeSettings => ({
+  url: BOISATHI_DOMAIN,
+  handleCodeInApp: true,
+});
 
 const mapUser = async (user: FirebaseUser): Promise<UserProfile & { emailVerified: boolean }> => {
   let username = "";
@@ -87,31 +93,27 @@ export const firebase = {
       const { user } = await signInWithEmailAndPassword(auth, email.trim(), pass);
       return await mapUser(user);
     },
-    signUp: async (email: string, pass: string, name: string, photoFile?: File) => {
+    signUp: async (email: string, pass: string, name: string) => {
       const { user } = await createUserWithEmailAndPassword(auth, email.trim(), pass);
-      try { await sendEmailVerification(user); } catch (e) {}
-      let photoURL = "";
-      if (photoFile) {
-        try {
-          const res = await firebase.db.uploadBookImage(photoFile);
-          photoURL = res.secure_url;
-        } catch (e) {}
-      }
-      await updateProfile(user, { displayName: name.trim(), photoURL });
-      const userProfile: UserProfile = { uid: user.uid, displayName: name.trim(), email: email.trim(), photoURL: photoURL || undefined, createdAt: Date.now(), username: "" };
+      try { await sendEmailVerification(user, getActionCodeSettings()); } catch (e) {}
+      
+      await firebaseUpdateProfile(user, { displayName: name.trim() });
+      const userProfile: UserProfile = { uid: user.uid, displayName: name.trim(), email: email.trim(), createdAt: Date.now(), username: "" };
       try { await setDoc(doc(db, "users", user.uid), userProfile); } catch (e) {}
       return await mapUser(user);
     },
-    updateProfile: async (name: string, photoURL?: string, username?: string) => {
+    updateProfile: async (displayName: string, photoURL?: string, username?: string) => {
       const user = auth.currentUser;
-      if (!user) throw new Error("No active session found");
-      await updateProfile(user, { displayName: name.trim(), photoURL });
+      if (!user) throw new Error("User not found");
+      await firebaseUpdateProfile(user, { displayName, photoURL });
       const userDocRef = doc(db, "users", user.uid);
-      await updateDoc(userDocRef, { displayName: name.trim(), photoURL, username });
+      const updates: any = { displayName };
+      if (photoURL !== undefined) updates.photoURL = photoURL;
+      if (username !== undefined) updates.username = username;
+      await updateDoc(userDocRef, updates);
     },
-    signOut: () => signOut(auth),
     resetPassword: async (email: string) => {
-      await sendPasswordResetEmail(auth, email.trim());
+      await sendPasswordResetEmail(auth, email.trim(), getActionCodeSettings());
     },
     confirmPasswordReset: async (code: string, newPass: string) => {
       await confirmPasswordReset(auth, code, newPass);
@@ -119,14 +121,11 @@ export const firebase = {
     verifyPasswordResetCode: async (code: string) => {
       return await verifyPasswordResetCode(auth, code);
     },
+    signOut: () => signOut(auth),
     deleteAccount: async () => {
       const user = auth.currentUser;
-      if (!user) throw new Error("No active session found");
-      const uid = user.uid;
-      const q = query(collection(db, "bookListings"), where("sellerId", "==", uid));
-      const snapshot = await getDocs(q);
-      for (const d of snapshot.docs) { await firebase.db.deleteListing(d.id); }
-      try { await deleteDoc(doc(db, "users", uid)); } catch (e) {}
+      if (!user) return;
+      await deleteDoc(doc(db, "users", user.uid));
       await deleteUser(user);
     }
   },
@@ -189,17 +188,9 @@ export const firebase = {
         reader.onerror = (error) => reject(error);
       });
     },
-    addListing: async (listing: Omit<BookListing, 'id' | 'createdAt'>, imageFile?: File) => {
-      const createdAt = Date.now();
-      let imageUrl = listing.imageUrl || "";
-      let imageDeleteToken = listing.imageDeleteToken || "";
-      if (imageFile) {
-        const res = await firebase.db.uploadBookImage(imageFile);
-        imageUrl = res.secure_url;
-        imageDeleteToken = res.delete_token || "";
-      }
-      const docRef = await addDoc(collection(db, "bookListings"), { ...listing, imageUrl, imageDeleteToken, createdAt });
-      return { id: docRef.id, ...listing, imageUrl, imageDeleteToken, createdAt } as BookListing;
+    addListing: async (listing: Omit<BookListing, 'id' | 'createdAt'>) => {
+      const docRef = await addDoc(collection(db, "bookListings"), { ...listing, createdAt: Date.now() });
+      return { id: docRef.id, ...listing, createdAt: Date.now() } as BookListing;
     },
     updateListing: async (id: string, data: Partial<BookListing>) => {
       await updateDoc(doc(db, "bookListings", id), data);
@@ -227,13 +218,11 @@ export const firebase = {
       const snapshot = await getDocs(q);
       return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as BookListing));
     },
-
     createOrGetConversation: async (book: BookListing, buyer: UserProfile): Promise<string> => {
       const participants = [buyer.uid, book.sellerId].sort();
       const conversationId = `${book.id}_${participants.join('_')}`;
       const convRef = doc(db, "conversations", conversationId);
       const snap = await getDoc(convRef);
-
       if (!snap.exists()) {
         const convData: Conversation = {
           id: conversationId,
@@ -241,50 +230,26 @@ export const firebase = {
           bookTitle: book.title,
           bookImageUrl: book.imageUrl,
           participants,
-          participantNames: {
-            [buyer.uid]: buyer.displayName,
-            [book.sellerId]: book.sellerName
-          },
+          participantNames: { [buyer.uid]: buyer.displayName, [book.sellerId]: book.sellerName },
           updatedAt: Date.now()
         };
         await setDoc(convRef, convData);
       }
       return conversationId;
     },
-
     subscribeToConversations: (userId: string, callback: (conversations: Conversation[]) => void) => {
-      const q = query(
-        collection(db, "conversations"),
-        where("participants", "array-contains", userId)
-      );
-      return onSnapshot(q, (snapshot) => {
-        callback(snapshot.docs.map(d => d.data() as Conversation));
-      });
+      const q = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+      return onSnapshot(q, (snapshot) => callback(snapshot.docs.map(d => d.data() as Conversation)));
     },
-
     subscribeToMessages: (conversationId: string, callback: (messages: ChatMessage[]) => void) => {
-      const q = query(
-        collection(db, "conversations", conversationId, "messages"),
-        orderBy("createdAt", "asc")
-      );
-      return onSnapshot(q, (snapshot) => {
-        callback(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage)));
-      });
+      const q = query(collection(db, "conversations", conversationId, "messages"), orderBy("createdAt", "asc"));
+      return onSnapshot(q, (snapshot) => callback(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as ChatMessage))));
     },
-
     sendMessage: async (conversationId: string, senderId: string, text: string) => {
-      const messageData = {
-        senderId,
-        text,
-        createdAt: Date.now()
-      };
+      const messageData = { senderId, text, createdAt: Date.now() };
       await addDoc(collection(db, "conversations", conversationId, "messages"), messageData);
-      await updateDoc(doc(db, "conversations", conversationId), {
-        lastMessage: text,
-        updatedAt: Date.now()
-      });
+      await updateDoc(doc(db, "conversations", conversationId), { lastMessage: text, updatedAt: Date.now() });
     },
-    
     getConversationById: async (id: string): Promise<Conversation | null> => {
       const snap = await getDoc(doc(db, "conversations", id));
       return snap.exists() ? snap.data() as Conversation : null;

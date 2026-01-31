@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
@@ -33,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       <button 
         onClick={() => setLang('en')}
         className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black transition-all duration-300 ${
-          lang === 'en' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
+          lang === 'en' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
         }`}
       >
         EN
@@ -41,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       <button 
         onClick={() => setLang('bn')}
         className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black transition-all duration-300 ${
-          lang === 'bn' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
+          lang === 'bn' ? 'bg-accent text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-600'
         }`}
       >
         BD

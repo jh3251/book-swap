@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { firebase } from '../firebase';
@@ -267,11 +266,7 @@ const BookDetailsPage: React.FC = () => {
                 <a 
                   href={isPhoneRevealed ? `tel:${book.contactPhone}` : '#'}
                   onClick={handleCallClick}
-                  className={`w-full text-white !text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition duration-300 transform active:scale-95 ${
-                    isPhoneRevealed 
-                      ? 'bg-[#16a34a] hover:bg-emerald-700 shadow-[#16a34a]/30' 
-                      : 'bg-[#16a34a] hover:bg-emerald-700 shadow-emerald-500/30'
-                  }`}
+                  className={`w-full text-white py-5 rounded-2xl flex items-center justify-center gap-4 font-black text-sm uppercase shadow-2xl transition duration-300 transform active:scale-95 bg-accent hover:bg-accent-hover shadow-accent/30`}
                 >
                   <Phone className={`w-5 h-5 !text-white ${!isPhoneRevealed ? 'animate-ring' : ''}`} />
                   <span className="!text-white">
@@ -338,7 +333,7 @@ const BookDetailsPage: React.FC = () => {
             className="absolute inset-0 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
             onClick={() => setShowShareModal(false)}
           ></div>
-          <div className="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm p-10 animate-in zoom-in duration-300">
+          <div className="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-sm p-10 animate-in zoom-in duration-300">
              <button onClick={() => setShowShareModal(false)} className="absolute top-8 right-8 p-2 text-zinc-300 hover:text-black transition">
                <X className="w-6 h-6" />
              </button>
